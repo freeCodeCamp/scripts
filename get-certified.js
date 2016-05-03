@@ -10,27 +10,18 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
 
   database.collection('user').aggregate([
     {
-      $group: {
-        _id: '$email',
-        count: { $sum: 1 }
-      }
-    },
-    {
       $match: {
-        _id: { $ne: null },
-        count: { $gt: 1 }
-      }
-    },
-    {
-      $project: {
-        email: '$_id',
-        _id: 0
+        $and: [
+          { isFrontEndCert: true },
+          { isBackEndCert: true },
+          { isDataVisCert: true }
+        ]
       }
     },
     {
       $group: {
         _id: 1,
-        usernames: { $addToSet: '$email' }
+        usernames: { $addToSet: '$username' }
       }
     }
   ], function(err, results) {
