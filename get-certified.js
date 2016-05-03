@@ -27,8 +27,8 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
   ], function(err, results) {
     if (err) { throw err; }
 
-    // console.log('\n@' + results[0].usernames.join('\n@'));
-    console.log(results[0].usernames.length);
+    console.log('\n@' + results[0].usernames.join('\n@'));
+    // console.log(results[0].usernames.length);
     process.exit(0);
   });
 });
