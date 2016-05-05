@@ -26,7 +26,7 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
   ], function(err, results) {
     if (err) { throw err; }
 
-    console.log('\"email\"\n\"' + results[0].emails.join('\"\n\"') + '\"');
+    console.log(JSON.stringify(results[0].emails));
     process.exit(0);
   });
 });
