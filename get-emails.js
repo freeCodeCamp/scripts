@@ -1,10 +1,9 @@
 /* eslint-disable no-process-exit */
 require('dotenv').load();
-var secrets = require('../config/secrets'),
-    mongodb = require('mongodb'),
-    MongoClient = mongodb.MongoClient;
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
 
-MongoClient.connect(secrets.db, function(err, database) {
+MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
   if (err) {
     throw err;
   }
