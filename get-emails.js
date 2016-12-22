@@ -22,11 +22,16 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
         ]
       }
     },
-    { $group: { _id: 1, emails: { $addToSet: '$email' } } }
-  ], function(err, results) {
+    { $project: { _id: 0, email: 1 } }
+  ])
+  .toArray(function(err, results) {
     if (err) { throw err; }
 
-    console.log(JSON.stringify(results[0].emails));
+    console.log(
+      JSON.stringify(results.map(user => user.email))
+    );
     process.exit(0);
   });
 });
+
+
