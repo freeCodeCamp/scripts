@@ -18,7 +18,7 @@ assert(
 );
 
 const writeStream = fs.createWriteStream(filepath);
-writeStream.write('emails\n');
+writeStream.write('email\n');
 
 MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
   if (err) {
