@@ -1,7 +1,24 @@
 /* eslint-disable no-process-exit */
 require('dotenv').load();
-var mongodb = require('mongodb');
-var MongoClient = mongodb.MongoClient;
+const fs = require('fs');
+const assert = require('assert');
+const mongodb = require('mongodb');
+const map = require('map-stream');
+
+const MongoClient = mongodb.MongoClient;
+
+const filepath = process.argv[2];
+
+assert(
+  filepath,
+  `
+  This script must be called with a filepath argument like so:
+  node ./get-emails ./emails.csv
+  `
+);
+
+const writeStream = fs.createWriteStream(filepath);
+writeStream.write('emails\n');
 
 MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
   if (err) {
@@ -24,14 +41,14 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
     },
     { $project: { _id: 0, email: 1 } }
   ])
-  .toArray(function(err, results) {
-    if (err) { throw err; }
-
-    console.log(
-      JSON.stringify(results.map(user => user.email))
-    );
-    process.exit(0);
-  });
+    .pipe(map((user, cb) => cb(null, '' + user.email + '\n')))
+    .pipe(writeStream)
+    .on('finish', () => {
+      console.log(`
+        Process complete. Emails have been written to ${filepath}.
+      `);
+      process.exit(0);
+    });
 });
 
 
