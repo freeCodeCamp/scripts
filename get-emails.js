@@ -41,6 +41,7 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
     },
     { $project: { _id: 0, email: 1 } }
   ])
+    .batchSize(10)
     .pipe(map((user, cb) => cb(null, '' + user.email + '\n')))
     .pipe(writeStream)
     .on('finish', () => {
