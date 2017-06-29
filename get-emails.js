@@ -4,6 +4,8 @@ const fs = require('fs');
 const assert = require('assert');
 const mongodb = require('mongodb');
 const map = require('map-stream');
+const validator = require('validator');
+const through = require('through2');
 
 const MongoClient = mongodb.MongoClient;
 
@@ -42,7 +44,14 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
     { $project: { _id: 0, email: 1 } }
   ])
     .batchSize(10)
-    .pipe(map((user, cb) => cb(null, '' + user.email + '\n')))
+    .pipe(map((user, cb) => cb(null, user.email)))
+    .pipe(through.obj((email, _, cb) => {
+      if (validator.isEmail(email)) {
+        return cb(null, email);
+      }
+      return cb();
+    }))
+    .pipe(map((email, cb) => cb(null, '' + email + '\n')))
     .pipe(writeStream)
     .on('finish', () => {
       console.log(`
