@@ -27,6 +27,7 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
     throw err;
   }
 
+  const users = [];
   database.collection('user').aggregate([
     { $match: { email: { $exists: true } } },
     { $match: { email: { $ne: '' } } },
@@ -38,11 +39,11 @@ MongoClient.connect(process.env.MONGODB_URI, function(err, database) {
       if (validator.isEmail(user.email)) {
         return cb();
       }
-      return cb(null, user);
+      users.push(user);
+      return cb();
     }))
-    .pipe(map(({ _id, email }, cb) => cb(null, _id + ', ' + email + '\n')))
-    .pipe(writeStream)
     .on('finish', () => {
+      fs.writeFileSync(filepath, JSON.stringify(users, null, 2));
       console.log(`
         Process complete. Emails have been written to ${filepath}.
       `);
