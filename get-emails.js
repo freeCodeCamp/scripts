@@ -40,56 +40,44 @@ assert(
   `
 );
 
-MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, function(err, client) {
-  const db = client.db(process.env.MONGO_DB)
-  if (err) {
-    throw err;
-  }
+const { MONGO_DB, MONGO_PASSWORD, MONGO_RS, MONGO_USER, MONGODB_URI } = process.env;
 
-  const stream = db.collection('user').find({
-    $and: [
-      { email: { $exists: true } },
-      { email: { $ne: '' } },
-      { email: { $ne: null } },
-      { email: { $not: /(test|fake)/i } },
-      { $or: [
-          { sendQuincyEmail: true },
-          { sendQuincyEmail: { $exists: false } },
-          { sendQuincyEmail: null }
-        ]
-      }
-    ]
-  }, {
-    email: 1,
-    unsubscribeId: 1
-  }).batchSize(100).stream();
+MongoClient.connect(
+  MONGODB_URI,
+  {
+    useNewUrlParser: true,
+    replicaSet: MONGO_RS,
+    auth: { user: MONGO_USER, password: MONGO_PASSWORD}
+  },
+  function(err, client) {
+    if (err) {
+      throw err;
+    }
+    const db = client.db(MONGO_DB)
 
-  stream.on('data', ({email, unsubscribeId}) => {
-    const data = {email, unsubscribeId};
-    rs.push(data)
-  })
+    const stream = db.collection('user').find({
+      $and: [
+        { email: { $exists: true } },
+        { email: { $ne: '' } },
+        { email: { $ne: null } },
+        { email: { $not: /(test|fake)/i } },
+        { $or: [
+            { sendQuincyEmail: true },
+            { sendQuincyEmail: { $exists: false } },
+            { sendQuincyEmail: null }
+          ]
+        }
+      ]
+    }, {
+      email: 1,
+      unsubscribeId: 1
+    }).batchSize(100).stream();
 
-  stream.on('end', () => {rs.push(null);client.close()});
+    stream.on('data', ({email, unsubscribeId}) => {
+      const data = {email, unsubscribeId};
+      rs.push(data)
+    })
 
+    stream.on('end', () => {rs.push(null);client.close()});
 
 });
-
-
-/**
- * [
-    { $match: { email: { $exists: true } } },
-    { $match: { email: { $ne: '' } } },
-    { $match: { email: { $ne: null } } },
-    { $match: { email: { $not: /(test|fake)/i } } },
-    {
-      $match: {
-        $or: [
-          { sendQuincyEmail: true },
-          { sendQuincyEmail: { $exists: false } },
-          { sendQuincyEmail: null }
-        ]
-      }
-    },
-    { $project: { _id: 0, email: 1, unsubscribeId: 1 } }
-  ]
- */
