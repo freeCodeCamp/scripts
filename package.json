@@ -10,20 +10,15 @@
     "type": "git",
     "url": "git+https://github.com/FreeCodeCamp/scripts.git"
   },
-  "author": "Berkeley Martinez <Berkeley@RoboTie.com> (http://RoboTie.com)",
+  "author": "freeCodeCamp",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/FreeCodeCamp/scripts/issues"
   },
   "homepage": "https://github.com/FreeCodeCamp/scripts#readme",
   "dependencies": {
-    "babel-cli": "^6.7.5",
-    "babel-preset-es2015": "^6.6.0",
-    "dotenv": "^2.0.0",
-    "map-stream": "0.0.7",
-    "mongodb": "^2.1.16",
-    "rxjs": "^5.5.2",
-    "through2": "^2.0.3",
-    "validator": "^9.1.1"
+    "dotenv": "^6.0.0",
+    "mongodb": "^3.1.0",
+    "validator": "^10.4.0"
   }
 }
