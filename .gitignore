@@ -72,3 +72,4 @@ typings/
 # Serverless directories
 .serverlesscontributors.txt
 *.txt
+.vscode
