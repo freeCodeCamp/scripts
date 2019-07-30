@@ -1,21 +1,16 @@
 const fetch = require('node-fetch');
 const { headers } = require('./headers');
 
-const makeRequest = async ({ actionDesc, method, endPoint, bodyObj, forumTopicId }) => {
-  const updateTopicUrl = process.env.BASE_URL + endPoint;
-  const response = await fetch(updateTopicUrl, {
+const makeRequest = async ({ method, endPoint, bodyObj }) => {
+  const apiUrl = process.env.BASE_URL + endPoint;
+  const body = bodyObj ? JSON.stringify(bodyObj) : undefined;
+  const response = await fetch(apiUrl, {
     headers,
     method,
-    body: JSON.stringify(bodyObj)
+    body
   });
-  const result = await response.json()
-
-  if (result.errors) {
-    console.log(`forumTopicId ${forumTopicId} - ${actionDesc} had an error`);
-    console.log(`error_type: ${result.error_type}`);
-    console.log(result.errors);
-  }
-  console.log(`forumTopicId ${forumTopicId} - ${actionDesc} was successful`);
+  const result = await response.json();
+  return result;
 };
 
 module.exports = { makeRequest };
