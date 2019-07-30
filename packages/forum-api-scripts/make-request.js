@@ -1,8 +1,7 @@
 const fetch = require('node-fetch');
-
 const { headers } = require('./headers');
 
-const makeRequest = async ({ actionDesc, method, endPoint, bodyObj, topic_id }) => {
+const makeRequest = async ({ actionDesc, method, endPoint, bodyObj, forumTopicId }) => {
   const updateTopicUrl = process.env.BASE_URL + endPoint;
   const response = await fetch(updateTopicUrl, {
     headers,
@@ -12,13 +11,11 @@ const makeRequest = async ({ actionDesc, method, endPoint, bodyObj, topic_id }) 
   const result = await response.json()
 
   if (result.errors) {
-    console.log(`topic_id ${topic_id} - ${actionDesc} had an error`);
+    console.log(`forumTopicId ${forumTopicId} - ${actionDesc} had an error`);
     console.log(`error_type: ${result.error_type}`);
     console.log(result.errors);
   }
-  console.log(`topic_id ${topic_id} - ${actionDesc} was successful`);
-  // })
-  //.catch(err => console.log('fetch request didn\'t succeed\n' + err));
+  console.log(`forumTopicId ${forumTopicId} - ${actionDesc} was successful`);
 };
 
 module.exports = { makeRequest };
