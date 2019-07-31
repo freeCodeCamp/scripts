@@ -5,14 +5,12 @@ const data = fs.readFileSync('D:/Coding/search-files/data/forum-topics-and-chall
 const matchedForumTopics = JSON.parse(data).matches;
 
 for (let { guideFilePath, title, forumTopicId } of matchedForumTopics) {
-  console.log(guideFilePath);
   const guideArticleContent = getGuideArticleContent(guideFilePath);
   if (guideArticleContent) {
     const regex = /\s*(?<mainHeader># .+)\r?\n/;
     const match = guideArticleContent.match(regex);
-    if (match) {
-      //console.log(match.groups.mainHeader);
-    } else {
+    if (!match) {
+      console.log(guideFilePath);
       console.log('could not find main header');
     }
   } else {
@@ -20,4 +18,5 @@ for (let { guideFilePath, title, forumTopicId } of matchedForumTopics) {
     console.log('could not retrieve guide content');
   }
 }
+console.log('script complete');
 
