@@ -12,6 +12,7 @@
     "status": "migrate-mongo status",
     "test": "echo \"Error: no test specified\" && exit 1",
     "up": "migrate-mongo up",
+    "up-and-log": "migrate-mongo up 2>&1| tee output.log",
     "down": "migrate-mongo down"
   }
 }

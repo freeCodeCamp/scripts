@@ -1,9 +1,10 @@
 require('dotenv').config();
 
 const { WAITTIME_BETWEEN_CALLS } = process.env;
-const waitBetweenCalls =  Number(WAITTIME_BETWEEN_CALLS) | 1;
+const waitBetweenCalls =  Number(WAITTIME_BETWEEN_CALLS);
 
 const wait = (seconds) => {
+  seconds === 0 ? 1 : seconds;
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(seconds);

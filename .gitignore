@@ -73,8 +73,6 @@ typings/
 .serverless
 
 
-*.txt
 .vscode
-*.csv
-db-migrations/migrations/
+
 db-migrations/data/
