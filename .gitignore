@@ -71,5 +71,8 @@ typings/
 
 # Serverless directories
 .serverless
+
+
 *.txt
 .vscode
+*.csv
