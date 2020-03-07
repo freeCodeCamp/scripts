@@ -1,0 +1,17 @@
+{
+  "name": "@freecodecamp/db-migrations",
+  "version": "1.0.0",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "migrate-mongo": "^7.1.0"
+  },
+  "scripts": {
+    "create": "migrate-mongo create",
+    "status": "migrate-mongo status",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "up": "migrate-mongo up",
+    "down": "migrate-mongo down"
+  }
+}
