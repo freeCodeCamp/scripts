@@ -1,5 +1,3 @@
-# Working with VMs
-
 ### Getting a list of the VMs from Azure
 
 Install Azure CLI `az`: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
@@ -10,7 +8,7 @@ Install Azure CLI `az`: https://docs.microsoft.com/en-us/cli/azure/install-azure
 brew install azure-cli
 ```
 
-> (onetime) Login: 
+> (onetime) Login:
 
 ```
 az login
@@ -32,7 +30,7 @@ Install Digital Ocean CLI `doctl`: https://github.com/digitalocean/doctl#install
 brew install doctl
 ```
 
-> (onetime) Login: 
+> (onetime) Login:
 
 Authentication and context switching: https://github.com/digitalocean/doctl#authenticating-with-digitalocean
 
