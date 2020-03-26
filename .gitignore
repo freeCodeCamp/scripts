@@ -75,4 +75,4 @@ typings/
 
 .vscode
 
-db-migrations/data/
+database/data/
