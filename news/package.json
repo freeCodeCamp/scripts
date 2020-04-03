@@ -9,7 +9,7 @@
   "author": "freeCodeCamp.org",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "@tryghost/admin-api": "^0.5.2",
-    "dotenv": "^8.0.0"
+    "@tryghost/admin-api": "^1.1.1",
+    "dotenv": "^8.2.0"
   }
 }
