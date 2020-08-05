@@ -76,3 +76,5 @@ typings/
 .vscode
 
 database/data/
+out/
+**/*.csv
