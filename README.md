@@ -1,3 +1,4 @@
 # Scripts
 
-Scripts for things like generating the mailing list and getting some statistics on our users.
+> Scripts for most one-off DevOps tasks. We use these for generating stats and housekeeping.
+
