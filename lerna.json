@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "database",
+    "emails",
+    "news"
+  ],
+  "version": "independent"
+}
