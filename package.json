@@ -1,0 +1,13 @@
+{
+  "name": "@freecodecamp/scripts",
+  "private": true,
+  "scripts": {
+    "bootstrap": "lerna bootstrap --ci",
+    "postinstall": "npm run bootstrap",
+    "audit": "npm audit & lerna exec --no-bail 'echo $LERNA_PACKAGE_NAME & npm audit'",
+    "audit:fix": "npm audit fix & lerna exec 'echo $LERNA_PACKAGE_NAME & npm audit fix'"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}
