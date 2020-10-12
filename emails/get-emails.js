@@ -38,7 +38,7 @@ assert(
   `
   This script must be called with a filepath argument like so:
 
-  yarn mailing-list ./emails.csv
+  npm run mailing-list -- './emails.csv'
 
   `
 );
@@ -92,18 +92,19 @@ MongoClient.connect(
       .batchSize(100)
       .stream();
 
-    const spinner = ora('Getting emails');
+    const spinner = ora('Begin querying emails ...');
     spinner.start();
 
     stream.on('data', ({ email, unsubscribeId }) => {
       const data = { email, unsubscribeId };
-      spinner.text = `Getting details for: ${email}\n`;
+      spinner.text = `Getting info for: ${email}\n`;
       rs.push(data);
     });
 
     stream.on('end', () => {
       rs.push(null);
       client.close();
+      spinner.succeed(`Completed compiling mailing list.`);
     });
   }
 );
