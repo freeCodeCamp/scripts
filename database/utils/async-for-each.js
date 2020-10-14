@@ -7,7 +7,7 @@ const wait = (seconds) => {
   seconds = seconds < 1 ? 1 : seconds;
   return new Promise(resolve => {
     setTimeout(() => {
-      resolve(seconds);
+      resolve();
     }, seconds * 1000);
   });
 }
