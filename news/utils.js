@@ -8,9 +8,14 @@ const wait = seconds => {
   });
 };
 
-export async function asyncForEach(array, callback) {
+async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await wait(WAIT_BETWEEN_CALLS);
     await callback(array[index], index, array);
   }
+}
+
+module.exports = {
+  wait,
+  asyncForEach
 }
