@@ -46,7 +46,13 @@ const seedPosts = async () => {
         published_at
       } = post;
       // Handle tags differently to prevent duplicate tags
-      const tags = post.tags.map(tag => tag.name);
+      const tags = post.tags.map(tag => {
+        const { name, slug } = tag;
+        return { 
+          name,
+          slug
+        }
+      });
 
       apiSetter.posts.add({
         id,
