@@ -61,30 +61,7 @@ const seedPosts = async () => {
 
       // Handle tags differently to prevent duplicate tags
       const tags = post.tags.map((tag) => {
-        return ({
-          id,
-          name,
-          slug,
-          description,
-          feature_image,
-          visibility,
-          meta_title,
-          meta_description,
-          created_at,
-          updated_at,
-
-          // these are new things on the v3 side so we set them to defaults
-          og_image: null,
-          og_title: null,
-          og_description: null,
-          twitter_image: null,
-          twitter_title: null,
-          twitter_description: null,
-          codeinjection_head: null,
-          codeinjection_foot: null,
-          canonical_url: null,
-          accent_color: null
-        } = tag);
+        return ({ name, slug } = tag);
       });
 
       apiSetter.posts
