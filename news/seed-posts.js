@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const GhostAdminAPI = require("@tryghost/admin-api");
-// const ora = require("ora");
+const ora = require("ora");
 const fs = require("fs");
 const { wait } = require("./utils");
 
@@ -21,12 +21,11 @@ const keys = {
 const apiGetter = new GhostAdminAPI({ ...keys.getter });
 const apiSetter = new GhostAdminAPI({ ...keys.setter });
 
-
 const seedPosts = async () => {
   let currPage = 1;
   let lastPage = 1;
-  // const spinner = ora("Begin seeding posts...");
-  // spinner.start();
+  const spinner = ora("Begin seeding posts...");
+  spinner.start();
 
   while (currPage && currPage <= lastPage) {
     const data = await apiGetter.posts.browse({
@@ -60,16 +59,14 @@ const seedPosts = async () => {
         primary_tag: primary_tag_v2,
         primary_author: primary_author_v2,
       } = post;
-      
+
       const primary_tag = primary_tag_v2 ? { id: primary_tag_v2.id } : null;
-      const primary_author = primary_author_v2 ? { id: primary_author_v2.id } : null;
+      const primary_author = primary_author_v2
+        ? { id: primary_author_v2.id }
+        : null;
 
       // Handle tags differently to prevent duplicate tags
-      const tags = post.tags.map((tag) => {
-     //   const { name, slug } = tag;
-        
-        return { name: tag.name, slug: tag.slug };
-      });
+      const tags = post.tags.map(({ name, slug }) => ({ name, slug }));
 
       apiSetter.posts
         .add({
@@ -104,12 +101,11 @@ const seedPosts = async () => {
           primary_author,
         })
         .then((res) => {
-          console.log('hello', res);
-          // spinner.text = `Seeded post: ${title}`;
+          spinner.text = `Seeded post: ${title}`;
         })
         .catch((err) => {
-          // spinner.fail = `Failed seeding: ${title}`;
-          console.log('disaster', err);
+          spinner.fail = `Failed seeding: ${title}`;
+          console.log("disaster", err);
           fs.appendFileSync(
             "failed-posts.txt",
             `Title: ${title}, Id: ${id}\n`,
@@ -117,10 +113,10 @@ const seedPosts = async () => {
           );
         });
 
-      // await wait(1);
+      await wait(1);
     }
   }
-  // spinner.succeed("Completed seeding posts.");
+  spinner.succeed("Completed seeding posts.");
 };
 
 seedPosts();
