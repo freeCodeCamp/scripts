@@ -19,6 +19,7 @@ const keys = {
 };
 
 let postsAdded = 0;
+let postsFailed = 0;
 
 const apiGetter = new GhostAdminAPI({ ...keys.getter });
 const apiSetter = new GhostAdminAPI({ ...keys.setter });
@@ -44,6 +45,8 @@ const seedPosts = async () => {
     // Comment these two when testing
     // currPage = data.meta.pagination.next;
     // lastPage = data.meta.pagination.pages;
+
+    await wait(3);
 
     for (let i in posts) {
       const post = posts[i];
@@ -115,9 +118,13 @@ const seedPosts = async () => {
             'passed-posts.log',
             `{
   "time": "${new Date()}",
-  "post": ${JSON.stringify(postToAdd, null, 2)}
+  "id": "${postToAdd.id}",
+  "slug": "${slug}"
 },
 `,
+
+            // "post": ${JSON.stringify(postToAdd, null, 2)}
+
             { flag: 'a+', encoding: 'utf-8' }
           );
           postsAdded++;
@@ -125,6 +132,7 @@ const seedPosts = async () => {
         .catch((err) => {
           // spinner.fail = `Failed seeding: ${title}`;
           console.log('DISASTER', err);
+          postsFailed++;
           fs.appendFileSync(
             'failed-posts.log',
             `{
@@ -136,11 +144,11 @@ const seedPosts = async () => {
             { flag: 'a+', encoding: 'utf-8' }
           );
         });
-
-      await wait(1);
     }
   }
-  console.log(`Complete. ${postsAdded} posts added.`);
+  console.log(
+    `Complete. ${postsAdded} posts added. ${postsFailed} posts failed.`
+  );
   // spinner.succeed('Completed seeding posts.');
 };
 
