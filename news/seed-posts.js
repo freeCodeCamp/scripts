@@ -1,6 +1,8 @@
 require('dotenv').config();
 
 const GhostAdminAPI = require('@tryghost/admin-api');
+const ora = require('ora');
+const fs = require('fs');
 const { wait } = require('./utils');
 
 const keys = {
@@ -22,6 +24,8 @@ const apiSetter = new GhostAdminAPI({ ...keys.setter });
 const seedPosts = async () => {
   let currPage = 1;
   let lastPage = 5;
+  const spinner = ora('Begin seeding posts...');
+  spinner.start();
 
   while (currPage && currPage <= lastPage) {
     const data = await apiGetter.posts.browse({ page: currPage, formats: ['html', 'mobiledoc'] });
@@ -71,19 +75,17 @@ const seedPosts = async () => {
         published_at
       })
         .then(res => {
-          console.log('---- :Seeding: ----');
-          console.log(id);
-          console.log(slug);
-          console.log(title);
-          console.log(tags);
-          console.log('---- :Seeding: ----\n');
+          spinner.text = `Seeded post: ${title}`;
         })
-        .then(() => console.log(`Added post: ${title}\n`))
-        .catch(err => console.error(err));
+        .catch(err => {
+          spinner.fail = `Failed seeding: ${title}`;
+          fs.appendFileSync('failed-posts.txt', `Title: ${title}, Id: ${id}\n`, { flag: 'a+', encoding: 'utf-8' });
+        });
 
       await wait(1);
     }
   }
+  spinner.succeed('Completed seeding posts.');
 };
 
 seedPosts();
