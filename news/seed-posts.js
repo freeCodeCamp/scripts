@@ -24,7 +24,7 @@ const seedPosts = async () => {
   let lastPage = 5;
 
   while (currPage && currPage <= lastPage) {
-    const data = await apiGetter.posts.browse({ page: currPage });
+    const data = await apiGetter.posts.browse({ page: currPage, formats: ['html', 'mobiledoc'] });
     const posts = [ ...data ];
 
     currPage = data.meta.pagination.next;
@@ -36,6 +36,7 @@ const seedPosts = async () => {
         id,
         title,
         slug,
+        html,
         mobiledoc,
         authors,
         feature_image,
@@ -58,6 +59,7 @@ const seedPosts = async () => {
         id,
         title,
         slug,
+        html,
         mobiledoc,
         authors,
         tags,
