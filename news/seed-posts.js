@@ -1,21 +1,21 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const GhostAdminAPI = require("@tryghost/admin-api");
-const ora = require("ora");
-const fs = require("fs");
-const { wait } = require("./utils");
+const GhostAdminAPI = require('@tryghost/admin-api');
+const ora = require('ora');
+const fs = require('fs');
+const { wait } = require('./utils');
 
 const keys = {
   getter: {
     url: process.env.GETTER_NEWS_API_URL,
     key: process.env.GETTER_NEWS_API_ADMIN_KEY,
-    version: "v2",
+    version: 'v2'
   },
   setter: {
     url: process.env.SETTER_NEWS_API_URL,
     key: process.env.SETTER_NEWS_API_ADMIN_KEY,
-    version: "v3",
-  },
+    version: 'v3'
+  }
 };
 
 const apiGetter = new GhostAdminAPI({ ...keys.getter });
@@ -24,19 +24,24 @@ const apiSetter = new GhostAdminAPI({ ...keys.setter });
 const seedPosts = async () => {
   let currPage = 1;
   let lastPage = 1;
-  const spinner = ora("Begin seeding posts...");
+
+  const spinner = ora('Begin seeding posts...');
   spinner.start();
 
   while (currPage && currPage <= lastPage) {
     const data = await apiGetter.posts.browse({
       page: currPage,
-      formats: ["html", "mobiledoc"],
+      formats: ['html', 'mobiledoc']
+      // filter: 'authors.id:5ceb747ae17b4228e0181c33'
     });
     const posts = [...data];
 
-    // currPage = data.meta.pagination.next;
-    currPage = 2;
-    // lastPage = data.meta.pagination.pages;
+    // Uncomment this when testing
+    // currPage = 2;
+
+    // Comment these two when testing
+    currPage = data.meta.pagination.next;
+    lastPage = data.meta.pagination.pages;
 
     for (let i in posts) {
       const post = posts[i];
@@ -46,7 +51,7 @@ const seedPosts = async () => {
         title,
         slug,
         mobiledoc,
-        html,
+        // html,  // We do not need to get set this key during add calls, use force_rerender when doing edit calls
         feature_image,
         featured,
         status,
@@ -57,7 +62,7 @@ const seedPosts = async () => {
         published_at,
         authors,
         primary_tag: primary_tag_v2,
-        primary_author: primary_author_v2,
+        primary_author: primary_author_v2
       } = post;
 
       const primary_tag = primary_tag_v2 ? { id: primary_tag_v2.id } : null;
@@ -75,7 +80,7 @@ const seedPosts = async () => {
           title,
           slug,
           mobiledoc,
-          html, // TODO: Skip over this using the force_rerender ??
+          // html,  // We do not need to get set this key during add calls, use force_rerender when doing edit calls
           feature_image,
           featured,
           status,
@@ -98,25 +103,25 @@ const seedPosts = async () => {
           primary_tag,
 
           authors,
-          primary_author,
+          primary_author
         })
         .then((res) => {
           spinner.text = `Seeded post: ${title}`;
         })
         .catch((err) => {
           spinner.fail = `Failed seeding: ${title}`;
-          console.log("disaster", err);
+          console.log('DISASTER', err);
           fs.appendFileSync(
-            "failed-posts.txt",
-            `Title: ${title}, Id: ${id}\n`,
-            { flag: "a+", encoding: "utf-8" }
+            'failed-posts.txt',
+            `Time:${new Date()} - Title: ${title} - Slug: ${slug} - Id: ${id}\n`,
+            { flag: 'a+', encoding: 'utf-8' }
           );
         });
 
       await wait(1);
     }
   }
-  spinner.succeed("Completed seeding posts.");
+  spinner.succeed('Completed seeding posts.');
 };
 
 seedPosts();
