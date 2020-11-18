@@ -1,29 +1,12 @@
 require('dotenv').config();
 
 const GhostAdminAPI = require('@tryghost/admin-api');
-const { wait } = require('./utils');
+const { wait, keys } = require('./utils');
 const fs = require('fs');
 
 const lang = 'en';
 
-const keys = {
-  en: {
-    api: {
-      url: process.env.NEWS_API_URL,
-      key: process.env.NEWS_API_ADMIN_KEY,
-      version: process.env.NEWS_API_VERSION || 'v2',
-    }
-  },
-  zh: {
-    api: {
-      url: process.env.ZH_NEWS_API_URL,
-      key: process.env.ZH_NEWS_API_ADMIN_KEY,
-      version: process.env.ZH_NEWS_API_VERSION || 'v2',
-    }
-  },
-};
-
-const langKeys = { ...keys[lang].api };
+const langKeys = { ...keys[lang] };
 
 const api = new GhostAdminAPI({
   ...langKeys

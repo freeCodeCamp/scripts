@@ -15,7 +15,36 @@ async function asyncForEach(array, callback) {
   }
 }
 
+const keys = {
+  en: {
+    url: process.env.NEWS_API_URL,
+    key: process.env.NEWS_API_ADMIN_KEY,
+    version: process.env.NEWS_API_VERSION || 'v2',
+  },
+  zh: {
+    url: process.env.ZH_NEWS_API_URL,
+    key: process.env.ZH_NEWS_API_ADMIN_KEY,
+    version: process.env.ZH_NEWS_API_VERSION || 'v2',
+  },
+  es: {
+    url: process.env.ES_NEWS_API_URL,
+    key: process.env.ES_NEWS_API_ADMIN_KEY,
+    version: process.env.ES_NEWS_API_VERSION || 'v2',
+  },
+  getter: {
+    url: process.env.GETTER_NEWS_API_URL,
+    key: process.env.GETTER_NEWS_API_ADMIN_KEY,
+    version: 'v2'
+  },
+  setter: {
+    url: process.env.SETTER_NEWS_API_URL,
+    key: process.env.SETTER_NEWS_API_ADMIN_KEY,
+    version: 'v3'
+  }
+};
+
 module.exports = {
   wait,
-  asyncForEach
+  asyncForEach,
+  keys
 }

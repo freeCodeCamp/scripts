@@ -1,20 +1,7 @@
 require('dotenv').config();
 
 const GhostAdminAPI = require('@tryghost/admin-api');
-const { wait } = require('./utils');
-
-const keys = {
-  getter: {
-    url: process.env.GETTER_NEWS_API_URL,
-    key: process.env.GETTER_NEWS_API_ADMIN_KEY,
-    version: process.env.GETTER_NEWS_API_VERSION || 'v2',
-  },
-  setter: {
-    url: process.env.SETTER_NEWS_API_URL,
-    key: process.env.SETTER_NEWS_API_ADMIN_KEY,
-    version: process.env.SETTER_NEWS_API_VERSION || 'v2',
-  },
-};
+const { wait, keys } = require('./utils');
 
 const apiGetter = new GhostAdminAPI({ ...keys.getter });
 const apiSetter = new GhostAdminAPI({ ...keys.setter });
