@@ -3,20 +3,7 @@ require('dotenv').config();
 const GhostAdminAPI = require('@tryghost/admin-api');
 const ora = require('ora');
 const fs = require('fs');
-const { wait } = require('./utils');
-
-const keys = {
-  getter: {
-    url: process.env.GETTER_NEWS_API_URL,
-    key: process.env.GETTER_NEWS_API_ADMIN_KEY,
-    version: 'v2'
-  },
-  setter: {
-    url: process.env.SETTER_NEWS_API_URL,
-    key: process.env.SETTER_NEWS_API_ADMIN_KEY,
-    version: 'v3'
-  }
-};
+const { wait, keys } = require('./utils');
 
 let postsAdded = 0;
 let postsFailed = 0;
