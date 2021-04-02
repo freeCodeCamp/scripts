@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/randelldawson/forum-api-scripts",
   "dependencies": {
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1"
   }
 }
