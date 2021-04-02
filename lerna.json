@@ -1,4 +1,4 @@
 {
-  "packages": ["database", "emails", "github", "news"],
+  "packages": ["database", "emails", "github", "news", "packages/*"],
   "version": "independent"
 }
