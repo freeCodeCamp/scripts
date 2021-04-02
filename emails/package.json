@@ -20,9 +20,9 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "email-validator": "^2.0.4",
-    "mongodb": "^3.1.0",
-    "ora": "^4.1.0",
-    "validator": "^13.1.1"
+    "mongodb": "^3.6.5",
+    "ora": "^5.4.0",
+    "validator": "^13.5.2"
   },
   "engines": {
     "node": ">= 14"
