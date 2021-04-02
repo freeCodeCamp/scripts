@@ -14,5 +14,8 @@
     "up": "migrate-mongo up",
     "up-and-log": "migrate-mongo up 2>&1| tee output.log",
     "down": "migrate-mongo down"
+  },
+  "engines": {
+    "node": ">= 14"
   }
 }

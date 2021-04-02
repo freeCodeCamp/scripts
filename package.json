@@ -8,6 +8,6 @@
     "audit:fix": "npm audit fix & lerna exec 'echo $LERNA_PACKAGE_NAME & npm audit fix'"
   },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^4.0.0"
   }
 }
