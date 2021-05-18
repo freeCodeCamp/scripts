@@ -3,6 +3,7 @@
   "extends": ["config:base"],
   "branchConcurrentLimit": 20,
   "dependencyDashboard": true,
+  "reviewers": ["team:dev-team"],
   "major": {
     "dependencyDashboardApproval": true
   },
