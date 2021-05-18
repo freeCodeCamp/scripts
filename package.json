@@ -4,8 +4,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap --ci",
     "postinstall": "npm run bootstrap",
-    "audit": "npm audit & lerna exec --no-bail 'echo $LERNA_PACKAGE_NAME & npm audit'",
-    "audit:fix": "npm audit fix & lerna exec 'echo $LERNA_PACKAGE_NAME & npm audit fix'"
+    "audit": "npm audit & npx lerna exec --no-bail --concurrency 1 --stream -- npm audit",
+    "audit:fix": "npm audit fix & npx lerna exec --no-bail --concurrency 1 --stream -- npm audit fix"
   },
   "devDependencies": {
     "lerna": "4.0.0"
