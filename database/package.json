@@ -4,8 +4,8 @@
   "private": true,
   "license": "BSD-3-Clause",
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "migrate-mongo": "^8.2.2"
+    "dotenv": "8.2.0",
+    "migrate-mongo": "8.2.2"
   },
   "scripts": {
     "create": "migrate-mongo create",
