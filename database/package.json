@@ -5,7 +5,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "dotenv": "8.6.0",
-    "migrate-mongo": "8.2.2"
+    "migrate-mongo": "8.2.3"
   },
   "scripts": {
     "create": "migrate-mongo create",
