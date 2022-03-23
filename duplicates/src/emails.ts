@@ -39,7 +39,7 @@ const spinnies = new Spinnies({
   rs._read = () => {};
 
   rs.on("data", (document: userSchema) => {
-    file.write(`${document._id}\n`);
+    file.write(`${document._id},${document.ids.join(",")}\n`);
   });
 
   const stream = users
@@ -49,6 +49,7 @@ const spinnies = new Spinnies({
           $group: {
             _id: { $toLower: "$email" },
             count: { $sum: 1 },
+            ids: { $push: "$_id" },
           },
         },
         {
