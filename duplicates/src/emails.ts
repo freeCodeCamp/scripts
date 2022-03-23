@@ -29,7 +29,7 @@ const spinnies = new Spinnies({
   });
   console.log("Connected to MongoDB");
 
-  const filePath = join(process.cwd(), "dupe-emails.csv");
+  const filePath = join(process.cwd(), "results", "dupe-emails.csv");
   const file = createWriteStream(filePath);
 
   const db = dbClient.db("freecodecamp");
@@ -47,7 +47,7 @@ const spinnies = new Spinnies({
       [
         {
           $group: {
-            _id: "$email",
+            _id: { $toLower: "$email" },
             count: { $sum: 1 },
           },
         },
