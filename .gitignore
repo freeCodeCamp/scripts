@@ -83,3 +83,5 @@ out/
 # typescript
 
 chat/prod
+honesty/prod
+duplicates/prod

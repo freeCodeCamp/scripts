@@ -5,7 +5,6 @@ import { MongoClient } from "mongodb";
 import { userSchema } from "./schema";
 import Spinnies from "spinnies";
 import { join } from "path";
-import { getChallengeSolutions } from "./getChallengeSolutions";
 
 const spinnies = new Spinnies({
   spinner: {
