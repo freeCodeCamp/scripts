@@ -227,9 +227,6 @@ const defaultProfileUI = {
           first[prop] = doc[prop];
         }
       }
-
-      // delete duplicate
-      await users.findOneAndDelete({ _id: new ObjectId(doc._id) });
     }
     first.yearsTopContributor = [...new Set(yearsTopContributor)];
     first.profileUI = profilePrivacySettings;
@@ -238,5 +235,10 @@ const defaultProfileUI = {
     await users.findOneAndReplace({ _id: new ObjectId(first._id) }, first);
     usernames.push("FINAL: " + first.username);
     usernameLog.write(`${usernames.join(",")}\n`);
+
+    // finally delete the rest
+    for (const doc of rest) {
+      await users.findOneAndDelete({ _id: new ObjectId(doc._id) });
+    }
   }
 })();
