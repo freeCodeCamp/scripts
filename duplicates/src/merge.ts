@@ -40,12 +40,14 @@ const certificationProperties = [
   "isSciCompPyCertV7",
   "isDataAnalysisPyCertV7",
   "isMachineLearningPyCertV7",
+  "isRelationalDatabaseCertV8",
 ];
 
 const propertiesThatCanBeFalsy = [
   "name",
   "website",
   "twitter",
+  "codepen",
   "linkedin",
   "about",
   "location",
@@ -58,6 +60,40 @@ const propertiesThatCanBeFalsy = [
   "emailVerified",
   "picture",
   "isBanned",
+];
+
+const arrayProperties = ["yearsTopContributor", "donationEmails"];
+
+// These properties have manual logic in the merge process. Be careful when adding properties here.
+const manuallyHandledProperties = [
+  "completedChallenges",
+  "progressTimestamps",
+  "portfolio",
+  "username",
+  "usernameDisplay",
+  "profileUI",
+];
+
+// These are the properties we don't want to worry about in the comparison
+const ignoredProperties = [
+  "emailVerifyTTL",
+  // we ignore email because we know they're the same.
+  "email",
+  "emailVerified",
+  "unsubscribeId",
+  "newEmail",
+  "emailAuthLinkTTL",
+  "currentChallengeId",
+  "partiallyCompletedChallenges",
+  "rand",
+  "timezone",
+  "theme",
+  "sound",
+  "externalId",
+  "password",
+  "_csrf",
+  "badges",
+  "savedChallenges",
 ];
 
 const defaultProfileUI = {
@@ -73,24 +109,61 @@ const defaultProfileUI = {
   showTimeLine: false,
 };
 
+const completePropertyList = [
+  ...certificationProperties,
+  ...propertiesThatCanBeFalsy,
+  ...arrayProperties,
+  ...manuallyHandledProperties,
+  ...ignoredProperties,
+];
+
 (async () => {
   // validate that the properties being edited are still on the schema.
   const userModelFromRepo = await fetch(
     "https://raw.githubusercontent.com/freeCodeCamp/freeCodeCamp/main/api-server/src/common/models/user.json"
   );
   const userModel = await userModelFromRepo.json();
-  if (!certificationProperties.every((prop) => prop in userModel.properties)) {
-    throw new Error("Invalid certification keys.");
+  const extraneousKeys = completePropertyList.filter(
+    (el) => !(el in userModel.properties)
+  );
+  if (extraneousKeys.length) {
+    throw new Error(
+      `The following keys are being used for the merge process but are no longer in the schema.\n\n${extraneousKeys.join(
+        "\n"
+      )}`
+    );
   }
-  if (!propertiesThatCanBeFalsy.every((prop) => prop in userModel.properties)) {
-    throw new Error("Invalid falsy keys.");
-  }
+  const profileUISet = new Set(Object.keys(defaultProfileUI));
+  const profileSchemaSet = new Set(
+    Object.keys(userModel.properties.profileUI.default)
+  );
   if (
-    !Object.keys(defaultProfileUI).every(
-      (prop) => prop in userModel.properties.profileUI.default
-    )
+    profileUISet.size !== profileSchemaSet.size ||
+    ![...profileUISet].every((el) => profileSchemaSet.has(el))
   ) {
-    throw new Error("Invalid profile UI");
+    throw new Error(
+      "Mismatch between userSchema profileUI and default profileUI"
+    );
+  }
+  const missingKeys = Object.keys(userModel.properties).filter(
+    (el) => !completePropertyList.includes(el)
+  );
+  if (missingKeys.length) {
+    throw new Error(
+      `The following keys are present on the userSchema but not handled here.\n\n${missingKeys.join(
+        "\n"
+      )}`
+    );
+  }
+
+  /**
+   * This logic is used for the merge:verify script, which allows you to test that every key on the
+   * user schema from /learn is being accounted for in the logic here.
+   * !ALL DATABASE LOGIC SHOULD GO AFTER THIS LINE!
+   */
+  if (process.argv[2] === "--verify") {
+    console.log("Schema validation looks good! Exiting process.");
+    return;
   }
 
   const usernameLogPath = join(
@@ -146,8 +219,14 @@ const defaultProfileUI = {
       // store username in log
       usernames.push(doc.username);
 
-      if (doc.yearsTopContributor?.length) {
-        yearsTopContributor.push(...doc.yearsTopContributor);
+      for (const prop of arrayProperties) {
+        if (doc[prop].length) {
+          const whatsOnFirst = first[prop] || [];
+          first[prop] = [
+            ...whatsOnFirst,
+            ...doc[prop].filter((el: string) => !whatsOnFirst.includes(el)),
+          ];
+        }
       }
 
       if (doc.profileUI) {

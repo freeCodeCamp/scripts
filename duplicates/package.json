@@ -9,6 +9,7 @@
     "get-emails": "node -r dotenv/config prod/emails.js",
     "get-usernames": "node -r dotenv/config prod/usernames.js",
     "merge": "node -r dotenv/config prod/merge.js",
+    "merge:verify": "node prod/merge.js --verify",
     "start": "node ./prod/index.js"
   },
   "author": "",
