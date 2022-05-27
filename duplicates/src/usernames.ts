@@ -5,7 +5,6 @@ import { MongoClient } from "mongodb";
 import { userSchema } from "./schema";
 import Spinnies from "spinnies";
 import { join } from "path";
-import { getChallengeSolutions } from "./getChallengeSolutions";
 
 const spinnies = new Spinnies({
   spinner: {
@@ -30,7 +29,7 @@ const spinnies = new Spinnies({
   });
   console.log("Connected to MongoDB");
 
-  const filePath = join(process.cwd(), "dupe-emails.csv");
+  const filePath = join(process.cwd(), "results", "dupe-usernames.csv");
   const file = createWriteStream(filePath);
 
   const db = dbClient.db("freecodecamp");
@@ -40,7 +39,7 @@ const spinnies = new Spinnies({
   rs._read = () => {};
 
   rs.on("data", (document: userSchema) => {
-    file.write(`${document._id}\n`);
+    file.write(`${document._id},${document.ids.join(",")}\n`);
   });
 
   const stream = users
@@ -48,8 +47,9 @@ const spinnies = new Spinnies({
       [
         {
           $group: {
-            _id: "$email",
+            _id: { $toLower: "$username" },
             count: { $sum: 1 },
+            ids: { $push: "$_id" },
           },
         },
         {
@@ -60,7 +60,7 @@ const spinnies = new Spinnies({
       ],
       {
         allowDiskUse: true,
-        hint: "_id_1_email_1",
+        hint: "username_1__id_1",
       }
     )
     .batchSize(50)
