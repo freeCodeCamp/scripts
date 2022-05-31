@@ -1,5 +1,5 @@
 {
-  "name": "@freecodecamp/db-migrations",
+  "name": "database",
   "version": "1.0.0",
   "private": true,
   "license": "BSD-3-Clause",

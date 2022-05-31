@@ -2,12 +2,10 @@
   "name": "@freecodecamp/scripts",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap --ci",
-    "postinstall": "npm run bootstrap",
-    "audit": "npm audit & npx lerna exec --no-bail --concurrency 1 --stream -- npm audit",
-    "audit:fix": "npm audit fix & npx lerna exec --no-bail --concurrency 1 --stream -- npm audit fix"
+    "start": "echo \"Error: Start has not been defined.\" && exit 1",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
   },
-  "devDependencies": {
-    "lerna": "4.0.0"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

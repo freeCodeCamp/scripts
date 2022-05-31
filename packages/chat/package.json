@@ -1,5 +1,5 @@
 {
-  "name": "chat-query",
+  "name": "chat",
   "version": "1.0.0",
   "description": "Query user list from Rocket.Chat",
   "main": "prod/index.js",
