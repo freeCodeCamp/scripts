@@ -1,6 +1,23 @@
 {
   "name": "@freecodecamp/scripts",
+  "version": "0.0.1",
+  "description": "Scripts for some one-off DevOps tasks",
+  "license": "BSD-3-Clause",
   "private": true,
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freeCodeCamp/scripts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freeCodeCamp/scripts/issues"
+  },
+  "homepage": "https://github.com/freeCodeCamp/scripts#readme",
+  "author": "freeCodeCamp <team@freecodecamp.org>",
+  "main": "none",
   "scripts": {
     "start": "echo \"Error: Start has not been defined.\" && exit 1",
     "test": "echo \"Error: Test has not been defined.\" && exit 1"
