@@ -40,4 +40,6 @@ export interface userSchema extends Document {
   linkedin: string | null;
   isDonating: boolean;
   about: string;
+  needsModeration: boolean;
+  keyboardShortcuts: boolean;
 }
