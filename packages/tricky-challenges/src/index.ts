@@ -17,9 +17,11 @@ import { Discourse, Topic } from "./interfaces/Discourse";
     console.log(`Loaded ${topics.length} topics`);
   }
 
-  const topicNames = topics.map((topic) => topic.title);
+  const topicNames = topics
+    .filter((topic) => !topic.closed)
+    .map((topic) => topic.title);
   const defaultHelpTitles = topicNames.filter((title) =>
-    /[\w\W]*\s-\s[\w\W]*\s-\s[\w\W]*/i.test(title)
+    /^[\w\W]*\s-\s[\w\W]/i.test(title)
   );
 
   const counts: { [key: string]: number } = {};
