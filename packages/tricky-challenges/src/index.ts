@@ -5,9 +5,24 @@ import { Discourse, Topic } from "./interfaces/Discourse";
 (async () => {
   const topics: Topic[] = [];
   let page = 0;
+  let limit = 100;
+  let block = "";
 
-  while (topics.length < 100) {
-    console.log(`Fetching page ${page}`);
+  const specificLimit = process.argv.find((el) => el.startsWith("posts="));
+  if (specificLimit) {
+    limit = parseInt(specificLimit.split("=")[1]);
+    if (isNaN(limit)) {
+      throw new Error("Invalid posts limit");
+    }
+  }
+
+  const specificBlock = process.argv.find((el) => el.startsWith("block="));
+  if (specificBlock) {
+    block = specificBlock.split("=")[1];
+  }
+
+  while (topics.length < limit) {
+    console.log(`Fetching page ${page} - ${topics.length}/${limit}`);
     const response = await fetch(
       `https://forum.freecodecamp.org/latest.json?no_definitions=true&page=${page}`
     );
@@ -32,5 +47,11 @@ import { Discourse, Topic } from "./interfaces/Discourse";
     counts[blockStepString] = counts[blockStepString] + 1 || 1;
   }
 
-  console.log(Object.entries(counts).sort((a, b) => b[1] - a[1]));
+  block
+    ? console.log(
+        Object.entries(counts)
+          .filter((el) => el[0].startsWith(block))
+          .sort((a, b) => b[1] - a[1])
+      )
+    : console.log(Object.entries(counts).sort((a, b) => b[1] - a[1]));
 })();
