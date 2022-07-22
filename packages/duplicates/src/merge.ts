@@ -60,6 +60,8 @@ const propertiesThatCanBeFalsy = [
   "emailVerified",
   "picture",
   "isBanned",
+  "needsModeration",
+  "keyboardShortcuts",
 ];
 
 const arrayProperties = ["yearsTopContributor", "donationEmails"];
@@ -180,7 +182,7 @@ const completePropertyList = [
   const portfolioLog = createWriteStream(portfolioLogPath);
 
   const dbClient = await MongoClient.connect(process.env.MONGO_URI as string, {
-    replicaSet: "atlas-axsdig-shard-0",
+    replicaSet: "atlas-2blby0-shard-0",
     maxPoolSize: 20,
   });
   const db = dbClient.db("freecodecamp");
@@ -220,7 +222,7 @@ const completePropertyList = [
       usernames.push(doc.username);
 
       for (const prop of arrayProperties) {
-        if (doc[prop].length) {
+        if (doc[prop]?.length) {
           const whatsOnFirst = first[prop] || [];
           first[prop] = [
             ...whatsOnFirst,
