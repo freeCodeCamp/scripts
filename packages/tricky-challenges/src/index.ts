@@ -5,8 +5,9 @@ import { Discourse, Topic } from "./interfaces/Discourse";
 (async () => {
   const topics: Topic[] = [];
   let page = 0;
-  let limit = 100;
+  let limit = 10;
   let block = "";
+  let projects = "";
 
   const specificLimit = process.argv.find((el) => el.startsWith("posts="));
   if (specificLimit) {
@@ -20,6 +21,8 @@ import { Discourse, Topic } from "./interfaces/Discourse";
   if (specificBlock) {
     block = specificBlock.split("=")[1];
   }
+
+  const projectsOnly = process.argv.find((el) => el.startsWith("project"));
 
   while (topics.length < limit) {
     console.log(`Fetching page ${page} - ${topics.length}/${limit}`);
@@ -42,16 +45,24 @@ import { Discourse, Topic } from "./interfaces/Discourse";
   const counts: { [key: string]: number } = {};
 
   for (const title of defaultHelpTitles) {
-    const [block, step] = title.split(/\s+-\s*/g);
-    const blockStepString = `${block}-${step}`;
+    let [block, step] = title.split(/\s+-\s*/g);
+
+    let stepNum;
+    if (projectsOnly) {
+      stepNum = step.match(/step\s*\d+/i);
+    }
+    const blockStepString = projectsOnly
+      ? `${block}-${stepNum}`
+      : `${block}-${step}`;
     counts[blockStepString] = counts[blockStepString] + 1 || 1;
   }
+  
+ const pareto = Object.entries(counts)
+   .filter((el) => el[0].startsWith(block))
+   .sort((a, b) => b[1] - a[1])
+   .reduce((str, [topic, count]) => {
+     return str += `${topic}|${count}\n`;
+   }, '');
+  console.log(pareto);
 
-  block
-    ? console.log(
-        Object.entries(counts)
-          .filter((el) => el[0].startsWith(block))
-          .sort((a, b) => b[1] - a[1])
-      )
-    : console.log(Object.entries(counts).sort((a, b) => b[1] - a[1]));
 })();
