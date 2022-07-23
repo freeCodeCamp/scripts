@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@types/node-fetch": "^2.6.1",
+    "markdown-table-ts": "^1.0.3",
     "node-fetch": "^2.6.7"
   },
   "author": "Naomi Carrigan",
