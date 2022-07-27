@@ -16,4 +16,6 @@ Run `npm start -- posts=1000` to query the last 1000 forum posts. (The default i
 
 Run `npm start -- block="Learn HTML by Building a Cat Photo App"` to query posts related to the cat photo project.
 
+Run `npm start -- display=table` to format the result in a markdown table.
+
 These can be combined if desired.
