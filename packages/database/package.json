@@ -4,7 +4,7 @@
   "private": true,
   "license": "BSD-3-Clause",
   "dependencies": {
-    "dotenv": "16.0.1",
+    "dotenv": "16.0.2",
     "migrate-mongo": "8.2.3"
   },
   "scripts": {
