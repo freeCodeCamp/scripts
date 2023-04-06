@@ -1,0 +1,13 @@
+{
+  "name": "forum",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "echo \"Error: Start has not been defined.\" && exit 1",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "node-fetch": "^2.6.1"
+  }
+}

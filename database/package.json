@@ -1,0 +1,21 @@
+{
+  "name": "database",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "migrate-mongo": "8.2.3"
+  },
+  "scripts": {
+    "create": "migrate-mongo create",
+    "status": "migrate-mongo status",
+    "up": "migrate-mongo up",
+    "up-and-log": "migrate-mongo up 2>&1| tee output.log",
+    "down": "migrate-mongo down",
+    "start": "echo \"Error: Start has not been defined.\" && exit 1",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+  },
+  "engines": {
+    "node": ">= 14"
+  }
+}

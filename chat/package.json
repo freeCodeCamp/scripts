@@ -1,0 +1,27 @@
+{
+  "name": "chat",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --max-warnings 0",
+    "start": "node -r dotenv/config prod/index.js",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.57.0",
+    "@typescript-eslint/parser": "5.57.0",
+    "eslint": "8.37.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jsdoc": "38.1.6",
+    "eslint-plugin-prettier": "4.2.1",
+    "prettier": "2.8.7",
+    "typescript": "4.9.5"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.1",
+    "dotenv": "^16.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}

@@ -1,18 +1,16 @@
 {
-  "name": "accounts",
+  "name": "images",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "mailing-list": "node ./get-emails.js",
     "start": "echo \"Error: Start has not been defined.\" && exit 1",
     "test": "echo \"Error: Test has not been defined.\" && exit 1"
   },
   "dependencies": {
-    "dotenv": "^9.0.2",
-    "email-validator": "^2.0.4",
-    "mongodb": "^3.6.7",
+    "@supercharge/promise-pool": "^1.7.0",
+    "glob": "^7.1.6",
     "ora": "^5.4.0",
-    "validator": "^13.6.0"
+    "sharp": "^0.31.0"
   },
   "engines": {
     "node": ">= 14"

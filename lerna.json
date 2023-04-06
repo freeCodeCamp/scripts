@@ -1,4 +1,0 @@
-{
-  "packages": ["database", "accounts", "forum", "github", "images", "news"],
-  "version": "independent"
-}

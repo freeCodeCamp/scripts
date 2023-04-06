@@ -1,18 +1,15 @@
 {
-  "name": "accounts",
+  "name": "github",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "mailing-list": "node ./get-emails.js",
     "start": "echo \"Error: Start has not been defined.\" && exit 1",
     "test": "echo \"Error: Test has not been defined.\" && exit 1"
   },
   "dependencies": {
-    "dotenv": "^9.0.2",
-    "email-validator": "^2.0.4",
-    "mongodb": "^3.6.7",
-    "ora": "^5.4.0",
-    "validator": "^13.6.0"
+    "@octokit/rest": "^18.5.2",
+    "dotenv": "^16.0.1",
+    "ora": "^5.1.0"
   },
   "engines": {
     "node": ">= 14"
