@@ -1,0 +1,5 @@
+/node_modules/
+.env
+/prod/
+/data/**.csv
+/data/**.md

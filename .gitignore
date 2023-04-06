@@ -78,3 +78,8 @@ typings/
 database/data/
 out/
 **/*.csv
+**/*.txt
+
+# typescript
+
+packages/**/prod/

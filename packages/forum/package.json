@@ -1,0 +1,24 @@
+{
+  "name": "forum",
+  "description": "This repo contains scripts to help create/modify/delete posts for the FCC forum",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/randelldawson/forum-api-scripts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/randelldawson/forum-api-scripts/issues"
+  },
+  "homepage": "https://github.com/randelldawson/forum-api-scripts",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "node-fetch": "^2.6.1"
+  }
+}
