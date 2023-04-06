@@ -1,0 +1,30 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "script",
+  "main": "index.js",
+  "scripts": {
+    "mailing-list": "node ./get-emails.js",
+    "test": "echo \"Happy Coding!\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeCodeCamp/scripts.git"
+  },
+  "author": "freeCodeCamp",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/FreeCodeCamp/scripts/issues"
+  },
+  "homepage": "https://github.com/FreeCodeCamp/scripts#readme",
+  "dependencies": {
+    "dotenv": "^9.0.2",
+    "email-validator": "^2.0.4",
+    "mongodb": "^3.6.7",
+    "ora": "^5.4.0",
+    "validator": "^13.6.0"
+  },
+  "engines": {
+    "node": ">= 14"
+  }
+}
