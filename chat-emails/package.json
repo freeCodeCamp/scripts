@@ -1,0 +1,13 @@
+{
+  "name": "chat-emails",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node -r dotenv/config index.js",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mongo": "^0.1.0"
+  }
+}

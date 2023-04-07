@@ -1,0 +1,28 @@
+{
+  "name": "duplicates",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "rm -rf ./prod",
+    "build": "tsc",
+    "get-emails": "node -r dotenv/config prod/emails.js",
+    "get-usernames": "node -r dotenv/config prod/usernames.js",
+    "merge": "node -r dotenv/config prod/merge.js",
+    "merge:verify": "node prod/merge.js --verify",
+    "start": "node ./prod/index.js",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "8.2.6",
+    "typescript": "4.9.5"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^2.6.1",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.0.0",
+    "inquirer": "^8.2.0",
+    "mongodb": "^4.4.0",
+    "node-fetch": "^2.6.7",
+    "spinnies": "^0.5.1"
+  }
+}
