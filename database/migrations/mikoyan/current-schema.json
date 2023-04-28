@@ -2,10 +2,19 @@
   "_id": ["ObjectId"],
   "about": ["String"],
   "acceptedPrivacyTerms": ["Boolean"],
+  "badges": [
+    "Undefined",
+    {
+      "coreTeam": [[[]]]
+    }
+  ],
   "completedChallenges": [
     [
       [
-        { "completedDate": ["Double"], "id": ["String"] },
+        {
+          "completedDate": ["Double"],
+          "id": ["String"]
+        },
         {
           "completedDate": ["Double"],
           "files": [[[]]],
@@ -436,18 +445,47 @@
     ]
   ],
   "currentChallengeId": ["String", "Undefined"],
+  "donationEmails": ["Undefined", [["String"]]],
   "email": ["String"],
   "emailAuthLinkTTL": ["Null", "DateTime", "Undefined"],
   "emailVerified": ["Boolean"],
   "emailVerifyTTL": ["Null", "DateTime", "Undefined"],
   "externalId": ["String"],
   "github": ["Null", "Undefined"],
+  "githubProfile": ["String", "Undefined"],
+  "is2018DataVisCert": ["Boolean", "Undefined"],
+  "is2018FullStackCert": ["Boolean", "Undefined"],
+  "isApisMicroservicesCert": ["Boolean", "Undefined"],
+  "isBackEndCert": ["Boolean", "Undefined"],
+  "isBanned": ["Boolean", "Undefined"],
+  "isCheater": ["Boolean", "Undefined"],
+  "isDataAnalysisPyCertV7": ["Boolean", "Undefined"],
+  "isDataVisCert": ["Boolean", "Undefined"],
   "isDonating": ["Boolean"],
+  "isFrontEndCert": ["Boolean", "Undefined"],
+  "isFrontEndLibsCert": ["Boolean", "Undefined"],
+  "isFullStackCert": ["Boolean", "Undefined"],
+  "isGithub": ["Boolean", "Undefined"],
   "isHonest": ["Boolean", "Undefined"],
+  "isInfosecCertV7": ["Boolean", "Undefined"],
+  "isInfosecQaCert": ["Boolean", "Undefined"],
+  "isJsAlgoDataStructCert": ["Boolean", "Undefined"],
+  "isLinkedIn": ["Boolean", "Undefined"],
+  "isMachineLearningPyCertV7": ["Boolean", "Undefined"],
+  "isQaCertV7": ["Boolean", "Undefined"],
+  "isRelationalDatabaseCertV8": ["Boolean", "Undefined"],
   "isRespWebDesignCert": ["Boolean", "Undefined"],
+  "isSciCompPyCertV7": ["Boolean", "Undefined"],
+  "isTwitter": ["Boolean", "Undefined"],
+  "isWebsite": ["Boolean", "Undefined"],
+  "keyboardShortcuts": ["Boolean", "Undefined"],
   "linkedin": ["Null", "String", "Undefined"],
   "location": ["String", "Null"],
   "name": ["String", "Null"],
+  "needsModeration": ["Boolean", "Undefined"],
+  "newEmail": ["Null", "Undefined", "String"],
+  "partiallyCompletedChallenges": ["Undefined", [[]]],
+  "password": ["String", "Undefined"],
   "picture": ["String"],
   "portfolio": [
     [
@@ -465,16 +503,6 @@
   "profileUI": [
     "Undefined",
     {
-      "isLocked": ["Boolean", "Undefined"],
-      "showAbout": ["Boolean", "Undefined"],
-      "showCerts": ["Boolean", "Undefined"],
-      "showHeatMap": ["Boolean", "Undefined"],
-      "showLocation": ["Boolean", "Undefined"],
-      "showName": ["Boolean", "Undefined"],
-      "showPoints": ["Boolean", "Undefined"],
-      "showPortfolio": ["Boolean", "Undefined"],
-      "showTimeLine": ["Boolean", "Undefined"],
-      "showDonation": ["Boolean", "Undefined"],
       "__cachedRelations": ["Undefined", {}],
       "__data": [
         "Undefined",
@@ -484,56 +512,42 @@
           "isLocked": ["Boolean"],
           "showAbout": ["Boolean"],
           "showCerts": ["Boolean"],
+          "showDonation": ["Boolean", "Undefined"],
           "showHeatMap": ["Boolean"],
           "showLocation": ["Boolean"],
           "showName": ["Boolean"],
           "showPoints": ["Boolean"],
           "showPortfolio": ["Boolean"],
-          "showTimeLine": ["Boolean"],
-          "showDonation": ["Boolean", "Undefined"]
+          "showTimeLine": ["Boolean"]
         }
       ],
       "__persisted": ["Boolean", "Undefined"],
-      "__strict": ["Boolean", "Undefined"]
+      "__strict": ["Boolean", "Undefined"],
+      "isLocked": ["Boolean", "Undefined"],
+      "showAbout": ["Boolean", "Undefined"],
+      "showCerts": ["Boolean", "Undefined"],
+      "showDonation": ["Boolean", "Undefined"],
+      "showHeatMap": ["Boolean", "Undefined"],
+      "showLocation": ["Boolean", "Undefined"],
+      "showName": ["Boolean", "Undefined"],
+      "showPoints": ["Boolean", "Undefined"],
+      "showPortfolio": ["Boolean", "Undefined"],
+      "showTimeLine": ["Boolean", "Undefined"]
     }
   ],
   "progressTimestamps": [
-    [[{ "timestamp": ["Double"] }, "Double", "Null", "Int64"]]
+    [
+      [
+        {
+          "timestamp": ["Double"]
+        },
+        "Double",
+        "Null",
+        "Int64"
+      ]
+    ]
   ],
-  "sendQuincyEmail": ["Boolean"],
-  "twitter": ["Null", "String", "Undefined"],
-  "unsubscribeId": ["String"],
-  "username": ["String"],
-  "website": ["String", "Undefined"],
-  "githubProfile": ["String", "Undefined"],
-  "isBackEndCert": ["Boolean", "Undefined"],
-  "isBanned": ["Boolean", "Undefined"],
-  "isCheater": ["Boolean", "Undefined"],
-  "isFullStackCert": ["Boolean", "Undefined"],
-  "isGithub": ["Boolean", "Undefined"],
-  "isLinkedIn": ["Boolean", "Undefined"],
-  "isTwitter": ["Boolean", "Undefined"],
-  "isWebsite": ["Boolean", "Undefined"],
-  "password": ["String", "Undefined"],
-  "theme": ["String", "Undefined"],
-  "newEmail": ["Null", "Undefined", "String"],
-  "isJsAlgoDataStructCert": ["Boolean", "Undefined"],
-  "donationEmails": ["Undefined", [["String"]]],
-  "timezone": ["String", "Undefined"],
-  "isFrontEndLibsCert": ["Boolean", "Undefined"],
-  "isFrontEndCert": ["Boolean", "Undefined"],
-  "is2018DataVisCert": ["Boolean", "Undefined"],
-  "is2018FullStackCert": ["Boolean", "Undefined"],
-  "isApisMicroservicesCert": ["Boolean", "Undefined"],
-  "isDataVisCert": ["Boolean", "Undefined"],
-  "isInfosecQaCert": ["Boolean", "Undefined"],
-  "partiallyCompletedChallenges": ["Undefined", [[]]],
-  "sound": ["Boolean", "Undefined"],
-  "yearsTopContributor": ["Undefined", [["String"]]],
-  "keyboardShortcuts": ["Boolean", "Undefined"],
-  "usernameDisplay": ["String", "Undefined"],
-  "isDataAnalysisPyCertV7": ["Boolean", "Undefined"],
-  "needsModeration": ["Boolean", "Undefined"],
+  "rand": ["Double", "Undefined"],
   "savedChallenges": [
     "Undefined",
     [
@@ -558,12 +572,15 @@
       ]
     ]
   ],
-  "isSciCompPyCertV7": ["Boolean", "Undefined"],
-  "isInfosecCertV7": ["Boolean", "Undefined"],
-  "isMachineLearningPyCertV7": ["Boolean", "Undefined"],
-  "isQaCertV7": ["Boolean", "Undefined"],
-  "isRelationalDatabaseCertV8": ["Boolean", "Undefined"],
+  "sendQuincyEmail": ["Boolean"],
+  "sound": ["Boolean", "Undefined"],
+  "theme": ["String", "Undefined"],
+  "timezone": ["String", "Undefined"],
+  "twitter": ["Null", "String", "Undefined"],
+  "unsubscribeId": ["String"],
+  "username": ["String"],
+  "usernameDisplay": ["String", "Undefined"],
   "verificationToken": ["String", "Undefined"],
-  "badges": ["Undefined", { "coreTeam": [[[]]] }],
-  "rand": ["Double", "Undefined"]
+  "website": ["String", "Undefined"],
+  "yearsTopContributor": ["Undefined", [["String"]]]
 }
