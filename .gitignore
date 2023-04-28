@@ -83,3 +83,6 @@ out/
 # typescript
 
 packages/**/prod/
+
+# Rust
+target
