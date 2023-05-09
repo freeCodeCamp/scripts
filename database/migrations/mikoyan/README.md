@@ -73,11 +73,11 @@ struct User {
 - `__dataSource`
 - `__persisted`
 - `__strict`
-- `github`
-- `isGithub`?
-- `isLinkedIn`?
-- `isTwitter`?
-- `isWebsite`?
+- `github`?
+- `isGithub`
+- `isLinkedIn`
+- `isTwitter`
+- `isWebsite`
 - `password`
 - `timezone`?
 - `verificationToken`?
