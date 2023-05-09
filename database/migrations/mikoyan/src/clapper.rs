@@ -1,7 +1,7 @@
 use clap::Parser;
 
 /// Script to generate a schema for a MongoDB collection
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     /// Name of database to use
@@ -25,6 +25,11 @@ pub struct Args {
 
     /// Number of documents to process
     /// If not provided, all documents will be processed
-    #[arg(short, long, default_value = "None")]
-    pub num_docs: Option<i64>,
+    #[arg(short, long)]
+    pub num_docs: Option<usize>,
+
+    /// Number of threads to use
+    /// If not provided, defaults to 1
+    #[arg(short, long, default_value = "1")]
+    pub num_threads: Option<usize>,
 }

@@ -74,7 +74,7 @@ struct User {
 - `__persisted`
 - `__strict`
 - `github`
-- `isGihub`?
+- `isGithub`?
 - `isLinkedIn`?
 - `isTwitter`?
 - `isWebsite`?
@@ -130,13 +130,13 @@ ProfileUI {
 ## Run the Script
 
 ```bash
-cargo run --release -- --db <db> --collection <collection> --url <url>
+cargo run --release -- --db <db> --collection <collection> --url <url> --num-threads <num-threads>
 ```
 
 Example:
 
 ```bash
-cargo run --release -- --db freecodecamp --collection user --url mongodb://localhost:27017
+cargo run --release -- --db freecodecamp --collection user --url mongodb://localhost:27017 --num-threads 4
 ```
 
 Run tests:
