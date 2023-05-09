@@ -56,8 +56,10 @@ async fn main() -> mongodb::error::Result<()> {
 
         let m_clone = m.clone();
         let handle: JoinHandle<Result<(), mongodb::error::Error>> = tokio::spawn(async move {
-            // tokio::spawn(async move {
-            connect_and_process(args, num_docs_to_handle, thread_id, m_clone).await
+            match connect_and_process(args, num_docs_to_handle, thread_id, m_clone).await {
+                Ok(_) => Ok(()),
+                Err(e) => Err(e),
+            }
         });
 
         handles.push(handle);
@@ -77,7 +79,7 @@ async fn connect_and_process(
     num_docs_to_handle: usize,
     thread_id: usize,
     m: MultiProgress,
-) -> mongodb::error::Result<()> {
+) -> Result<(), mongodb::error::Error> {
     let collection = get_collection(&args.uri, &args.db, &args.collection).await?;
 
     let find_ops = FindOptions::builder()
@@ -91,7 +93,7 @@ async fn connect_and_process(
             "partiallyCompletedChallenges": 1,
             "yearsTopContributor": 1,
             "savedChallenges": 1,
-            "badges": 1
+            "badges": 1,
         })
         .build();
     let mut cursor = collection.find(doc! {}, find_ops).await?;
@@ -106,10 +108,21 @@ async fn connect_and_process(
     pb.set_style(sty);
 
     let mut count: usize = 0;
-    let epoch = num_docs_to_handle / 100;
-    while let Some(mut user) = cursor.try_next().await? {
-        // Progress
-        normalize_user(&mut user)?;
+    let epoch = (num_docs_to_handle / 100).max(1);
+    while let Some(user) = cursor.try_next().await? {
+        match normalize_user(&user) {
+            Ok(normalized_user) => {
+                let id = user.get_object_id("_id").unwrap();
+                let filter = doc! {"_id": id};
+                collection
+                    .update_one(filter, normalized_user, None)
+                    .await
+                    .unwrap();
+            }
+            Err(normalize_error) => {
+                println!("Error: {:?}", normalize_error);
+            }
+        }
 
         count += 1;
         if count % epoch == 0 {
@@ -117,6 +130,7 @@ async fn connect_and_process(
             pb.inc(epoch as u64);
         }
     }
+
     pb.finish_with_message("done");
     Ok(())
 }
