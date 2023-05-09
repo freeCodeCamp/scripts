@@ -12,11 +12,11 @@ pub struct Args {
     #[arg(short, long)]
     pub collection: String,
 
-    /// Output file path relative to current directory
-    /// If not provided, will default to `schema.json`
+    /// Log file to write to
+    /// If not provided, will default to `logs.log`
     /// in the current directory
-    #[arg(short, long, default_value = "schema.json")]
-    pub output: String,
+    #[arg(short, long, default_value = "logs.log")]
+    pub logs: String,
 
     /// MongoDB connection string
     /// If not provided, will default to `mongodb://127.0.0.1:27017`
@@ -24,6 +24,7 @@ pub struct Args {
     pub uri: String,
 
     /// Number of documents to process
+    /// If not provided, all documents will be processed
     #[arg(short, long, default_value = "None")]
     pub num_docs: Option<i64>,
 }

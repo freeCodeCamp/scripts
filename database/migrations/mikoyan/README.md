@@ -1,4 +1,9 @@
-# MikoyanisHonest
+# Mikoyan
+
+We have decided to not normalise the database to the point of one schema. Instead, all we **need** is all schemas to not have ambiguous data types.
+
+- Fields posed as `[] | undefined` should be normalised to `[]`
+- Fields with similar structure but multiple data types should be normalised to one data type. E.g. `[String | Number]` -> `[String]`
 
 ## Desired Schema
 
@@ -81,86 +86,22 @@ struct User {
 
 - `completedChallenges`
   - remove all `__<>` properties
-- `currentChallengeId`
-  - `Undefined` -> `Null`
-- `emailAuthLinkTTL`
-  - `Undefined` -> `Null`
-- `emailVerifyTTL`
-  - `Undefined` -> `Null`
-- `isHonest`
-  - `Undefined` -> `false`
-- `isRespWebDesignCert`
-  - `Undefined` -> `false`
-- `linkedin`
-  - `Undefined` -> `Null`
 - `profileUI`
   - `Undefined` -> `ProfileUI::default()`
 - `progressTimestamps`
   - `[{ timestamp: Double }]` -> `[Double]`
   - `[Null]` -> `[]`
   - `[Int64]` -> `[Double]`
-- `twitter`
-  - `Undefined` -> `Null`
-- `website`
-  - `Undefined` -> `Null`
-- `githubProfile`
-  - `Undefined` -> `Null`
-- `isBackEndCert`
-  - `Undefined` -> `false`
-- `isBanned`
-  - `Undefined` -> `false`
-- `isCheater`
-  - `Undefined` -> `false`
-- `isFullStackCert`
-  - `Undefined` -> `false`
-- `theme`
-  - `Undefined` -> `"default"`
-- `newEmail`
-  - `Undefined` -> `Null`
-- `isJsAlgoDataStructCert`
-  - `Undefined` -> `false`
-- `isFrontEndCert`
-  - `Undefined` -> `false`
-- `is2018DataVisCert`
-  - `Undefined` -> `false`
-- `is2018FullStackCert`
-  - `Undefined` -> `false`
-- `isApisMicroservicesCert`
-  - `Undefined` -> `false`
-- `isDataVisCert`
-  - `Undefined` -> `false`
-- `isInfosecQaCert`
-  - `Undefined` -> `false`
 - `partiallyCompletedChallenges`
   - `Undefined` -> `[]`
   - `[[]]` -> `[]`
   - Does this have any actual values?
-- `sound`
-  - `Undefined` -> `false`
 - `yearsTopContributor`
   - `Undefined` -> `[]`
   - `[String]` -> `[Double]`
     - A string of length 4 takes 24 bytes, a double takes 8 bytes
-- `keyboardShortcuts`
-  - `Undefined` -> `false`
-- `usernameDisplay`
-  - `Undefined` -> `Null`
-- `isDataAnalysisPyCertV7`
-  - `Undefined` -> `false`
-- `needsModeration`
-  - `Undefined` -> `false`
 - `savedChallenges`
   - `Undefined` -> `[]`
-- `isSciCompPyCertV7`
-  - `Undefined` -> `false`
-- `isInfosecCertV7`
-  - `Undefined` -> `false`
-- `isMachineLearningPyCertV7`
-  - `Undefined` -> `false`
-- `isQaCertV7`
-  - `Undefined` -> `false`
-- `isRelationalDatabaseCertV8`
-  - `Undefined` -> `false`
 - `badges`
   - `Undefined` -> `[]`
   - Remove?
