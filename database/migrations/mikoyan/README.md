@@ -136,7 +136,7 @@ cargo run --release -- --db <db> --collection <collection> --url <url> --num-thr
 Example:
 
 ```bash
-cargo run --release -- --db freecodecamp --collection user --url mongodb://localhost:27017 --num-threads 4
+cargo run --release -- --db freecodecamp --collection user --num-threads 4
 ```
 
 Run tests:
