@@ -2,10 +2,13 @@
 
 We have decided to not normalise the database to the point of one schema. Instead, all we **need** is all schemas to not have ambiguous data types.
 
-- Fields posed as `[] | undefined` should be normalised to `[]`
+- Fields posed as `[]?` should be normalised to `[]`
 - Fields with similar structure but multiple data types should be normalised to one data type. E.g. `[String | Number]` -> `[String]`
 
 ## Desired Schema
+
+<details>
+  <summary>Click to expand</summary>
 
 ```rust
 struct User {
@@ -60,6 +63,8 @@ struct User {
 }
 ```
 
+</details>
+
 ## Actual Schema
 
 [current-schema.json](./current-schema.json)
@@ -68,45 +73,43 @@ struct User {
 
 ### Removal
 
-- `__cachedRelations`
-- `__data`
-- `__dataSource`
-- `__persisted`
-- `__strict`
-- `github`?
+- `badges`
 - `isGithub`
 - `isLinkedIn`
 - `isTwitter`
 - `isWebsite`
 - `password`
-- `timezone`?
-- `verificationToken`?
+- `timezone`
+- `completedChallenges.$[el].__cachedRelations`
+- `completedChallenges.$[el].__data`
+- `completedChallenges.$[el].__dataSource`
+- `completedChallenges.$[el].__persisted`
+- `completedChallenges.$[el].__strict`
+- `profileUI.__cachedRelations`
+- `profileUI.__data`
+- `profileUI.__dataSource`
+- `profileUI.__persisted`
+- `profileUI.__strict`
 
 ### Transposition
 
-- `completedChallenges`
-  - remove all `__<>` properties
-- `profileUI`
-  - `Undefined` -> `ProfileUI::default()`
-- `progressTimestamps`
-  - `[{ timestamp: Double }]` -> `[Double]`
-  - `[Null]` -> `[]`
-  - `[Int64]` -> `[Double]`
-- `partiallyCompletedChallenges`
-  - `Undefined` -> `[]`
-  - `[[]]` -> `[]`
-  - Does this have any actual values?
-- `yearsTopContributor`
-  - `Undefined` -> `[]`
-  - `[String]` -> `[Double]`
-    - A string of length 4 takes 24 bytes, a double takes 8 bytes
 - `savedChallenges`
   - `Undefined` -> `[]`
-- `badges`
+- `partiallyCompletedChallenges`
   - `Undefined` -> `[]`
-  - Remove?
-- `rand`
-  - `Undefined` -> `Null` or something random
+- `completedChallenges`
+  - `[{ files: Undefined | Null }]` -> `[{ files: [] }]`
+- `progressTimestamps`
+  - `[{ timestamp: Double | Int32 | Int64 | String | Timestamp }]` -> `[Double]`
+  - `[Null | Undefined]` -> `[]`
+  - `[Int64 | Int32 | String]` -> `[Double]`
+- `yearsTopContributor`
+  - `Undefined` -> `[]`
+  - `[String | Int32 | Int64]` -> `[Double]`
+    - A string of length 4 takes 24 bytes, a double takes 8 bytes
+- `profileUI`
+  - `Undefined` -> `ProfileUI::default()`
+  - Any `undefined` field -> `false` value
 
 ```rust
 ProfileUI {
@@ -123,26 +126,16 @@ ProfileUI {
 }
 ```
 
-### Miscellaneous
-
-- `rand`?
-
 ## Run the Script
 
 ```bash
-cargo run --release -- --db <db> --collection <collection> --url <url> --num-threads <num-threads>
+cargo run --release -- --url <url> --num-threads <num-threads> --num_docs <num-docs> --logs <logs-path>
 ```
 
 Example:
 
 ```bash
-cargo run --release -- --db freecodecamp --collection user --num-threads 4
-```
-
-Run tests:
-
-```bash
-cargo test
+cargo run --release -- --num-threads 4
 ```
 
 More info:

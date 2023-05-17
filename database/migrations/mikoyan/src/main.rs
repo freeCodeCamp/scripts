@@ -30,11 +30,11 @@ async fn main() -> mongodb::error::Result<()> {
     let mut handles = Vec::new();
 
     let num_docs_in_collection = {
-        let collection = get_collection(&args.uri, &args.db, &args.collection).await?;
+        let collection = get_collection(&args.uri).await?;
         collection.estimated_document_count(None).await? as usize
     };
 
-    println!("Docs in {}: {}", args.collection, num_docs_in_collection);
+    println!("Docs in user: {}", num_docs_in_collection);
 
     // Split the database into `num_threads` chunks
     // Any remainder will be handled by the last thread
@@ -77,7 +77,7 @@ async fn main() -> mongodb::error::Result<()> {
     for handle in handles {
         if let Err(e) = handle.await {
             // Write errors to logs file
-            file.write(format!("{}\n", e).as_bytes()).await?;
+            file.write_all(format!("{}\n", e).as_bytes()).await?;
         }
     }
     Ok(())
@@ -89,7 +89,7 @@ async fn connect_and_process(
     thread_id: usize,
     m: MultiProgress,
 ) -> Result<(), mongodb::error::Error> {
-    let collection = get_collection(&args.uri, &args.db, &args.collection).await?;
+    let collection = get_collection(&args.uri).await?;
 
     let find_ops = FindOptions::builder()
         .limit(num_docs_to_handle as i64)
@@ -126,6 +126,7 @@ async fn connect_and_process(
     while let Some(user) = cursor.try_next().await? {
         match normalize_user(&user) {
             Ok(normalized_user) => {
+                // _id exists, because `normalize_user` returns an error if it does not
                 let id = user.get_object_id("_id").unwrap();
                 let filter = doc! {"_id": id};
                 let update_options = UpdateOptions::builder()
@@ -135,8 +136,7 @@ async fn connect_and_process(
                     .build();
                 collection
                     .update_one(filter, normalized_user, update_options)
-                    .await
-                    .unwrap();
+                    .await?;
             }
             Err(normalize_error) => {
                 // Write to logs file
@@ -145,7 +145,7 @@ async fn connect_and_process(
                     match e {
                         NormalizeError::UnhandledType { id, doc } => {
                             logs_file
-                                .write(format!("{}: {}\n", id, doc).as_bytes())
+                                .write_all(format!("{}: {}\n", id, doc).as_bytes())
                                 .await?;
                         }
                     }

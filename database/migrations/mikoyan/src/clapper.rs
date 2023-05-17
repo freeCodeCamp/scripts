@@ -4,14 +4,6 @@ use clap::Parser;
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
-    /// Name of database to use
-    #[arg(short, long)]
-    pub db: String,
-
-    /// Name of collection to query
-    #[arg(short, long)]
-    pub collection: String,
-
     /// Log file to write to
     /// If not provided, will default to `logs.log`
     /// in the current directory

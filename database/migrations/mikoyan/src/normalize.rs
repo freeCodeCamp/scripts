@@ -25,16 +25,51 @@ pub fn normalize_user(user: &Document) -> Result<Document, Vec<NormalizeError>> 
         update_op.insert("savedChallenges", empty_vec.clone());
     }
 
-    if user.get("badges").is_none() {
-        update_op.insert("badges", empty_vec.clone());
-    }
-
     if user.get("partiallyCompletedChallenges").is_none() {
         update_op.insert("partiallyCompletedChallenges", empty_vec.clone());
     }
 
-    if let Some(_completed_challenges) = user.get("completedChallenges") {
-        // Handle completed challenge format
+    if let Some(completed_challenges) = user.get("completedChallenges") {
+        match completed_challenges {
+            Bson::Array(arr) => {
+                let mut new_arr: Vec<Bson> = Vec::with_capacity(arr.len());
+                for c in arr {
+                    match c {
+                        Bson::Document(completed_challenge) => {
+                            let mut new_completed_challenge = completed_challenge.clone();
+                            if new_completed_challenge.get("files").is_none() {
+                                new_completed_challenge.insert("files", empty_vec.clone());
+                            }
+                            new_arr.push(Bson::Document(new_completed_challenge));
+                        }
+                        Bson::Null | Bson::Undefined => {
+                            // NO-OP
+                        }
+                        _ => {
+                            normalize_error.push(NormalizeError::UnhandledType {
+                                id: user_id,
+                                doc: doc! {
+                                    "completedChallenges": completed_challenges.clone()
+                                },
+                            });
+                            break;
+                        }
+                    }
+                }
+                update_op.insert("completedChallenges", new_arr);
+            }
+            Bson::Null | Bson::Undefined => {
+                update_op.insert("completedChallenges", empty_vec.clone());
+            }
+            _ => {
+                normalize_error.push(NormalizeError::UnhandledType {
+                    id: user_id,
+                    doc: doc! {
+                        "completedChallenges": completed_challenges.clone()
+                    },
+                });
+            }
+        }
     } else {
         update_op.insert("completedChallenges", empty_vec.clone());
     }
@@ -132,6 +167,7 @@ pub fn normalize_user(user: &Document) -> Result<Document, Vec<NormalizeError>> 
                         }
                     }
                 }
+                update_op.insert("progressTimestamps", new_arr);
             }
             Bson::Null | Bson::Undefined => {
                 update_op.insert("progressTimestamps", empty_vec.clone());
@@ -211,29 +247,90 @@ pub fn normalize_user(user: &Document) -> Result<Document, Vec<NormalizeError>> 
         update_op.insert("yearsTopContributor", empty_vec);
     }
 
+    let profile_ui_default = doc! {
+        "isLocked": false,
+        "showAbout": false,
+        "showCerts": false,
+        "showDonation": false,
+        "showHeatMap": false,
+        "showLocation": false,
+        "showName": false,
+        "showPoints": false,
+        "showPortfolio": false,
+        "showTimeLine": false,
+    };
+    if let Some(profile_ui) = user.get("profileUI") {
+        match profile_ui {
+            Bson::Document(ui) => {
+                let mut new_ui = ui.clone();
+
+                if is_undefined_or_null(&new_ui, "isLocked") {
+                    new_ui.insert("isLocked", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showAbout") {
+                    new_ui.insert("showAbout", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showCerts") {
+                    new_ui.insert("showCerts", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showDonation") {
+                    new_ui.insert("showDonation", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showHeatMap") {
+                    new_ui.insert("showHeatMap", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showLocation") {
+                    new_ui.insert("showLocation", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showName") {
+                    new_ui.insert("showName", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showPoints") {
+                    new_ui.insert("showPoints", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showPortfolio") {
+                    new_ui.insert("showPortfolio", Bson::Boolean(false));
+                }
+                if is_undefined_or_null(&new_ui, "showTimeLine") {
+                    new_ui.insert("showTimeLine", Bson::Boolean(false));
+                }
+
+                update_op.insert("profileUI", new_ui);
+            }
+            Bson::Null | Bson::Undefined => {
+                update_op.insert("profileUI", profile_ui_default);
+            }
+            _ => {
+                normalize_error.push(NormalizeError::UnhandledType {
+                    id: user_id,
+                    doc: doc! {
+                        "profileUI": profile_ui.clone()
+                    },
+                });
+            }
+        }
+    } else {
+        update_op.insert("profileUI", profile_ui_default);
+    }
+
     if !normalize_error.is_empty() {
         Err(normalize_error)
     } else {
         let update_op = doc! {
             "$set": update_op,
             "$unset": doc! {
-                "password": "",
+                "badges": "",
                 "isGithub": "",
                 "isLinkedIn": "",
                 "isTwitter": "",
                 "isWebsite": "",
-                // "github": "",
-                // "timezone": "",
+                "password": "",
+                "timezone": "",
                 "completedChallenges.$[el].__cachedRelations": "",
                 "completedChallenges.$[el].__data": "",
                 "completedChallenges.$[el].__dataSource": "",
                 "completedChallenges.$[el].__persisted": "",
                 "completedChallenges.$[el].__strict": "",
-                // "completedChallenges.$.files.$.__cachedRelations": "",
-                // "completedChallenges.$.files.$.__data": "",
-                // "completedChallenges.$.files.$.__dataSource": "",
-                // "completedChallenges.$.files.$.__persisted": "",
-                // "completedChallenges.$.files.$.__strict": "",
                 "profileUI.__cachedRelations": "",
                 "profileUI.__data": "",
                 "profileUI.__dataSource": "",
@@ -242,5 +339,13 @@ pub fn normalize_user(user: &Document) -> Result<Document, Vec<NormalizeError>> 
             },
         };
         Ok(update_op)
+    }
+}
+
+fn is_undefined_or_null(docum: &Document, field: &str) -> bool {
+    if let Some(val) = docum.get(field) {
+        matches!(val, Bson::Null | Bson::Undefined)
+    } else {
+        true
     }
 }
