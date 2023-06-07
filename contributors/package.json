@@ -25,6 +25,7 @@
     "typescript": "4.9.5"
   },
   "dependencies": {
+    "@tryghost/admin-api": "1.13.6",
     "@tryghost/content-api": "^1.5.16",
     "dotenv": "^16.0.0",
     "node-fetch": "^2.6.6",

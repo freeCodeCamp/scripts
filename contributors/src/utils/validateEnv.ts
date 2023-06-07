@@ -19,6 +19,11 @@ export const validateEnv = (): Credentials => {
     process.exit(1);
   }
 
+  if (!process.env.GHOST_ADMIN_KEY) {
+    logHandler.log("error", "Missing Ghost Admin credentials.");
+    process.exit(1);
+  }
+
   if (!process.env.CROWDIN_KEY) {
     logHandler.log("error", "Missing Crowdin credentials.");
     process.exit(1);
@@ -37,6 +42,7 @@ export const validateEnv = (): Credentials => {
   return {
     githubToken: process.env.GITHUB_TOKEN,
     ghostKey: process.env.GHOST_KEY,
+    ghostAdminKey: process.env.GHOST_ADMIN_KEY,
     crowdinKey: process.env.CROWDIN_KEY,
     forumKey: process.env.FORUM_KEY,
     forumUsername: process.env.FORUM_USERNAME,

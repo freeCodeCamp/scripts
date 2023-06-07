@@ -1,3 +1,4 @@
+import GhostAdminApi from "@tryghost/admin-api";
 import GhostContentAPI, {
   GhostContentAPIOptions,
   PostsOrPages,
@@ -8,14 +9,20 @@ import { Credentials } from "../interfaces/Credentials";
 import { NewsContributor } from "../interfaces/news/NewsContributor";
 import { logHandler } from "../utils/logHandler";
 
-const parseNewsData = (
+const parseNewsData = async (
+  credentials: Credentials,
   data: PostsOrPages
-): { news: NewsContributor[]; urls: string[] } => {
+): Promise<{ news: NewsContributor[]; urls: string[] }> => {
+  const api = new GhostAdminApi({
+    url: "https://freecodecamp.org/news",
+    key: credentials.ghostAdminKey,
+    version: "v3",
+  });
   const results: NewsContributor[] = [];
   const staffUrls: string[] = [];
-  data.forEach((datum) => {
+  for (const datum of data) {
     if (!datum.primary_author || !datum.primary_author.name) {
-      return;
+      continue;
     }
     const name = datum.primary_author.name;
     const username = datum.primary_author.slug;
@@ -25,10 +32,11 @@ const parseNewsData = (
     if (exists) {
       exists.posts++;
     } else {
-      results.push({ name, username, url, posts: 1 });
+      const user = await api.users.read({ id: datum.primary_author.id });
+      results.push({ name, username, url, posts: 1, email: user.email });
       staffUrls.push(`https://freecodecamp.org/news/ghost/#/staff/${username}`);
     }
-  });
+  }
   return { news: results, urls: staffUrls };
 };
 
@@ -79,7 +87,8 @@ export const getNewsData = async (
       lastPage = postData.meta.pagination.pages;
     }
 
-    return parseNewsData(totalPosts);
+    const result = await parseNewsData(credentials, totalPosts);
+    return result;
   } catch (err) {
     logHandler.log("error", err);
     process.exit(1);
