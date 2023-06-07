@@ -28,14 +28,14 @@ export const writeData = async (
   if (type === "GitHub") {
     parsedData += "name,github-url,commits,email\n";
     (data as GithubContributor[]).forEach((datum) => {
-      parsedData += `${datum.name},${datum.url},${datum.commits}\n`;
+      parsedData += `${datum.name},${datum.url},${datum.commits},${datum.email}\n`;
     });
   }
 
   if (type === "Forum") {
-    parsedData += "name,forum-url,likes\n";
+    parsedData += "name,forum-url,likes,email\n";
     (data as ForumContributor[]).forEach((datum) => {
-      parsedData += `${datum.name},${datum.url},${datum.likes}\n`;
+      parsedData += `${datum.name},${datum.url},${datum.likes},${datum.email}\n`;
     });
   }
 

@@ -13,6 +13,7 @@ const parseForumData = async (
 ): Promise<ForumContributor[]> => {
   const contributors: ForumContributor[] = [];
   for (const item of data.directory_items) {
+    await sleep(500);
     const rawUser = await fetch(
       `https://forum.freecodecamp.org/u/${item.user.username}/emails.json`,
       {
