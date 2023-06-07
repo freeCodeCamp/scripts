@@ -1,7 +1,7 @@
 export interface GithubContributor {
   username: string;
   name: string;
-  commits: number;
+  mergedPrs: number;
   url: string;
   email: string;
 }

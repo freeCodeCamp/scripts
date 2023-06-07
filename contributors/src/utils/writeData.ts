@@ -26,9 +26,9 @@ export const writeData = async (
   let parsedData = "";
 
   if (type === "GitHub") {
-    parsedData += "name,github-url,commits,email\n";
+    parsedData += "name,github-url,merged-prs,email\n";
     (data as GithubContributor[]).forEach((datum) => {
-      parsedData += `${datum.name},${datum.url},${datum.commits},${datum.email}\n`;
+      parsedData += `${datum.name},${datum.url},${datum.mergedPrs},${datum.email}\n`;
     });
   }
 

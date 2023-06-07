@@ -2,28 +2,39 @@ import fetch from "node-fetch";
 
 import { globalConfig } from "../config/globalConfig";
 import { Credentials } from "../interfaces/Credentials";
-import { GitHubCommit } from "../interfaces/github/GitHubCommit";
 import { GithubContributor } from "../interfaces/github/GitHubContributor";
+import { GitHubPull } from "../interfaces/github/GitHubPull";
+import { GitHubUser } from "../interfaces/github/GitHubUser";
 import { logHandler } from "../utils/logHandler";
 
-const parseGitHubCommits = (data: GitHubCommit[]): GithubContributor[] => {
+const parseGitHubCommits = async (
+  credentials: Credentials,
+  data: GitHubPull[]
+): Promise<GithubContributor[]> => {
   const contributors: GithubContributor[] = [];
-  for (const commit of data) {
-    if (!commit.author || !commit.commit.author) {
+  for (const pull of data) {
+    if (!pull.user) {
       continue;
     }
-    const target = contributors.find(
-      (el) => el.username === commit.author.login
-    );
+    const target = contributors.find((el) => el.username === pull.user.login);
     if (target) {
-      target.commits++;
+      target.mergedPrs++;
     } else {
+      const userResponse = await fetch(pull.user.url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-GitHub-Media-Type": "github.v3",
+          Authorization: "token " + credentials.githubToken,
+        },
+      });
+      const user: GitHubUser = await userResponse.json();
       contributors.push({
-        username: commit.author.login,
-        name: commit.commit.author.name,
-        commits: 1,
-        url: commit.author.html_url,
-        email: commit.commit.author.email,
+        username: user.login,
+        name: user.name,
+        mergedPrs: 1,
+        url: user.html_url,
+        email: user.email,
       });
     }
   }
@@ -42,16 +53,14 @@ export const getGitHubContributions = async (
   credentials: Credentials
 ): Promise<GithubContributor[]> => {
   try {
-    const since = new Date(globalConfig.start).toISOString();
-
     let page = 1;
 
-    const totalData: GitHubCommit[] = [];
+    const totalData: GitHubPull[] = [];
 
     logHandler.log("info", `Fetching page ${page}`);
 
     let rawData = await fetch(
-      `https://api.github.com/repos/freeCodeCamp/freeCodeCamp/commits?since=${since}&page=${page}&per_page=100`,
+      `https://api.github.com/repos/freeCodeCamp/freeCodeCamp/pulls?state=closed&page=${page}&per_page=100`,
       {
         method: "GET",
         headers: {
@@ -62,15 +71,23 @@ export const getGitHubContributions = async (
       }
     );
 
-    let parsedData: GitHubCommit[] = await rawData.json();
+    let parsedData: GitHubPull[] = await rawData.json();
 
-    totalData.push(...parsedData);
+    totalData.push(...parsedData.filter((issue) => issue.merged_at));
 
-    while (parsedData.length === 100) {
+    while (
+      new Date(parsedData[parsedData.length - 1].created_at) >
+      new Date(globalConfig.start)
+    ) {
       page++;
-      logHandler.log("info", `Fetching page ${page}`);
+      logHandler.log(
+        "info",
+        `Fetching page ${page} - Looking at ${
+          parsedData[parsedData.length - 1].created_at
+        }`
+      );
       rawData = await fetch(
-        `https://api.github.com/repos/freeCodeCamp/freeCodeCamp/commits?since=${since}&page=${page}&per_page=100`,
+        `https://api.github.com/repos/freeCodeCamp/freeCodeCamp/pulls?state=closed&page=${page}&per_page=100`,
         {
           method: "GET",
           headers: {
@@ -81,12 +98,21 @@ export const getGitHubContributions = async (
         }
       );
       parsedData = await rawData.json();
-      totalData.push(...parsedData);
+      totalData.push(...parsedData.filter((issue) => issue.merged_at));
     }
+
+    logHandler.log(
+      "info",
+      `Finished with PR created at ${
+        parsedData[parsedData.length - 1].created_at
+      }`
+    );
 
     logHandler.log("info", "Parsing data");
 
-    return parseGitHubCommits(totalData).sort((a, b) => b.commits - a.commits);
+    const parsed = await parseGitHubCommits(credentials, totalData);
+
+    return parsed.sort((a, b) => b.mergedPrs - a.mergedPrs);
   } catch (err) {
     logHandler.log("error", err);
     process.exit(1);
