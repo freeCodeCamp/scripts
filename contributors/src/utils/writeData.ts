@@ -33,7 +33,7 @@ export const writeData = async (
   }
 
   if (type === "Forum") {
-    parsedData += "name,forum-url,likes,email\n";
+    parsedData += "name,forum-url,solutions,email\n";
     (data as ForumContributor[]).forEach((datum) => {
       parsedData += `${datum.name},${datum.url},${datum.likes},${datum.email}\n`;
     });

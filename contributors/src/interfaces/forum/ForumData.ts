@@ -8,6 +8,7 @@ export interface ForumData {
     post_count: number;
     posts_read: number;
     days_visited: number;
+    solutions: number;
     user: {
       id: number;
       username: string;
