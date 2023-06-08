@@ -3,4 +3,5 @@ export interface NewsContributor {
   username: string;
   url: string;
   posts: number;
+  email: string;
 }

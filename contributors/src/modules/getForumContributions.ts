@@ -13,6 +13,7 @@ const parseForumData = async (
 ): Promise<ForumContributor[]> => {
   const contributors: ForumContributor[] = [];
   for (const item of data.directory_items) {
+    await sleep(500);
     const rawUser = await fetch(
       `https://forum.freecodecamp.org/u/${item.user.username}/emails.json`,
       {
@@ -46,9 +47,10 @@ export const getForumData = async (
   credentials: Credentials
 ): Promise<ForumContributor[]> => {
   try {
+    logHandler.log("info", "Fetching page 0...");
     let page = 0;
     let rawData = await fetch(
-      `https://forum.freecodecamp.org/directory_items.json?order=likes_received&period=yearly&page=${page}`
+      `https://forum.freecodecamp.org/directory_items.json?order=solutions&period=yearly&page=${page}`
     );
 
     const totalData: ForumData = await rawData.json();
@@ -57,9 +59,10 @@ export const getForumData = async (
 
     while (
       parsedData.directory_items[parsedData.directory_items.length - 1]
-        .likes_received > globalConfig.minimumLikes
+        .solutions > globalConfig.minimumSolutions
     ) {
       await sleep(3000);
+      logHandler.log("info", `Fetching page ${page + 1}...`);
       rawData = await fetch(
         `https://forum.freecodecamp.org/directory_items.json?order=likes_received&period=yearly&page=${++page}`
       );

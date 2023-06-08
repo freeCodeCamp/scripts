@@ -7,9 +7,11 @@
     "build": "tsc",
     "lint": "eslint src --max-warnings 0",
     "start": "node -r dotenv/config prod/index.js",
-    "test": "echo \"Error: Test has not been defined.\" && exit 1"
+    "test": "echo \"Error: Test has not been defined.\" && exit 1",
+    "merge": "node -r dotenv/config prod/merge.js"
   },
   "devDependencies": {
+    "@types/node": "18",
     "@types/node-fetch": "2.6.3",
     "@types/tryghost__content-api": "1.3.11",
     "@typescript-eslint/eslint-plugin": "5.57.0",
@@ -23,6 +25,7 @@
     "typescript": "4.9.5"
   },
   "dependencies": {
+    "@tryghost/admin-api": "1.13.6",
     "@tryghost/content-api": "^1.5.16",
     "dotenv": "^16.0.0",
     "node-fetch": "^2.6.6",
