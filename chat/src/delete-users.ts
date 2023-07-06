@@ -12,6 +12,7 @@ import { UserList } from "./interfaces/UserList";
   const headers = {
     "X-Auth-Token": token,
     "X-User-Id": userId,
+    "Content-type": "application/json",
   };
 
   const allUsers = await fetch(`${baseUrl}/api/v1/users.list?count=0`, {
@@ -23,14 +24,23 @@ import { UserList } from "./interfaces/UserList";
     (user) => !user.roles.includes("Staff") && !user.roles.includes("bot")
   );
 
+  console.log("Total users: ", allUsersData["total"]);
+
   for (const user of otherAccountsData) {
-    console.log("Deleted user: ", user["_id"]);
-    // await fetch(`${baseUrl}/api/v1/users.delete`, {
-    //   method: "POST",
-    //   headers: headers,
-    //   body: JSON.stringify({
-    //     userId: user["_id"],
-    //   }),
-    // });
+    const response = await fetch(`${baseUrl}/api/v1/users.delete`, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        userId: user["_id"],
+      }),
+    });
+    const responseJson = await response.json();
+    if (responseJson.success === true) {
+      console.log("Deleted user: ", user["_id"]);
+    } else {
+      console.log("Failed to delete user: ", user["_id"]);
+    }
   }
+
+  console.log("Remaining users: ", allUsersData["total"]);
 })();

@@ -5,9 +5,9 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint src --max-warnings 0",
-    "start": "node -r dotenv/config prod/index.js",
-    "test": "echo \"Error: Test has not been defined.\" && exit 1",
-    "delete-other-users": "pnpm build && node -r dotenv/config prod/delete-other-users.js"
+    "script:get-emails": "pnpm build && node -r dotenv/config prod/index.js",
+    "script:delete-users": "pnpm build && node -r dotenv/config prod/delete-users.js",
+    "test": "echo \"Error: Test has not been defined.\" && exit 1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "5.57.0",
