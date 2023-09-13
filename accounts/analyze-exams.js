@@ -2,9 +2,8 @@
 // this goes through that info and gives some totals
 
 const fs = require("fs");
-const filePath = "exams.json";
 
-fs.readFile(filePath, "utf8", (err, data) => {
+fs.readFile("exams.json", "utf8", (err, data) => {
   if (err) {
     console.error(`Error reading the file: ${err}`);
     return;
