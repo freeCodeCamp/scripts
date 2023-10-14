@@ -1,36 +1,53 @@
-require('dotenv').config();
-const fetch = require('node-fetch');
-const fs = require('fs');
+require("dotenv").config();
+const fs = require("fs");
+const GhostAdminAPI = require("@tryghost/admin-api");
 
+const api = new GhostAdminAPI({
+  url: process.env.NEWS_API_URL,
+  key: process.env.NEWS_API_ADMIN_KEY,
+  version: "v3",
+});
 
-async function formatTagData() {
+async function fetchGhostTags() {
+  let tags = await api.tags.browse({ limit: 100 });
 
-  const object = {
-    tags: []
+  const modifiedTags = [
+    ...tags.map((tag) => {
+      return {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        visibility: tag.visibility,
+        count: tag.count?.posts,
+      };
+    }),
+  ];
+
+  while (tags.meta.pagination.pages > tags.meta.pagination.page) {
+    tags = await api.tags.browse({
+      limit: 100,
+      page: tags.meta.pagination.page + 1,
+    });
+    modifiedTags.push(
+      ...tags.map((tag) => {
+        return {
+          id: tag.id,
+          name: tag.name,
+          slug: tag.slug,
+          visibility: tag.visibility,
+          count: tag.count?.posts,
+        };
+      })
+    );
   }
 
-  const url = `${process.env.NEWS_API_URL}/ghost/api/v3/content/tags/?key=${process.env.NEWS_API_KEY}`;
-  const tags = await fetch(url).then(res => res.json());
+  fs.writeFileSync("./tags.json", JSON.stringify(modifiedTags, null, 2));
 
-  const tagsModified = tags['tags'].map(tag => {
-    return {
-      id: tag.id,
-      name: tag.name,
-      slug: tag.slug,
-    }
-  })
-
-  object.tags = [...tagsModified]
-
-  // writing to file for now
-  fs.writeFile('./tags.json', JSON.stringify(object, null, 2), (err) => {
-    if (err) throw err;
-    console.log('The file has been saved!');
-  });
+  return modifiedTags;
 }
 
 async function migrate() {
-  formatTagData();
+  const tags = await fetchGhostTags();
 }
 
 migrate();
