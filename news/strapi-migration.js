@@ -31,11 +31,9 @@ async function fetchGhostTags() {
     modifiedTags.push(
       ...tags.map((tag) => {
         return {
-          id: tag.id,
           name: tag.name,
           slug: tag.slug,
           visibility: tag.visibility,
-          count: tag.count?.posts,
         };
       })
     );
@@ -46,8 +44,41 @@ async function fetchGhostTags() {
   return modifiedTags;
 }
 
+async function uploadTagsToCMS(tags) {
+  tags.forEach(async (tag) => {
+    const data = {
+      data: {
+        name: tag.name,
+        slug: tag.slug,
+        visibility: tag.visibility,
+      },
+    };
+
+    const res = await fetch(`${process.env.STRAPI_API_URL}/tags`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      console.log(res.status, res.statusText, tag.name);
+    }
+  });
+}
+
 async function migrate() {
+  // Migrate tags
   const tags = await fetchGhostTags();
+  console.log("Tags fetched from Ghost.");
+  await uploadTagsToCMS(tags);
+  console.log("Tags uploaded to Strapi.");
+
+  // Migrate authors
+  // Migrate posts
+  // Migrate pages
 }
 
 migrate();
