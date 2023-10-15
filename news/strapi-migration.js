@@ -122,6 +122,81 @@ async function fetchGhostUsers() {
   return modifiedUsers;
 }
 
+async function uploadUsersToCMS(users) {
+  let newUsers = {};
+  const rolesRes = await fetch(
+    `${process.env.STRAPI_API_URL}/users-permissions/roles`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+      },
+    }
+  );
+
+  const rolesData = (await rolesRes.json()).roles;
+  const roles = rolesData.reduce((acc, role) => {
+    acc[role.name] = role.id;
+    return acc;
+  }, {});
+
+  for (const user of users) {
+    const data = {
+      username: user.email,
+      name: user.name,
+      slug: user.slug,
+      email: user.email,
+      location: user.location ?? "",
+      website: user.website ?? "",
+      facebook: user.facebook ?? "",
+      twitter: user.twitter ?? "",
+      bio: user.bio ?? "",
+      role:
+        user.roles[0].name === "Contributor"
+          ? roles["Contributor"]
+          : roles["Editor"],
+      confirmed: true,
+      provider: "auth0",
+      password: "password",
+    };
+
+    await fetch(`${process.env.STRAPI_API_URL}/invited-users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        data: {
+          email: data.email,
+          role: [data.role],
+        },
+      }),
+    });
+
+    const res = await fetch(`${process.env.STRAPI_API_URL}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      console.log(res.status, res.statusText, user.name);
+      const json = await res.json();
+      console.log(json);
+    } else {
+      const json = await res.json();
+      newUsers[user.slug] = json.id;
+    }
+  }
+
+  return newUsers;
+}
+
 async function migrate() {
   // Migrate tags
   const ghostTags = await fetchGhostTags();
@@ -130,8 +205,10 @@ async function migrate() {
   console.log("Tags uploaded to Strapi.");
 
   // Migrate users
-  const users = await fetchGhostUsers();
+  const ghostUsers = await fetchGhostUsers();
   console.log("Users fetched from Ghost.");
+  const strapiUsers = await uploadUsersToCMS(ghostUsers);
+  console.log("Users uploaded to Strapi.");
 
   // Migrate posts
   // Migrate pages
