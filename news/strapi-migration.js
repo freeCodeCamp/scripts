@@ -45,7 +45,8 @@ async function fetchGhostTags() {
 }
 
 async function uploadTagsToCMS(tags) {
-  tags.forEach(async (tag) => {
+  let newTags = {};
+  for (const tag of tags) {
     const data = {
       data: {
         name: tag.name,
@@ -65,8 +66,13 @@ async function uploadTagsToCMS(tags) {
 
     if (!res.ok) {
       console.log(res.status, res.statusText, tag.name);
+    } else {
+      const json = await res.json();
+      newTags[tag.slug] = json.data.id;
     }
-  });
+  }
+
+  return newTags;
 }
 
 async function fetchGhostUsers() {
@@ -118,9 +124,9 @@ async function fetchGhostUsers() {
 
 async function migrate() {
   // Migrate tags
-  const tags = await fetchGhostTags();
+  const ghostTags = await fetchGhostTags();
   console.log("Tags fetched from Ghost.");
-  await uploadTagsToCMS(tags);
+  const strapiTags = await uploadTagsToCMS(ghostTags);
   console.log("Tags uploaded to Strapi.");
 
   // Migrate users
