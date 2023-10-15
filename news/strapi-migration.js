@@ -69,6 +69,53 @@ async function uploadTagsToCMS(tags) {
   });
 }
 
+async function fetchGhostUsers() {
+  let users = await api.users.browse({ limit: 100, include: "roles" });
+
+  const modifiedUsers = [
+    ...users.map((user) => {
+      return {
+        name: user.name,
+        slug: user.slug,
+        email: user.email,
+        location: user.location ?? "",
+        website: user.website ?? "",
+        facebook: user.facebook ?? "",
+        twitter: user.twitter ?? "",
+        bio: user.bio ?? "",
+        roles: user.roles,
+      };
+    }),
+  ];
+
+  while (users.meta.pagination.pages > users.meta.pagination.page) {
+    users = await api.users.browse({
+      limit: 100,
+      page: users.meta.pagination.page + 1,
+      include: "roles",
+    });
+    modifiedUsers.push(
+      ...users.map((user) => {
+        return {
+          name: user.name,
+          slug: user.slug,
+          email: user.email,
+          location: user.location ?? "",
+          website: user.website ?? "",
+          facebook: user.facebook ?? "",
+          twitter: user.twitter ?? "",
+          bio: user.bio ?? "",
+          roles: user.roles,
+        };
+      })
+    );
+  }
+
+  fs.writeFileSync("./users.json", JSON.stringify(modifiedUsers, null, 2));
+
+  return modifiedUsers;
+}
+
 async function migrate() {
   // Migrate tags
   const tags = await fetchGhostTags();
@@ -76,7 +123,10 @@ async function migrate() {
   await uploadTagsToCMS(tags);
   console.log("Tags uploaded to Strapi.");
 
-  // Migrate authors
+  // Migrate users
+  const users = await fetchGhostUsers();
+  console.log("Users fetched from Ghost.");
+
   // Migrate posts
   // Migrate pages
 }
