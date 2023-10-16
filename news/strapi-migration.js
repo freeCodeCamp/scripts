@@ -248,34 +248,63 @@ async function fetchGhostPosts() {
 
 async function uploadPostsToCMS(posts, tags, authors) {
   posts = JSON.parse(fs.readFileSync("./posts.json"));
-  let c = 0;
-  for (let post of posts) {
-    if (post.authors.length < 1) {
-      console.log(post);
-      c++;
+  tags = JSON.parse(fs.readFileSync("./tags-new.json"));
+  authors = JSON.parse(fs.readFileSync("./users-new.json"));
+
+  let count = 0;
+
+  for (const post of posts) {
+    const data = {
+      data: {
+        title: post.title,
+        slug: post.slug,
+        body: post.html,
+        publishedAt: post.status === "draft" ? null : post.published_at,
+        tags: post.tags.map((tag) => tags[tag.slug]),
+        author: authors[post.primary_author.slug],
+      },
+    };
+
+    const res = await fetch(`${process.env.STRAPI_API_URL}/posts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      console.log(res.status, res.statusText, post.title);
+      const json = await res.json();
+      console.log(json);
+    }
+
+    count++;
+    if (count % 50 === 0) {
+      console.log(`${count}/${posts.length} posts migrated.`);
     }
   }
-  console.log(c);
 }
 
 async function migrate() {
   // Migrate tags
-  // const ghostTags = await fetchGhostTags();
-  // console.log("Tags fetched from Ghost.");
-  // const strapiTags = await uploadTagsToCMS(ghostTags);
-  // console.log("Tags uploaded to Strapi.");
+  const ghostTags = await fetchGhostTags();
+  console.log("Tags fetched from Ghost.");
+  const strapiTags = await uploadTagsToCMS(ghostTags);
+  console.log("Tags uploaded to Strapi.");
 
   // Migrate users
-  // const ghostUsers = await fetchGhostUsers();
-  // console.log("Users fetched from Ghost.");
-  // const strapiUsers = await uploadUsersToCMS(ghostUsers);
-  // console.log("Users uploaded to Strapi.");
+  const ghostUsers = await fetchGhostUsers();
+  console.log("Users fetched from Ghost.");
+  const strapiUsers = await uploadUsersToCMS(ghostUsers);
+  console.log("Users uploaded to Strapi.");
 
   // Migrate posts
-  // const ghostPosts = await fetchGhostPosts();
-  // console.log("Posts fetched from Ghost.");
-  // await uploadPostsToCMS(ghostPosts, strapiTags, strapiUsers);
-  await uploadPostsToCMS([], [], []);
+  const ghostPosts = await fetchGhostPosts();
+  console.log("Posts fetched from Ghost.");
+  await uploadPostsToCMS(ghostPosts, strapiTags, strapiUsers);
+  console.log("Posts uploaded to Strapi.");
 
   // Migrate pages
 }
