@@ -72,6 +72,8 @@ async function uploadTagsToCMS(tags) {
     }
   }
 
+  fs.writeFileSync("./tags-new.json", JSON.stringify(newTags, null, 2));
+
   return newTags;
 }
 
@@ -193,6 +195,8 @@ async function uploadUsersToCMS(users) {
       newUsers[user.slug] = json.id;
     }
   }
+
+  fs.writeFileSync("./users-new.json", JSON.stringify(newUsers, null, 2));
 
   return newUsers;
 }
