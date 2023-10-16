@@ -197,6 +197,57 @@ async function uploadUsersToCMS(users) {
   return newUsers;
 }
 
+async function fetchGhostPosts() {
+  let posts = await api.posts.browse({ formats: "html", limit: 25 });
+
+  const modifiedPosts = [
+    ...posts.map((post) => {
+      return {
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        uuid: post.uuid,
+        html: post.html,
+        status: post.status,
+        published_at: post.published_at,
+        tags: post.tags,
+        authors: post.authors,
+        primary_tag: post.primary_tag,
+        primary_author: post.primary_author,
+      };
+    }),
+  ];
+
+  while (posts.meta.pagination.pages > posts.meta.pagination.page) {
+    posts = await api.posts.browse({
+      formats: "html",
+      limit: 25,
+      page: posts.meta.pagination.page + 1,
+    });
+    modifiedPosts.push(
+      ...posts.map((post) => {
+        return {
+          id: post.id,
+          slug: post.slug,
+          title: post.title,
+          uuid: post.uuid,
+          html: post.html,
+          status: post.status,
+          published_at: post.published_at,
+          tags: post.tags,
+          authors: post.authors,
+          primary_tag: post.primary_tag,
+          primary_author: post.primary_author,
+        };
+      })
+    );
+  }
+
+  fs.writeFileSync("./posts.json", JSON.stringify(modifiedPosts, null, 2));
+
+  return modifiedPosts;
+}
+
 async function migrate() {
   // Migrate tags
   const ghostTags = await fetchGhostTags();
@@ -211,6 +262,8 @@ async function migrate() {
   console.log("Users uploaded to Strapi.");
 
   // Migrate posts
+  const ghostPosts = await fetchGhostPosts();
+  console.log("Posts fetched from Ghost.");
   // Migrate pages
 }
 
