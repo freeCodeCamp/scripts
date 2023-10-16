@@ -212,7 +212,6 @@ async function fetchGhostPosts() {
         published_at: post.published_at,
         tags: post.tags,
         authors: post.authors,
-        primary_tag: post.primary_tag,
         primary_author: post.primary_author,
       };
     }),
@@ -236,7 +235,6 @@ async function fetchGhostPosts() {
           published_at: post.published_at,
           tags: post.tags,
           authors: post.authors,
-          primary_tag: post.primary_tag,
           primary_author: post.primary_author,
         };
       })
@@ -248,22 +246,37 @@ async function fetchGhostPosts() {
   return modifiedPosts;
 }
 
+async function uploadPostsToCMS(posts, tags, authors) {
+  posts = JSON.parse(fs.readFileSync("./posts.json"));
+  let c = 0;
+  for (let post of posts) {
+    if (post.authors.length < 1) {
+      console.log(post);
+      c++;
+    }
+  }
+  console.log(c);
+}
+
 async function migrate() {
   // Migrate tags
-  const ghostTags = await fetchGhostTags();
-  console.log("Tags fetched from Ghost.");
-  const strapiTags = await uploadTagsToCMS(ghostTags);
-  console.log("Tags uploaded to Strapi.");
+  // const ghostTags = await fetchGhostTags();
+  // console.log("Tags fetched from Ghost.");
+  // const strapiTags = await uploadTagsToCMS(ghostTags);
+  // console.log("Tags uploaded to Strapi.");
 
   // Migrate users
-  const ghostUsers = await fetchGhostUsers();
-  console.log("Users fetched from Ghost.");
-  const strapiUsers = await uploadUsersToCMS(ghostUsers);
-  console.log("Users uploaded to Strapi.");
+  // const ghostUsers = await fetchGhostUsers();
+  // console.log("Users fetched from Ghost.");
+  // const strapiUsers = await uploadUsersToCMS(ghostUsers);
+  // console.log("Users uploaded to Strapi.");
 
   // Migrate posts
-  const ghostPosts = await fetchGhostPosts();
-  console.log("Posts fetched from Ghost.");
+  // const ghostPosts = await fetchGhostPosts();
+  // console.log("Posts fetched from Ghost.");
+  // await uploadPostsToCMS(ghostPosts, strapiTags, strapiUsers);
+  await uploadPostsToCMS([], [], []);
+
   // Migrate pages
 }
 
