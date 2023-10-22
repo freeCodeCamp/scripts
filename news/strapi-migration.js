@@ -205,7 +205,7 @@ async function uploadUsersToCMS(users) {
       const userImageBlob = await userImage.blob();
       const formData = new FormData();
 
-      formData.append("files", userImageBlob);
+      formData.append("files", userImageBlob, user.slug);
       formData.append("ref", "plugin::users-permissions.user");
       formData.append("refId", json.id);
       formData.append("field", "profile_image");
