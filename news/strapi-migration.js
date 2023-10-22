@@ -258,6 +258,7 @@ async function fetchGhostPosts() {
       };
     }),
   ];
+  console.log(posts.meta.pagination)
 
   while (posts.meta.pagination.pages > posts.meta.pagination.page) {
     posts = await api.posts.browse({
@@ -284,6 +285,7 @@ async function fetchGhostPosts() {
         };
       })
     );
+    console.log(posts.meta.pagination)
   }
 
   fs.writeFileSync("./posts.json", JSON.stringify(modifiedPosts, null, 2));
@@ -320,15 +322,41 @@ async function uploadPostsToCMS(posts, tags, authors) {
       },
       body: JSON.stringify(data),
     });
+    const json = await res.json();
 
     if (!res.ok) {
       console.log(res.status, res.statusText, post.title);
-      const json = await res.json();
       console.log(json);
     }
 
+    if (post.feature_image) {
+      // Fetch and upload post feature image
+      const postImage = await fetch(post.feature_image);
+      const postImageBlob = await postImage.blob();
+      const formData = new FormData();
+
+      formData.append("files", postImageBlob, post.slug);
+      formData.append("ref", "api::post.post");
+      formData.append("refId", json.data.id);
+      formData.append("field", "feature_image");
+
+      const imageRes = await fetch(`${process.env.STRAPI_API_URL}/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.STRAPI_ACCESS_TOKEN}`,
+        },
+        body: formData,
+      });
+      const imageJson = await imageRes.json();
+
+      if (!imageRes.ok) {
+        console.log(imageRes.status, imageRes.statusText, post.title);
+        console.log(imageJson);
+      }
+    }
+
     count++;
-    if (count % 50 === 0) {
+    if (count % 20 === 0) {
       console.log(`${count}/${posts.length} posts migrated.`);
     }
   }
@@ -336,25 +364,22 @@ async function uploadPostsToCMS(posts, tags, authors) {
 
 async function migrate() {
   // Migrate tags
-  // const ghostTags = await fetchGhostTags();
-  // console.log("Tags fetched from Ghost.");
-  // const strapiTags = await uploadTagsToCMS(ghostTags);
-  // console.log("Tags uploaded to Strapi.");
+  const ghostTags = await fetchGhostTags();
+  console.log("Tags fetched from Ghost.");
+  const strapiTags = await uploadTagsToCMS(ghostTags);
+  console.log("Tags uploaded to Strapi.");
 
   // Migrate users
-  // const ghostUsers = await fetchGhostUsers();
-  // console.log("Users fetched from Ghost.");
+  const ghostUsers = await fetchGhostUsers();
+  console.log("Users fetched from Ghost.");
   const strapiUsers = await uploadUsersToCMS();
   console.log("Users uploaded to Strapi.");
 
   // Migrate posts
-  // const ghostPosts = await fetchGhostPosts();
-  // console.log("Posts fetched from Ghost.");
-  // await uploadPostsToCMS(ghostPosts, strapiTags, strapiUsers);
-  // await uploadPostsToCMS([], [], []);
-  // console.log("Posts uploaded to Strapi.");
-
-  // Migrate pages
+  const ghostPosts = await fetchGhostPosts();
+  console.log("Posts fetched from Ghost.");
+  await uploadPostsToCMS([], [], []);
+  console.log("Posts uploaded to Strapi.");
 }
 
 migrate();
