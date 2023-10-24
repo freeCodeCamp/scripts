@@ -294,10 +294,6 @@ async function fetchGhostPosts() {
 }
 
 async function uploadPostsToCMS(posts, tags, authors) {
-  posts = JSON.parse(fs.readFileSync("./posts.json"));
-  tags = JSON.parse(fs.readFileSync("./tags-new.json"));
-  authors = JSON.parse(fs.readFileSync("./users-new.json"));
-
   let count = 0;
 
   for (const post of posts) {
@@ -372,13 +368,13 @@ async function migrate() {
   // Migrate users
   const ghostUsers = await fetchGhostUsers();
   console.log("Users fetched from Ghost.");
-  const strapiUsers = await uploadUsersToCMS();
+  const strapiUsers = await uploadUsersToCMS(ghostUsers);
   console.log("Users uploaded to Strapi.");
 
   // Migrate posts
   const ghostPosts = await fetchGhostPosts();
   console.log("Posts fetched from Ghost.");
-  await uploadPostsToCMS([], [], []);
+  await uploadPostsToCMS(ghostPosts, strapiTags, strapiUsers);
   console.log("Posts uploaded to Strapi.");
 }
 
