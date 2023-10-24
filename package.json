@@ -5,9 +5,5 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm"
-  },
-  "devDependencies": {
-    "dotenv": "^8.6.0",
-    "node-fetch": "^2.7.0"
   }
 }
