@@ -39,7 +39,7 @@ async function fetchGhostTags() {
     );
   }
 
-  fs.writeFileSync("./tags.json", JSON.stringify(modifiedTags, null, 2));
+  fs.writeFileSync("./data/tags.json", JSON.stringify(modifiedTags, null, 2));
 
   return modifiedTags;
 }
@@ -73,7 +73,7 @@ async function uploadTagsToCMS(tags) {
     }
   }
 
-  fs.writeFileSync("./tags-new.json", JSON.stringify(newTags, null, 2));
+  fs.writeFileSync("./data/tags-new.json", JSON.stringify(newTags, null, 2));
 
   return newTags;
 }
@@ -124,7 +124,7 @@ async function fetchGhostUsers() {
     );
   }
 
-  fs.writeFileSync("./users.json", JSON.stringify(modifiedUsers, null, 2));
+  fs.writeFileSync("./data/users.json", JSON.stringify(modifiedUsers, null, 2));
 
   return modifiedUsers;
 }
@@ -235,7 +235,7 @@ async function uploadUsersToCMS(users) {
     }
   }
 
-  fs.writeFileSync("./users-new.json", JSON.stringify(newUsers, null, 2));
+  fs.writeFileSync("./data/users-new.json", JSON.stringify(newUsers, null, 2));
 
   return newUsers;
 }
@@ -292,7 +292,7 @@ async function fetchGhostPosts() {
     console.log(posts.meta.pagination);
   }
 
-  fs.writeFileSync("./posts.json", JSON.stringify(modifiedPosts, null, 2));
+  fs.writeFileSync("./data/posts.json", JSON.stringify(modifiedPosts, null, 2));
 
   return modifiedPosts;
 }
