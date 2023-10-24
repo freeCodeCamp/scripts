@@ -18,7 +18,6 @@ async function fetchGhostTags() {
         name: tag.name,
         slug: tag.slug,
         visibility: tag.visibility,
-        count: tag.count?.posts,
       };
     }),
   ];
@@ -31,6 +30,7 @@ async function fetchGhostTags() {
     modifiedTags.push(
       ...tags.map((tag) => {
         return {
+          id: tag.id,
           name: tag.name,
           slug: tag.slug,
           visibility: tag.visibility,
@@ -49,6 +49,7 @@ async function uploadTagsToCMS(tags) {
   for (const tag of tags) {
     const data = {
       data: {
+        ghost_id: tag.id,
         name: tag.name,
         slug: tag.slug,
         visibility: tag.visibility,
@@ -83,6 +84,7 @@ async function fetchGhostUsers() {
   const modifiedUsers = [
     ...users.map((user) => {
       return {
+        id: user.id,
         name: user.name,
         slug: user.slug,
         email: user.email,
@@ -106,6 +108,7 @@ async function fetchGhostUsers() {
     modifiedUsers.push(
       ...users.map((user) => {
         return {
+          id: user.id,
           name: user.name,
           slug: user.slug,
           email: user.email,
@@ -149,6 +152,7 @@ async function uploadUsersToCMS(users) {
 
   for (const user of users) {
     const data = {
+      ghost_id: user.id,
       username: user.email,
       name: user.name,
       slug: user.slug,
@@ -258,7 +262,7 @@ async function fetchGhostPosts() {
       };
     }),
   ];
-  console.log(posts.meta.pagination)
+  console.log(posts.meta.pagination);
 
   while (posts.meta.pagination.pages > posts.meta.pagination.page) {
     posts = await api.posts.browse({
@@ -285,7 +289,7 @@ async function fetchGhostPosts() {
         };
       })
     );
-    console.log(posts.meta.pagination)
+    console.log(posts.meta.pagination);
   }
 
   fs.writeFileSync("./posts.json", JSON.stringify(modifiedPosts, null, 2));
@@ -299,6 +303,7 @@ async function uploadPostsToCMS(posts, tags, authors) {
   for (const post of posts) {
     const data = {
       data: {
+        ghost_id: post.id,
         title: post.title,
         slug: post.slug,
         body: post.html,
