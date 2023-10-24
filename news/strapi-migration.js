@@ -383,4 +383,8 @@ async function migrate() {
   console.log("Posts uploaded to Strapi.");
 }
 
+if (!fs.existsSync("./data")) {
+  fs.mkdirSync("./data");
+}
+
 migrate();
