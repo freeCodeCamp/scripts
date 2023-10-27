@@ -129,7 +129,7 @@ const seedPages = async () => {
           );
         });
 
-	    await wait(1); 
+	    await wait(1);
     }
   }
   console.log(
