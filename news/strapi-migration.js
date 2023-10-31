@@ -259,6 +259,8 @@ async function fetchGhostPosts() {
         authors: post.authors,
         primary_author: post.primary_author,
         feature_image: post.feature_image,
+        codeinjection_head: post.codeinjection_head,
+        codeinjection_foot: post.codeinjection_foot,
       };
     }),
   ];
@@ -286,6 +288,8 @@ async function fetchGhostPosts() {
           authors: post.authors,
           primary_author: post.primary_author,
           feature_image: post.feature_image,
+          codeinjection_head: post.codeinjection_head,
+          codeinjection_foot: post.codeinjection_foot,
         };
       })
     );
@@ -312,6 +316,8 @@ async function uploadPostsToCMS(posts, tags, authors) {
         publishedAt: post.status === "draft" ? null : post.published_at,
         tags: post.tags.map((tag) => tags[tag.slug]),
         author: authors[post.primary_author.slug],
+        codeinjection_head: post.codeinjection_head,
+        codeinjection_foot: post.codeinjection_foot,
       },
     };
 
