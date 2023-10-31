@@ -259,6 +259,8 @@ async function fetchGhostPosts() {
         authors: post.authors,
         primary_author: post.primary_author,
         feature_image: post.feature_image,
+        codeinjection_head: post.codeinjection_head,
+        codeinjection_foot: post.codeinjection_foot,
       };
     }),
   ];
@@ -286,6 +288,8 @@ async function fetchGhostPosts() {
           authors: post.authors,
           primary_author: post.primary_author,
           feature_image: post.feature_image,
+          codeinjection_head: post.codeinjection_head,
+          codeinjection_foot: post.codeinjection_foot,
         };
       })
     );
