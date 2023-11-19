@@ -4,6 +4,7 @@
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "install": "echo 'Packages should be installed at the script level, not the root level.'"
   }
 }
