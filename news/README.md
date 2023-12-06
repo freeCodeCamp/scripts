@@ -17,8 +17,6 @@ node get-user-emails.js
 
 ## Database migration from Ghost to Strapi
 
-### Setup
-
 1. Install npm packages and prepare `.env` file for this script
 
 ```
@@ -47,7 +45,7 @@ cp sample.env .env
 
 4. Set `STRAPI_API_URL` to the API root, such as `http://localhost:1337/api` if you are running the Strapi app locally
 
-5. In the environment variables **for the Strapi app**, set `DATA_MIGRATION=true`
+5. In the environment variables **for the Strapi app**, set `DATA_MIGRATION=true`  
     **Make sure to change it back to `false` when you are done with the data migration.**
 
 6. Run the script:
