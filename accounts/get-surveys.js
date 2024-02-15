@@ -1,7 +1,7 @@
 /* eslint-disable no-process-exit */
 
-// This script gets Exam data from the database and writes it to an
-// exams.json file. After running the script and getting the JSON output,
+// This script gets Survey data from the database and writes it to a
+// surveys.json file. After running the script and getting the JSON output,
 // you need to manually remove the last comma in the output file.
 
 require("dotenv").config();
@@ -12,7 +12,10 @@ const ora = require("ora");
 
 const { MongoClient } = mongodb;
 
-const outputFile = fs.createWriteStream("exams.json", { encoding: "utf8" });
+// Change this to get a specific survey
+const surveyTitle = "Foundational C# with Microsoft Survey";
+
+const outputFile = fs.createWriteStream("surveys.json", { encoding: "utf8" });
 
 // write first bracket in array
 outputFile.write("[\n");
@@ -36,17 +39,17 @@ MongoClient.connect(
     const db = client.db(MONGO_DB);
 
     const stream = db
-      .collection("user")
-      .find({ "completedExams.0": { $exists: true } }, { completedExams: 1 })
+      .collection("Survey")
+      .find({ title: { $eq: surveyTitle } }, { responses: 1 })
       .batchSize(100)
       .stream();
 
-    const spinner = ora("Querying completedExams ...");
+    const spinner = ora("Querying surveys ...");
     spinner.start();
 
-    stream.on("data", ({ completedExams }) => {
-      if (Array.isArray(completedExams)) {
-        const jsonStr = JSON.stringify(completedExams);
+    stream.on("data", ({ responses }) => {
+      if (Array.isArray(responses)) {
+        const jsonStr = JSON.stringify(responses);
         outputFile.write(`${jsonStr},\n`);
       }
     });
@@ -55,7 +58,7 @@ MongoClient.connect(
       outputFile.write("]");
       client.close();
       spinner.succeed(
-        `Completed compiling exams taken. Be sure to go delete the comma after the last item in exams.json :)`
+        `Completed compiling surveys taken. Be sure to go delete the comma after the last item in surveys.json :)`
       );
     });
 
