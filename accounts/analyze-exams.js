@@ -27,8 +27,8 @@ const examJsonFile = "exams.json";
  * 12. Enable Stage 1 and wait for it to finish, it only takes a few seconds
  * 13. Enable Stage 2 to see the number of certifications claimed
  */
-const linkedAccounts = 1;
-const certsClaimed = 1;
+const linkedAccounts = 0;
+const certsClaimed = 0;
 
 if (linkedAccounts === 0 || certsClaimed === 0) {
   console.error(
