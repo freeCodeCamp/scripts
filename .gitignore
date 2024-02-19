@@ -79,6 +79,10 @@ database/data/
 out/
 **/*.csv
 **/*.txt
+exams.json
+surveys.json
+analyzed-exams.json
+analyzed-surveys.json
 
 # typescript
 
