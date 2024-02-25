@@ -87,3 +87,6 @@ analyzed-surveys.json
 # typescript
 
 packages/**/prod/
+
+# Rust
+target
