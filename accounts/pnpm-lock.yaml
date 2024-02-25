@@ -13,7 +13,7 @@ dependencies:
     version: 2.0.4
   mongodb:
     specifier: ^3.6.7
-    version: 3.6.7
+    version: 3.6.10
   ora:
     specifier: ^5.4.0
     version: 5.4.0
@@ -173,8 +173,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /mongodb@3.6.7:
-    resolution: {integrity: sha512-VXW2bWz47LhAEw0qs8Mk2zRgQwgbXH16KAwQFtylBu0zXO8rkQmA8ncsYbmICaVutZeINRlXYXG3MDIz90NM3g==}
+  /mongodb@3.6.10:
+    resolution: {integrity: sha512-fvIBQBF7KwCJnDZUnFFy4WqEFP8ibdXeFANnylW19+vOwdjOAvqIzPdsNCEMT6VKTHnYu4K64AWRih0mkFms6Q==}
     engines: {node: '>=4'}
     peerDependencies:
       aws4: '*'
