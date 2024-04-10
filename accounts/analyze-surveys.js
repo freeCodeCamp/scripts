@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const surveyResults = {};
 
-fs.readFile('surveys.json','utf8', (err, data) => {
+fs.readFile('surveys.json', 'utf8', (err, data) => {
   if (err) {
     console.error(`Error reading the file: ${err}`);
     return;
@@ -14,8 +14,8 @@ fs.readFile('surveys.json','utf8', (err, data) => {
   try {
     const surveyJson = JSON.parse(data);
 
-    surveyJson.forEach((survey) => {
-      survey.forEach((surveyResponse) => {
+    surveyJson.forEach(survey => {
+      survey.forEach(surveyResponse => {
         const { question, response } = surveyResponse;
 
         if (!surveyResults.hasOwnProperty(question)) {
