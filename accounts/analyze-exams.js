@@ -18,7 +18,7 @@ const examJsonFile = "exams.json";
  * 4. Add a new stage
  * 5. Disable the stage with the toggle next to the Stage 1 dropdown
  * 5. Put $match in the Stage 1 dropdown
- * 6. Put this in the Stage 1 query body: { isFoundationalCShardCertV8: true }
+ * 6. Put this in the Stage 1 query body: { isFoundationalCSharpCertV8: true }
  * 7. Add another new stage
  * 8. Disable the stage with the toggle next to the Stage 2 dropdown
  * 9. Put $group in the Stage 2 dropdown

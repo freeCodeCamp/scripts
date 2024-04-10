@@ -26,6 +26,7 @@ MongoClient.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     replicaSet: MONGO_RS,
+    readPreference: "secondary",
     auth: { user: MONGO_USER, password: MONGO_PASSWORD },
     poolSize: 20,
   },
@@ -37,7 +38,9 @@ MongoClient.connect(
 
     const stream = db
       .collection("user")
-      .find({ "completedExams.0": { $exists: true } }, { completedExams: 1 })
+      .find({ "completedExams.id": { $type: "string" } })
+      .hint( "completedExams.id_1" )
+      .project({ completedExams: 1 })
       .batchSize(100)
       .stream();
 

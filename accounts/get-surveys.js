@@ -29,6 +29,7 @@ MongoClient.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     replicaSet: MONGO_RS,
+    readPreference: 'secondary',
     auth: { user: MONGO_USER, password: MONGO_PASSWORD },
     poolSize: 20,
   },
