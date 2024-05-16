@@ -11,6 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "@tryghost/admin-api": "^1.13.8",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "graphql-request": "^6.1.0",
+    "jsdom": "^24.0.0",
+    "rehype-parse": "^9.0.0",
+    "rehype-remark": "^10.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-stringify": "^11.0.0",
+    "showdown": "^2.1.0",
+    "unified": "^11.0.4"
   }
 }
