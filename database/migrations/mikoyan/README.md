@@ -80,6 +80,7 @@ struct User {
 - `isWebsite`
 - `password`
 - `timezone`
+- `rand`
 - `completedChallenges.$[el].__cachedRelations`
 - `completedChallenges.$[el].__data`
 - `completedChallenges.$[el].__dataSource`
@@ -100,16 +101,18 @@ struct User {
 - `completedChallenges`
   - `[{ files: Undefined | Null }]` -> `[{ files: [] }]`
 - `progressTimestamps`
-  - `[{ timestamp: Double | Int32 | Int64 | String | Timestamp }]` -> `[Double]`
+  - `[{ timestamp: Double | Int32 | Int64 | String | Timestamp }]` -> `[i64]`
   - `[Null | Undefined]` -> `[]`
-  - `[Int64 | Int32 | String]` -> `[Double]`
+  - `[Int64 | Int32 | String]` -> `[i64]`
 - `yearsTopContributor`
   - `Undefined` -> `[]`
-  - `[String | Int32 | Int64]` -> `[Double]`
+  - `[String | Int32 | Int64]` -> `[Int32]`
     - A string of length 4 takes 24 bytes, a double takes 8 bytes
 - `profileUI`
   - `Undefined` -> `ProfileUI::default()`
   - Any `undefined` field -> `false` value
+- `email`
+  - Lowercase all email addresses
 
 ```rust
 ProfileUI {

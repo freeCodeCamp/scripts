@@ -10,8 +10,10 @@ use tokio::{self, io::AsyncWriteExt, task::JoinHandle};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 
 mod clapper;
+mod convert;
 mod db;
 mod normalize;
+mod record;
 
 use normalize::{normalize_user, NormalizeError};
 
@@ -124,10 +126,11 @@ async fn connect_and_process(
     let mut count: usize = 0;
     let epoch = (num_docs_to_handle / 1000).max(1);
     while let Some(user) = cursor.try_next().await? {
-        match normalize_user(&user) {
+        match normalize_user(user) {
             Ok(normalized_user) => {
                 // _id exists, because `normalize_user` returns an error if it does not
-                let id = user.get_object_id("_id").unwrap();
+                // TODO: Consider doing an `update_many` for all users with matching emails.
+                let id = normalized_user.get_object_id("_id").unwrap();
                 let filter = doc! {"_id": id};
                 let update_options = UpdateOptions::builder()
                     .array_filters(vec![doc! {
@@ -141,13 +144,16 @@ async fn connect_and_process(
             Err(normalize_error) => {
                 // Write to logs file
                 // Format: <user_id>: <error>
-                for e in normalize_error.iter() {
-                    match e {
-                        NormalizeError::UnhandledType { id, doc } => {
-                            logs_file
-                                .write_all(format!("{}: {}\n", id, doc).as_bytes())
-                                .await?;
-                        }
+                match normalize_error {
+                    NormalizeError::UnhandledType { id, doc } => {
+                        logs_file
+                            .write_all(format!("{}: {}\n", id, doc).as_bytes())
+                            .await?;
+                    }
+                    NormalizeError::ConfusedId { doc } => {
+                        logs_file
+                            .write_all(format!("{}: {}\n", "Confused ID", doc).as_bytes())
+                            .await?;
                     }
                 }
             }
