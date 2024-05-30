@@ -1,7 +1,7 @@
 use mongodb::bson::{self, Bson};
 use serde::Deserialize;
 
-use crate::record::{CompletedChallenge, CompletedExam, User};
+use crate::record::{CompletedChallenge, CompletedExam, NOption, User};
 
 struct UserVisitor;
 
@@ -21,6 +21,14 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let mut accepted_privacy_terms = None;
         let mut completed_challenges = None;
         let mut completed_exams = None;
+        let mut current_challenge_id = None;
+        let mut donation_emails = None;
+        let mut email = None;
+        let mut email_auth_link_ttl = None;
+        let mut email_verified = None;
+        let mut email_verify_ttl = None;
+        let mut external_id = None;
+        let mut github_profile = None;
         let mut name = None;
 
         while let Some(key) = map.next_key::<String>()? {
@@ -99,6 +107,100 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
+                "currentChallengeId" => {
+                    if current_challenge_id.is_some() {
+                        return Err(serde::de::Error::duplicate_field("currentChallengeId"));
+                    }
+
+                    current_challenge_id = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        Bson::ObjectId(v) => Some(v.to_hex()),
+                        _ => None,
+                    };
+                }
+                "donationEmails" => {
+                    if donation_emails.is_some() {
+                        return Err(serde::de::Error::duplicate_field("donationEmails"));
+                    }
+
+                    donation_emails = match map.next_value()? {
+                        Bson::Array(array) => {
+                            let mut donation_emails = vec![];
+                            for email in array {
+                                if let Bson::String(email) = email {
+                                    donation_emails.push(email.to_ascii_lowercase());
+                                }
+                            }
+                            Some(donation_emails)
+                        }
+                        _ => None,
+                    };
+                }
+                "email" => {
+                    if email.is_some() {
+                        return Err(serde::de::Error::duplicate_field("email"));
+                    }
+
+                    email = match map.next_value()? {
+                        Bson::String(v) => Some(v.to_ascii_lowercase()),
+                        _ => None,
+                    };
+                }
+                "emailAuthLinkTTL" => {
+                    if email_auth_link_ttl.is_some() {
+                        return Err(serde::de::Error::duplicate_field("email_auth_link_ttl"));
+                    }
+
+                    email_auth_link_ttl = match map.next_value()? {
+                        Bson::DateTime(v) => Some(NOption::Some(v)),
+                        Bson::String(s) => {
+                            let t = bson::DateTime::parse_rfc3339_str(&s).unwrap();
+                            let nullable = NOption::Some(t);
+                            Some(nullable)
+                        }
+                        _ => Some(NOption::Null),
+                    };
+                }
+                "emailVerified" => {
+                    if email_verified.is_some() {
+                        return Err(serde::de::Error::duplicate_field("email_verified"));
+                    }
+
+                    email_verified = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "emailVerifyTTL" => {
+                    if email_verify_ttl.is_some() {
+                        return Err(serde::de::Error::duplicate_field("email_verify_ttl"));
+                    }
+
+                    email_verify_ttl = match map.next_value()? {
+                        Bson::DateTime(v) => Some(NOption::Some(v)),
+                        _ => Some(NOption::Null),
+                    };
+                }
+                "externalId" => {
+                    if external_id.is_some() {
+                        return Err(serde::de::Error::duplicate_field("external_id"));
+                    }
+
+                    external_id = match map.next_value()? {
+                        Bson::String(v) => Some(NOption::Some(v)),
+                        _ => Some(NOption::Undefined),
+                    };
+                }
+                "githubProfile" => {
+                    if github_profile.is_some() {
+                        return Err(serde::de::Error::duplicate_field("github_profile"));
+                    }
+
+                    github_profile = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
                 "name" => {
                     if name.is_some() {
                         return Err(serde::de::Error::duplicate_field("name"));
@@ -120,6 +222,15 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let accepted_privacy_terms = accepted_privacy_terms.unwrap_or_default();
         let completed_challenges = completed_challenges.unwrap_or_default();
         let completed_exams = completed_exams.unwrap_or_default();
+        let current_challenge_id = current_challenge_id.unwrap_or_default();
+        let donation_emails = donation_emails.unwrap_or_default();
+        let email = email.unwrap_or_default();
+        let email_auth_link_ttl = email_auth_link_ttl.unwrap_or_default();
+        // TODO: default to false or true?
+        let email_verified = email_verified.unwrap_or_default();
+        let email_verify_ttl = email_verify_ttl.unwrap_or_default();
+        let external_id = external_id.unwrap_or_default();
+        let github_profile = github_profile.unwrap_or_default();
         let name = name.unwrap_or_default();
 
         Ok(User {
@@ -128,6 +239,14 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
             accepted_privacy_terms,
             completed_challenges,
             completed_exams,
+            current_challenge_id,
+            donation_emails,
+            email,
+            email_auth_link_ttl,
+            email_verified,
+            email_verify_ttl,
+            external_id,
+            github_profile,
             name,
         })
     }
@@ -210,12 +329,22 @@ mod tests {
     #[test]
     fn user_to_document() {
         let object_id = ObjectId::new();
+        let email_auth_link_ttl = NOption::Some(bson::DateTime::now());
+        let email_verify_ttl = NOption::Some(bson::DateTime::now());
         let user = User {
             _id: object_id,
             about: "about".to_string(),
             accepted_privacy_terms: true,
             completed_challenges: vec![],
             completed_exams: vec![],
+            current_challenge_id: object_id.to_hex(),
+            donation_emails: vec!["fcc@freecodecamp.org".to_string()],
+            email: "fcc@freecodecamp.org".to_string(),
+            email_auth_link_ttl,
+            email_verified: true,
+            email_verify_ttl,
+            external_id: NOption::Undefined,
+            github_profile: "".to_string(),
             name: "name".to_string(),
         };
 
@@ -226,6 +355,32 @@ mod tests {
         assert_eq!(doc.get_bool("acceptedPrivacyTerms").unwrap(), true);
         assert_eq!(doc.get_array("completedChallenges").unwrap().len(), 0);
         assert_eq!(doc.get_array("completedExams").unwrap().len(), 0);
+        assert_eq!(
+            doc.get_str("currentChallengeId").unwrap(),
+            object_id.to_hex()
+        );
+        assert_eq!(
+            doc.get_array("donationEmails")
+                .unwrap()
+                .first()
+                .unwrap()
+                .as_str()
+                .unwrap(),
+            "fcc@freecodecamp.org".to_string()
+        );
+        assert_eq!(doc.get_str("email").unwrap(), "fcc@freecodecamp.org");
+        // TODO
+        // assert_eq!(
+        //     doc.get_datetime("email_auth_link_ttl").unwrap(),
+        //     &email_auth_link_ttl
+        // );
+        assert_eq!(doc.get_bool("email_verified").unwrap(), true);
+        // assert_eq!(
+        //     doc.get_datetime("email_verify_ttl").unwrap(),
+        //     &email_verify_ttl
+        // );
+        // assert_eq!(doc.get_str("externalId").unwrap(), "");
+        assert_eq!(doc.get_str("githubProfile").unwrap(), "");
         assert_eq!(doc.get_str("name").unwrap(), "name");
     }
 }
