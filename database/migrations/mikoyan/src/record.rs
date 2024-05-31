@@ -1,8 +1,8 @@
 use mongodb::{
     self,
-    bson::{self, oid::ObjectId, Bson, DateTime, Document},
+    bson::{self, oid::ObjectId},
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 #[derive(Debug)]
 pub enum NOption<T> {
@@ -60,17 +60,18 @@ pub struct User {
     pub location: String,
     pub name: String,
     pub needs_moderation: bool,
-    pub new_email: String,
+    pub new_email: NOption<String>,
     pub partially_completed_challenges: Vec<PartiallyCompletedChallenge>,
     pub picture: String,
     pub portfolio: Vec<Portfolio>,
+    #[serde(rename = "profileUI")]
     pub profile_ui: ProfileUI,
     pub progress_timestamps: Vec<bson::DateTime>,
     pub saved_challenges: Vec<SavedChallenge>,
     pub send_quincy_email: bool,
     pub theme: String,
     pub twitter: String,
-    pub unsubscribe_id: String,
+    pub unsubscribe_id: NOption<String>,
     pub username_display: String,
     pub website: String,
     pub years_top_contributor: Vec<i32>,
@@ -105,13 +106,13 @@ pub struct ExamResults {
     pub percent_correct: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PartiallyCompletedChallenge {
     pub completed_date: bson::DateTime,
     pub id: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Portfolio {
     pub description: String,
     pub id: String,
@@ -120,7 +121,7 @@ pub struct Portfolio {
     pub url: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct ProfileUI {
     pub is_locked: bool,
     pub show_about: bool,
@@ -134,7 +135,24 @@ pub struct ProfileUI {
     pub show_time_line: bool,
 }
 
-#[derive(Debug)]
+impl Default for ProfileUI {
+    fn default() -> Self {
+        Self {
+            is_locked: true,
+            show_about: Default::default(),
+            show_certs: Default::default(),
+            show_donation: Default::default(),
+            show_heat_map: Default::default(),
+            show_location: Default::default(),
+            show_name: Default::default(),
+            show_points: Default::default(),
+            show_portfolio: Default::default(),
+            show_time_line: Default::default(),
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
 pub struct SavedChallenge {
     pub challenge_type: i32,
     pub files: Vec<File>,

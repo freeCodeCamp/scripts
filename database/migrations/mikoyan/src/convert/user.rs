@@ -1,7 +1,7 @@
 use mongodb::bson::{self, Bson};
 use serde::Deserialize;
 
-use crate::record::{CompletedChallenge, CompletedExam, NOption, User};
+use crate::record::{CompletedChallenge, CompletedExam, NOption, ProfileUI, User};
 
 struct UserVisitor;
 
@@ -58,21 +58,21 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let mut linkedin = None;
         let mut location = None;
         let mut name = None;
-            let mut needs_moderation = None;
-    let mut new_email = None;
-    let mut partially_completed_challenges = None;
-    let mut picture = None;
-    let mut portfolio = None;
-    let mut profile_ui = None;
-    let mut progress_timestamps = None;
-    let mut saved_challenges = None;
-    let mut send_quincy_email = None;
-    let mut theme = None;
-    let mut twitter = None;
-    let mut unsubscribe_id = None;
-    let mut username_display = None;
-    let mut website = None;
-    let mut years_top_contributor = None;
+        let mut needs_moderation = None;
+        let mut new_email = None;
+        let mut partially_completed_challenges = None;
+        let mut picture = None;
+        let mut portfolio = None;
+        let mut profile_ui = None;
+        let mut progress_timestamps = None;
+        let mut saved_challenges = None;
+        let mut send_quincy_email = None;
+        let mut theme = None;
+        let mut twitter = None;
+        let mut unsubscribe_id = None;
+        let mut username_display = None;
+        let mut website = None;
+        let mut years_top_contributor = None;
 
         while let Some(key) = map.next_key::<String>()? {
             match key.as_str() {
@@ -550,6 +550,147 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
+                "needsModeration" => {
+                    if needs_moderation.is_some() {
+                        return Err(serde::de::Error::duplicate_field("needs_moderation"));
+                    }
+
+                    needs_moderation = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "newEmail" => {
+                    if new_email.is_some() {
+                        return Err(serde::de::Error::duplicate_field("new_email"));
+                    }
+
+                    new_email = match map.next_value()? {
+                        Bson::String(v) => Some(NOption::Some(v)),
+                        _ => None,
+                    };
+                }
+                "partiallyCompletedChallenges" => {
+                    if partially_completed_challenges.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "partially_completed_challenges",
+                        ));
+                    }
+
+                    todo!();
+                }
+                "picture" => {
+                    if picture.is_some() {
+                        return Err(serde::de::Error::duplicate_field("picture"));
+                    }
+
+                    picture = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "portfolio" => {
+                    if portfolio.is_some() {
+                        return Err(serde::de::Error::duplicate_field("portfolio"));
+                    }
+
+                    todo!();
+                }
+                "profileUI" => {
+                    if profile_ui.is_some() {
+                        return Err(serde::de::Error::duplicate_field("profile_ui"));
+                    }
+
+                    profile_ui = match map.next_value()? {
+                        Bson::Document(doc) => {
+                            let profile_ui: ProfileUI =
+                                bson::from_bson(Bson::Document(doc)).unwrap();
+                            Some(profile_ui)
+                        }
+                        _ => None,
+                    };
+                }
+                "progressTimestamps" => {
+                    if progress_timestamps.is_some() {
+                        return Err(serde::de::Error::duplicate_field("progress_timestamps"));
+                    }
+
+                    todo!();
+                }
+                "savedChallenges" => {
+                    if saved_challenges.is_some() {
+                        return Err(serde::de::Error::duplicate_field("saved_challenges"));
+                    }
+
+                    todo!();
+                }
+                "sendQuincyEmail" => {
+                    if send_quincy_email.is_some() {
+                        return Err(serde::de::Error::duplicate_field("send_quincy_email"));
+                    }
+
+                    send_quincy_email = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "theme" => {
+                    if theme.is_some() {
+                        return Err(serde::de::Error::duplicate_field("theme"));
+                    }
+
+                    theme = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "twitter" => {
+                    if twitter.is_some() {
+                        return Err(serde::de::Error::duplicate_field("twitter"));
+                    }
+
+                    twitter = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "unsubscribeId" => {
+                    if unsubscribe_id.is_some() {
+                        return Err(serde::de::Error::duplicate_field("unsubscribe_id"));
+                    }
+
+                    unsubscribe_id = match map.next_value()? {
+                        Bson::String(v) => Some(NOption::Some(v)),
+                        _ => Some(NOption::Null),
+                    };
+                }
+                "usernameDisplay" => {
+                    if username_display.is_some() {
+                        return Err(serde::de::Error::duplicate_field("username_display"));
+                    }
+
+                    username_display = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "website" => {
+                    if website.is_some() {
+                        return Err(serde::de::Error::duplicate_field("website"));
+                    }
+
+                    website = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "yearsTopContributor" => {
+                    if years_top_contributor.is_some() {
+                        return Err(serde::de::Error::duplicate_field("years_top_contributor"));
+                    }
+
+                    todo!();
+                }
                 _ => {
                     println!("Skipping {key:?}");
                 }
@@ -599,21 +740,21 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let linkedin = linkedin.unwrap_or_default();
         let location = location.unwrap_or_default();
         let name = name.unwrap_or_default();
-            let needs_moderation = needs_moderation.unwrap_or_default();
-    let new_email = new_email.unwrap_or_default();
-    let partially_completed_challenges = partially_completed_challenges.unwrap_or_default();
-    let picture = picture.unwrap_or_default();
-    let portfolio = portfolio.unwrap_or_default();
-    let profile_ui = profile_ui.unwrap_or_default();
-    let progress_timestamps = progress_timestamps.unwrap_or_default();
-    let saved_challenges = saved_challenges.unwrap_or_default();
-    let send_quincy_email = send_quincy_email.unwrap_or_default();
-    let theme = theme.unwrap_or_default();
-    let twitter = twitter.unwrap_or_default();
-    let unsubscribe_id = unsubscribe_id.unwrap_or_default();
-    let username_display = username_display.unwrap_or_default();
-    let website = website.unwrap_or_default();
-    let years_top_contributor = years_top_contributor.unwrap_or_default();
+        let needs_moderation = needs_moderation.unwrap_or_default();
+        let new_email = new_email.unwrap_or_default();
+        let partially_completed_challenges = partially_completed_challenges.unwrap_or_default();
+        let picture = picture.unwrap_or_default();
+        let portfolio = portfolio.unwrap_or_default();
+        let profile_ui = profile_ui.unwrap_or_default();
+        let progress_timestamps = progress_timestamps.unwrap_or_default();
+        let saved_challenges = saved_challenges.unwrap_or_default();
+        let send_quincy_email = send_quincy_email.unwrap_or_default();
+        let theme = theme.unwrap_or_default();
+        let twitter = twitter.unwrap_or_default();
+        let unsubscribe_id = unsubscribe_id.unwrap_or_default();
+        let username_display = username_display.unwrap_or_default();
+        let website = website.unwrap_or_default();
+        let years_top_contributor = years_top_contributor.unwrap_or_default();
 
         Ok(User {
             _id,
@@ -658,21 +799,21 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
             linkedin,
             location,
             name,
-                needs_moderation,
-    new_email,
-    partially_completed_challenges,
-    picture,
-    portfolio,
-    profile_ui,
-    progress_timestamps,
-    saved_challenges,
-    send_quincy_email,
-    theme,
-    twitter,
-    unsubscribe_id,
-    username_display,
-    website,
-    years_top_contributor,
+            needs_moderation,
+            new_email,
+            partially_completed_challenges,
+            picture,
+            portfolio,
+            profile_ui,
+            progress_timestamps,
+            saved_challenges,
+            send_quincy_email,
+            theme,
+            twitter,
+            unsubscribe_id,
+            username_display,
+            website,
+            years_top_contributor,
         })
     }
 
@@ -695,6 +836,8 @@ impl<'de> Deserialize<'de> for User {
 
 #[cfg(test)]
 mod tests {
+    use crate::record::ProfileUI;
+
     use super::*;
     use bson::oid::ObjectId;
 
@@ -756,6 +899,19 @@ mod tests {
         let object_id = ObjectId::new();
         let email_auth_link_ttl = NOption::Some(bson::DateTime::now());
         let email_verify_ttl = NOption::Some(bson::DateTime::now());
+        let profile_ui = ProfileUI {
+            is_locked: true,
+            show_about: false,
+            show_certs: false,
+            show_donation: false,
+            show_heat_map: false,
+            show_location: false,
+            show_name: false,
+            show_points: false,
+            show_portfolio: false,
+            show_time_line: false,
+        };
+
         let user = User {
             _id: object_id,
             about: "about".to_string(),
@@ -799,21 +955,21 @@ mod tests {
             linkedin: "".to_string(),
             location: "".to_string(),
             name: "name".to_string(),
-                needs_moderation: ,
-    new_email: ,
-    partially_completed_challenges: ,
-    picture: ,
-    portfolio: ,
-    profile_ui: ,
-    progress_timestamps: ,
-    saved_challenges: ,
-    send_quincy_email: ,
-    theme: ,
-    twitter: ,
-    unsubscribe_id: ,
-    username_display: ,
-    website: ,
-    years_top_contributor: ,
+            needs_moderation: false,
+            new_email: NOption::Null,
+            partially_completed_challenges: vec![],
+            picture: "".to_string(),
+            portfolio: vec![],
+            profile_ui,
+            progress_timestamps: vec![],
+            saved_challenges: vec![],
+            send_quincy_email: false,
+            theme: "light".to_string(),
+            twitter: "".to_string(),
+            unsubscribe_id: NOption::Null,
+            username_display: "".to_string(),
+            website: "".to_string(),
+            years_top_contributor: vec![],
         };
 
         let doc = mongodb::bson::to_document(&user).unwrap();
