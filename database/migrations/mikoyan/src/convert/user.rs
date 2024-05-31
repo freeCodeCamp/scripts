@@ -29,7 +29,50 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let mut email_verify_ttl = None;
         let mut external_id = None;
         let mut github_profile = None;
+        let mut is_2018_data_vis_cert = None;
+        let mut is_2018_full_stack_cert = None;
+        let mut is_apis_microservices_cert = None;
+        let mut is_back_end_cert = None;
+        let mut is_banned = None;
+        let mut is_cheater = None;
+        let mut is_classroom_account = None;
+        let mut is_college_algebra_py_cert_v8 = None;
+        let mut is_data_analysis_py_cert_v7 = None;
+        let mut is_data_vis_cert = None;
+        let mut is_donating = None;
+        let mut is_foundational_c_sharp_cert_v8 = None;
+        let mut is_front_end_cert = None;
+        let mut is_front_end_libs_cert = None;
+        let mut is_full_stack_cert = None;
+        let mut is_honest = None;
+        let mut is_infosec_cert_v7 = None;
+        let mut is_infosec_qa_cert = None;
+        let mut is_js_algo_data_struct_cert = None;
+        let mut is_js_algo_data_struct_cert_v8 = None;
+        let mut is_machine_learning_py_cert_v7 = None;
+        let mut is_qa_cert_v7 = None;
+        let mut is_relational_database_cert_v8 = None;
+        let mut is_resp_web_design_cert = None;
+        let mut is_sci_comp_py_cert_v7 = None;
+        let mut keyboard_shortcuts = None;
+        let mut linkedin = None;
+        let mut location = None;
         let mut name = None;
+            let mut needs_moderation = None;
+    let mut new_email = None;
+    let mut partially_completed_challenges = None;
+    let mut picture = None;
+    let mut portfolio = None;
+    let mut profile_ui = None;
+    let mut progress_timestamps = None;
+    let mut saved_challenges = None;
+    let mut send_quincy_email = None;
+    let mut theme = None;
+    let mut twitter = None;
+    let mut unsubscribe_id = None;
+    let mut username_display = None;
+    let mut website = None;
+    let mut years_top_contributor = None;
 
         while let Some(key) = map.next_key::<String>()? {
             match key.as_str() {
@@ -201,6 +244,302 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
+                "is2018DataVisCert" => {
+                    if is_2018_data_vis_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_2018_data_vis_cert"));
+                    }
+
+                    is_2018_data_vis_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "is2018FullStackCert" => {
+                    if is_2018_full_stack_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_2018_full_stack_cert"));
+                    }
+
+                    is_2018_full_stack_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isApisMicroservicesCert" => {
+                    if is_apis_microservices_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_apis_microservices_cert",
+                        ));
+                    }
+
+                    is_apis_microservices_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isBackEndCert" => {
+                    if is_back_end_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_back_end_cert"));
+                    }
+
+                    is_back_end_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isBanned" => {
+                    if is_banned.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_banned"));
+                    }
+
+                    is_banned = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isCheater" => {
+                    if is_cheater.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_cheater"));
+                    }
+
+                    is_cheater = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isClassroomAccount" => {
+                    if is_classroom_account.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_classroom_account"));
+                    }
+
+                    is_classroom_account = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isCollegeAlgebraPyCertV8" => {
+                    if is_college_algebra_py_cert_v8.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_college_algebra_py_cert_v8",
+                        ));
+                    }
+
+                    is_college_algebra_py_cert_v8 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isDataAnalysisPyCertV7" => {
+                    if is_data_analysis_py_cert_v7.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_data_analysis_py_cert_v7",
+                        ));
+                    }
+
+                    is_data_analysis_py_cert_v7 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isDataVisCert" => {
+                    if is_data_vis_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_data_vis_cert"));
+                    }
+
+                    is_data_vis_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isDonating" => {
+                    if is_donating.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_donating"));
+                    }
+
+                    is_donating = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isFoundationalCSharpCertV8" => {
+                    if is_foundational_c_sharp_cert_v8.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_foundational_c_sharp_cert_v8",
+                        ));
+                    }
+
+                    is_foundational_c_sharp_cert_v8 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isFrontEndCert" => {
+                    if is_front_end_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_front_end_cert"));
+                    }
+
+                    is_front_end_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isFrontEndLibsCert" => {
+                    if is_front_end_libs_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_front_end_libs_cert"));
+                    }
+
+                    is_front_end_libs_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isFullStackCert" => {
+                    if is_full_stack_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_full_stack_cert"));
+                    }
+
+                    is_full_stack_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isHonest" => {
+                    if is_honest.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_honest"));
+                    }
+
+                    is_honest = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isInfosecCertV7" => {
+                    if is_infosec_cert_v7.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_infosec_cert_v7"));
+                    }
+
+                    is_infosec_cert_v7 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isInfosecQACert" => {
+                    if is_infosec_qa_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_infosec_qa_cert"));
+                    }
+
+                    is_infosec_qa_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isJsAlgoDataStructCert" => {
+                    if is_js_algo_data_struct_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_js_algo_data_struct_cert",
+                        ));
+                    }
+
+                    is_js_algo_data_struct_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isJsAlgoDataStructCertV8" => {
+                    if is_js_algo_data_struct_cert_v8.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_js_algo_data_struct_cert_v8",
+                        ));
+                    }
+
+                    is_js_algo_data_struct_cert_v8 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isMachineLearningPyCertV7" => {
+                    if is_machine_learning_py_cert_v7.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_machine_learning_py_cert_v7",
+                        ));
+                    }
+
+                    is_machine_learning_py_cert_v7 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isQACertV7" => {
+                    if is_qa_cert_v7.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_qa_cert_v7"));
+                    }
+
+                    is_qa_cert_v7 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isRelationalDatabaseCertV8" => {
+                    if is_relational_database_cert_v8.is_some() {
+                        return Err(serde::de::Error::duplicate_field(
+                            "is_relational_database_cert_v8",
+                        ));
+                    }
+
+                    is_relational_database_cert_v8 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isRespWebDesignCert" => {
+                    if is_resp_web_design_cert.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_resp_web_design_cert"));
+                    }
+
+                    is_resp_web_design_cert = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "isSciCompPyCertV7" => {
+                    if is_sci_comp_py_cert_v7.is_some() {
+                        return Err(serde::de::Error::duplicate_field("is_sci_comp_py_cert_v7"));
+                    }
+
+                    is_sci_comp_py_cert_v7 = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "keyboardShortcuts" => {
+                    if keyboard_shortcuts.is_some() {
+                        return Err(serde::de::Error::duplicate_field("keyboardShortcuts"));
+                    }
+
+                    keyboard_shortcuts = match map.next_value()? {
+                        Bson::Boolean(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "linkedin" => {
+                    if linkedin.is_some() {
+                        return Err(serde::de::Error::duplicate_field("linkedin"));
+                    }
+
+                    linkedin = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
+                "location" => {
+                    if location.is_some() {
+                        return Err(serde::de::Error::duplicate_field("location"));
+                    }
+
+                    location = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
                 "name" => {
                     if name.is_some() {
                         return Err(serde::de::Error::duplicate_field("name"));
@@ -231,7 +570,50 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let email_verify_ttl = email_verify_ttl.unwrap_or_default();
         let external_id = external_id.unwrap_or_default();
         let github_profile = github_profile.unwrap_or_default();
+        let is_2018_data_vis_cert = is_2018_data_vis_cert.unwrap_or_default();
+        let is_2018_full_stack_cert = is_2018_full_stack_cert.unwrap_or_default();
+        let is_apis_microservices_cert = is_apis_microservices_cert.unwrap_or_default();
+        let is_back_end_cert = is_back_end_cert.unwrap_or_default();
+        let is_banned = is_banned.unwrap_or_default();
+        let is_cheater = is_cheater.unwrap_or_default();
+        let is_classroom_account = is_classroom_account.unwrap_or_default();
+        let is_college_algebra_py_cert_v8 = is_college_algebra_py_cert_v8.unwrap_or_default();
+        let is_data_analysis_py_cert_v7 = is_data_analysis_py_cert_v7.unwrap_or_default();
+        let is_data_vis_cert = is_data_vis_cert.unwrap_or_default();
+        let is_donating = is_donating.unwrap_or_default();
+        let is_foundational_c_sharp_cert_v8 = is_foundational_c_sharp_cert_v8.unwrap_or_default();
+        let is_front_end_cert = is_front_end_cert.unwrap_or_default();
+        let is_front_end_libs_cert = is_front_end_libs_cert.unwrap_or_default();
+        let is_full_stack_cert = is_full_stack_cert.unwrap_or_default();
+        let is_honest = is_honest.unwrap_or_default();
+        let is_infosec_cert_v7 = is_infosec_cert_v7.unwrap_or_default();
+        let is_infosec_qa_cert = is_infosec_qa_cert.unwrap_or_default();
+        let is_js_algo_data_struct_cert = is_js_algo_data_struct_cert.unwrap_or_default();
+        let is_js_algo_data_struct_cert_v8 = is_js_algo_data_struct_cert_v8.unwrap_or_default();
+        let is_machine_learning_py_cert_v7 = is_machine_learning_py_cert_v7.unwrap_or_default();
+        let is_qa_cert_v7 = is_qa_cert_v7.unwrap_or_default();
+        let is_relational_database_cert_v8 = is_relational_database_cert_v8.unwrap_or_default();
+        let is_resp_web_design_cert = is_resp_web_design_cert.unwrap_or_default();
+        let is_sci_comp_py_cert_v7 = is_sci_comp_py_cert_v7.unwrap_or_default();
+        let keyboard_shortcuts = keyboard_shortcuts.unwrap_or_default();
+        let linkedin = linkedin.unwrap_or_default();
+        let location = location.unwrap_or_default();
         let name = name.unwrap_or_default();
+            let needs_moderation = needs_moderation.unwrap_or_default();
+    let new_email = new_email.unwrap_or_default();
+    let partially_completed_challenges = partially_completed_challenges.unwrap_or_default();
+    let picture = picture.unwrap_or_default();
+    let portfolio = portfolio.unwrap_or_default();
+    let profile_ui = profile_ui.unwrap_or_default();
+    let progress_timestamps = progress_timestamps.unwrap_or_default();
+    let saved_challenges = saved_challenges.unwrap_or_default();
+    let send_quincy_email = send_quincy_email.unwrap_or_default();
+    let theme = theme.unwrap_or_default();
+    let twitter = twitter.unwrap_or_default();
+    let unsubscribe_id = unsubscribe_id.unwrap_or_default();
+    let username_display = username_display.unwrap_or_default();
+    let website = website.unwrap_or_default();
+    let years_top_contributor = years_top_contributor.unwrap_or_default();
 
         Ok(User {
             _id,
@@ -247,7 +629,50 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
             email_verify_ttl,
             external_id,
             github_profile,
+            is_2018_data_vis_cert,
+            is_2018_full_stack_cert,
+            is_apis_microservices_cert,
+            is_back_end_cert,
+            is_banned,
+            is_cheater,
+            is_classroom_account,
+            is_college_algebra_py_cert_v8,
+            is_data_analysis_py_cert_v7,
+            is_data_vis_cert,
+            is_donating,
+            is_foundational_c_sharp_cert_v8,
+            is_front_end_cert,
+            is_front_end_libs_cert,
+            is_full_stack_cert,
+            is_honest,
+            is_infosec_cert_v7,
+            is_infosec_qa_cert,
+            is_js_algo_data_struct_cert,
+            is_js_algo_data_struct_cert_v8,
+            is_machine_learning_py_cert_v7,
+            is_qa_cert_v7,
+            is_relational_database_cert_v8,
+            is_resp_web_design_cert,
+            is_sci_comp_py_cert_v7,
+            keyboard_shortcuts,
+            linkedin,
+            location,
             name,
+                needs_moderation,
+    new_email,
+    partially_completed_challenges,
+    picture,
+    portfolio,
+    profile_ui,
+    progress_timestamps,
+    saved_challenges,
+    send_quincy_email,
+    theme,
+    twitter,
+    unsubscribe_id,
+    username_display,
+    website,
+    years_top_contributor,
         })
     }
 
@@ -345,7 +770,50 @@ mod tests {
             email_verify_ttl,
             external_id: NOption::Undefined,
             github_profile: "".to_string(),
+            is_2018_data_vis_cert: false,
+            is_2018_full_stack_cert: false,
+            is_apis_microservices_cert: false,
+            is_back_end_cert: false,
+            is_banned: false,
+            is_cheater: false,
+            is_classroom_account: false,
+            is_college_algebra_py_cert_v8: false,
+            is_data_analysis_py_cert_v7: false,
+            is_data_vis_cert: false,
+            is_donating: false,
+            is_foundational_c_sharp_cert_v8: false,
+            is_front_end_cert: false,
+            is_front_end_libs_cert: false,
+            is_full_stack_cert: false,
+            is_honest: false,
+            is_infosec_cert_v7: false,
+            is_infosec_qa_cert: false,
+            is_js_algo_data_struct_cert: false,
+            is_js_algo_data_struct_cert_v8: false,
+            is_machine_learning_py_cert_v7: false,
+            is_qa_cert_v7: false,
+            is_relational_database_cert_v8: false,
+            is_resp_web_design_cert: false,
+            is_sci_comp_py_cert_v7: false,
+            keyboard_shortcuts: false,
+            linkedin: "".to_string(),
+            location: "".to_string(),
             name: "name".to_string(),
+                needs_moderation: ,
+    new_email: ,
+    partially_completed_challenges: ,
+    picture: ,
+    portfolio: ,
+    profile_ui: ,
+    progress_timestamps: ,
+    saved_challenges: ,
+    send_quincy_email: ,
+    theme: ,
+    twitter: ,
+    unsubscribe_id: ,
+    username_display: ,
+    website: ,
+    years_top_contributor: ,
         };
 
         let doc = mongodb::bson::to_document(&user).unwrap();
@@ -374,13 +842,41 @@ mod tests {
         //     doc.get_datetime("email_auth_link_ttl").unwrap(),
         //     &email_auth_link_ttl
         // );
-        assert_eq!(doc.get_bool("email_verified").unwrap(), true);
+        assert_eq!(doc.get_bool("emailVerified").unwrap(), true);
         // assert_eq!(
         //     doc.get_datetime("email_verify_ttl").unwrap(),
         //     &email_verify_ttl
         // );
         // assert_eq!(doc.get_str("externalId").unwrap(), "");
         assert_eq!(doc.get_str("githubProfile").unwrap(), "");
+        assert_eq!(doc.get_bool("is2018DataVisCert").unwrap(), false);
+        assert_eq!(doc.get_bool("is2018FullStackCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isApisMicroservicesCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isBackEndCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isBanned").unwrap(), false);
+        assert_eq!(doc.get_bool("isCheater").unwrap(), false);
+        assert_eq!(doc.get_bool("isClassroomAccount").unwrap(), false);
+        assert_eq!(doc.get_bool("isCollegeAlgebraPyCertV8").unwrap(), false);
+        assert_eq!(doc.get_bool("isDataAnalysisPyCertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("isDataVisCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isDonating").unwrap(), false);
+        assert_eq!(doc.get_bool("isFoundationalCSharpCertV8").unwrap(), false);
+        assert_eq!(doc.get_bool("isFrontEndCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isFrontEndLibsCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isFullStackCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isHonest").unwrap(), false);
+        assert_eq!(doc.get_bool("isInfosecCertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("isInfosecQACert").unwrap(), false);
+        assert_eq!(doc.get_bool("isJsAlgoDataStructCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isJsAlgoDataStructCertV8").unwrap(), false);
+        assert_eq!(doc.get_bool("isMachineLearningPyCertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("isQACertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("isRelationalDatabaseCertV8").unwrap(), false);
+        assert_eq!(doc.get_bool("isRespWebDesignCert").unwrap(), false);
+        assert_eq!(doc.get_bool("isSciCompPyCertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("keyboardShortcuts").unwrap(), false);
+        assert_eq!(doc.get_str("linkedin").unwrap(), "");
+        assert_eq!(doc.get_str("location").unwrap(), "");
         assert_eq!(doc.get_str("name").unwrap(), "name");
     }
 }
