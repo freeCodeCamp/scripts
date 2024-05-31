@@ -1,7 +1,10 @@
 use mongodb::bson::{self, Bson};
 use serde::Deserialize;
 
-use crate::record::{CompletedChallenge, CompletedExam, NOption, ProfileUI, User};
+use crate::record::{
+    CompletedChallenge, CompletedExam, NOption, PartiallyCompletedChallenge, Portfolio, ProfileUI,
+    User,
+};
 
 struct UserVisitor;
 
@@ -142,7 +145,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         Bson::Array(array) => {
                             let mut completed_exams = vec![];
                             for exam in array {
-                                let exam: CompletedExam = bson::from_bson(exam).expect("Error");
+                                let exam: CompletedExam = bson::from_bson(exam).expect("TODO");
                                 completed_exams.push(exam);
                             }
                             Some(completed_exams)
@@ -577,7 +580,18 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         ));
                     }
 
-                    todo!();
+                    partially_completed_challenges = match map.next_value()? {
+                        Bson::Array(array) => {
+                            let mut partially_completed_challenges = vec![];
+                            for challenge in array {
+                                let challenge: PartiallyCompletedChallenge =
+                                    bson::from_bson(challenge).expect("TODO");
+                                partially_completed_challenges.push(challenge);
+                            }
+                            Some(partially_completed_challenges)
+                        }
+                        _ => None,
+                    };
                 }
                 "picture" => {
                     if picture.is_some() {
@@ -594,7 +608,17 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         return Err(serde::de::Error::duplicate_field("portfolio"));
                     }
 
-                    todo!();
+                    portfolio = match map.next_value()? {
+                        Bson::Array(array) => {
+                            let mut portfolio = vec![];
+                            for item in array {
+                                let item: Portfolio = bson::from_bson(item).expect("TODO");
+                                portfolio.push(item);
+                            }
+                            Some(portfolio)
+                        }
+                        _ => None,
+                    };
                 }
                 "profileUI" => {
                     if profile_ui.is_some() {
@@ -706,7 +730,6 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let donation_emails = donation_emails.unwrap_or_default();
         let email = email.unwrap_or_default();
         let email_auth_link_ttl = email_auth_link_ttl.unwrap_or_default();
-        // TODO: default to false or true?
         let email_verified = email_verified.unwrap_or_default();
         let email_verify_ttl = email_verify_ttl.unwrap_or_default();
         let external_id = external_id.unwrap_or_default();
