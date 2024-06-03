@@ -645,7 +645,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for (_, value) in doc {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(v as i64);
+                                        progress_timestamps.push(DateTime::from_millis(v as i64));
                                     }
                                     _ => {}
                                 };
@@ -657,21 +657,27 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for value in arr {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(v as i64);
+                                        progress_timestamps.push(DateTime::from_millis(v as i64));
                                     }
                                     Bson::DateTime(v) => {
-                                        progress_timestamps.push(v.timestamp_millis());
+                                        progress_timestamps.push(v);
                                     }
                                     Bson::Int32(v) => {
-                                        progress_timestamps.push(v as i64);
+                                        progress_timestamps.push(DateTime::from_millis(v as i64));
                                     }
                                     Bson::Int64(v) => {
-                                        progress_timestamps.push(v);
+                                        progress_timestamps
+                                            .push(DateTime::from_millis(v.try_into().unwrap()));
                                     }
                                     Bson::String(v) => {
                                         if let Ok(v) = v.parse::<i64>() {
-                                            progress_timestamps.push(v);
+                                            progress_timestamps
+                                                .push(DateTime::from_millis(v.try_into().unwrap()));
                                         }
+                                    }
+                                    Bson::Timestamp(v) => {
+                                        progress_timestamps
+                                            .push(DateTime::from_millis(v.time as i64));
                                     }
                                     _ => {}
                                 };
@@ -820,11 +826,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let picture = picture.unwrap_or_default();
         let portfolio = portfolio.unwrap_or_default();
         let profile_ui = profile_ui.unwrap_or_default();
-        let progress_timestamps = progress_timestamps
-            .unwrap_or_default()
-            .into_iter()
-            .map(|i| DateTime::from_millis(i))
-            .collect();
+        let progress_timestamps = progress_timestamps.unwrap_or_default();
         let saved_challenges = saved_challenges.unwrap_or_default();
         let send_quincy_email = send_quincy_email.unwrap_or_default();
         let theme = theme.unwrap_or_default();
