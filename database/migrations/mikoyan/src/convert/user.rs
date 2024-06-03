@@ -145,7 +145,12 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         Bson::Array(array) => {
                             let mut completed_exams = vec![];
                             for exam in array {
-                                let exam: CompletedExam = bson::from_bson(exam).expect("TODO");
+                                let exam: CompletedExam = bson::from_bson(exam).map_err(|e| {
+                                    serde::de::Error::invalid_value(
+                                        serde::de::Unexpected::Other(&e.to_string()),
+                                        &"a valid CompletedExam",
+                                    )
+                                })?;
                                 completed_exams.push(exam);
                             }
                             Some(completed_exams)
@@ -647,7 +652,9 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                                     Bson::Double(v) => {
                                         progress_timestamps.push(DateTime::from_millis(v as i64));
                                     }
-                                    _ => {}
+                                    _ => {
+                                        // No-Op
+                                    }
                                 };
                             }
                             Some(progress_timestamps)
@@ -679,7 +686,9 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                                         progress_timestamps
                                             .push(DateTime::from_millis(v.time as i64));
                                     }
-                                    _ => {}
+                                    _ => {
+                                        // No-Op
+                                    }
                                 };
                             }
                             Some(progress_timestamps)
@@ -770,7 +779,26 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         return Err(serde::de::Error::duplicate_field("years_top_contributor"));
                     }
 
-                    todo!();
+                    years_top_contributor = match map.next_value()? {
+                        Bson::Array(array) => {
+                            let mut years_top_contributor = vec![];
+                            for year in array {
+                                match year {
+                                    Bson::String(v) => {
+                                        if let Ok(v) = v.parse::<i32>() {
+                                            years_top_contributor.push(v);
+                                        }
+                                    }
+                                    Bson::Int32(v) => years_top_contributor.push(v),
+                                    Bson::Int64(v) => years_top_contributor.push(v as i32),
+                                    Bson::Double(v) => years_top_contributor.push(v as i32),
+                                    _ => {}
+                                }
+                            }
+                            Some(years_top_contributor)
+                        }
+                        _ => None,
+                    };
                 }
                 _ => {
                     println!("Skipping {key:?}");

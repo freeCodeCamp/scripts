@@ -61,7 +61,7 @@ impl<'de> serde::de::Visitor<'de> for CompletedExamVisitor {
                     exam_results = match map.next_value()? {
                         Bson::Document(doc) => {
                             let exam_results: ExamResults =
-                                bson::from_bson(Bson::Document(doc)).expect("Error");
+                                bson::from_document(doc).expect("Error");
                             Some(exam_results)
                         }
                         _ => None,
@@ -83,10 +83,13 @@ impl<'de> serde::de::Visitor<'de> for CompletedExamVisitor {
             }
         }
 
-        let challenge_type = challenge_type.unwrap_or_default();
-        let completed_date = completed_date.unwrap_or(DateTime::now());
-        let exam_results = todo!("Discuss with Tom what is needed if such a case occurs");
-        let id = id.unwrap_or_default();
+        // DEFAULTS should never happen. So, error should be returned to prevent any change to user record.
+        let challenge_type =
+            challenge_type.ok_or(serde::de::Error::missing_field("challengeType"))?;
+        let completed_date =
+            completed_date.ok_or(serde::de::Error::missing_field("completedDate"))?;
+        let exam_results = exam_results.ok_or(serde::de::Error::missing_field("examResults"))?;
+        let id = id.ok_or(serde::de::Error::missing_field("id"))?;
 
         Ok(CompletedExam {
             challenge_type,

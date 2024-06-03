@@ -145,9 +145,9 @@ async fn connect_and_process(
                 // Write to logs file
                 // Format: <user_id>: <error>
                 match normalize_error {
-                    NormalizeError::UnhandledType { id, doc } => {
+                    NormalizeError::UnhandledType { id, error } => {
                         logs_file
-                            .write_all(format!("{}: {}\n", id, doc).as_bytes())
+                            .write_all(format!("{}: {}\n", id, error).as_bytes())
                             .await?;
                     }
                     NormalizeError::ConfusedId { doc } => {
