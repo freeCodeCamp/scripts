@@ -121,6 +121,18 @@ pub struct Portfolio {
     pub url: String,
 }
 
+impl Default for Portfolio {
+    fn default() -> Self {
+        Self {
+            description: Default::default(),
+            id: Default::default(),
+            image: Default::default(),
+            title: Default::default(),
+            url: Default::default(),
+        }
+    }
+}
+
 #[derive(Debug, Serialize)]
 pub struct ProfileUI {
     pub is_locked: bool,

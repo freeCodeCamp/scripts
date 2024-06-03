@@ -1,9 +1,9 @@
-use mongodb::bson::{self, Bson};
+use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
 use crate::record::{
     CompletedChallenge, CompletedExam, NOption, PartiallyCompletedChallenge, Portfolio, ProfileUI,
-    User,
+    SavedChallenge, User,
 };
 
 struct UserVisitor;
@@ -612,7 +612,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         Bson::Array(array) => {
                             let mut portfolio = vec![];
                             for item in array {
-                                let item: Portfolio = bson::from_bson(item).expect("TODO");
+                                let item: Portfolio = bson::from_bson(item).unwrap_or_default();
                                 portfolio.push(item);
                             }
                             Some(portfolio)
@@ -628,7 +628,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                     profile_ui = match map.next_value()? {
                         Bson::Document(doc) => {
                             let profile_ui: ProfileUI =
-                                bson::from_bson(Bson::Document(doc)).unwrap();
+                                bson::from_bson(Bson::Document(doc)).unwrap_or_default();
                             Some(profile_ui)
                         }
                         _ => None,
@@ -639,14 +639,65 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         return Err(serde::de::Error::duplicate_field("progress_timestamps"));
                     }
 
-                    todo!();
+                    progress_timestamps = match map.next_value()? {
+                        Bson::Document(doc) => {
+                            let mut progress_timestamps = vec![];
+                            for (_, value) in doc {
+                                match value {
+                                    Bson::Double(v) => {
+                                        progress_timestamps.push(v as i64);
+                                    }
+                                    _ => {}
+                                };
+                            }
+                            Some(progress_timestamps)
+                        }
+                        Bson::Array(arr) => {
+                            let mut progress_timestamps = vec![];
+                            for value in arr {
+                                match value {
+                                    Bson::Double(v) => {
+                                        progress_timestamps.push(v as i64);
+                                    }
+                                    Bson::DateTime(v) => {
+                                        progress_timestamps.push(v.timestamp_millis());
+                                    }
+                                    Bson::Int32(v) => {
+                                        progress_timestamps.push(v as i64);
+                                    }
+                                    Bson::Int64(v) => {
+                                        progress_timestamps.push(v);
+                                    }
+                                    Bson::String(v) => {
+                                        if let Ok(v) = v.parse::<i64>() {
+                                            progress_timestamps.push(v);
+                                        }
+                                    }
+                                    _ => {}
+                                };
+                            }
+                            Some(progress_timestamps)
+                        }
+                        _ => None,
+                    }
                 }
                 "savedChallenges" => {
                     if saved_challenges.is_some() {
                         return Err(serde::de::Error::duplicate_field("saved_challenges"));
                     }
 
-                    todo!();
+                    saved_challenges = match map.next_value()? {
+                        Bson::Array(array) => {
+                            let mut saved_challenges = vec![];
+                            for challenge in array {
+                                let challenge: SavedChallenge =
+                                    bson::from_bson(challenge).expect("Error");
+                                saved_challenges.push(challenge);
+                            }
+                            Some(saved_challenges)
+                        }
+                        _ => None,
+                    };
                 }
                 "sendQuincyEmail" => {
                     if send_quincy_email.is_some() {
@@ -769,7 +820,11 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let picture = picture.unwrap_or_default();
         let portfolio = portfolio.unwrap_or_default();
         let profile_ui = profile_ui.unwrap_or_default();
-        let progress_timestamps = progress_timestamps.unwrap_or_default();
+        let progress_timestamps = progress_timestamps
+            .unwrap_or_default()
+            .into_iter()
+            .map(|i| DateTime::from_millis(i))
+            .collect();
         let saved_challenges = saved_challenges.unwrap_or_default();
         let send_quincy_email = send_quincy_email.unwrap_or_default();
         let theme = theme.unwrap_or_default();
