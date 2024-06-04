@@ -199,7 +199,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "emailAuthLinkTTL" => {
                     if email_auth_link_ttl.is_some() {
-                        return Err(serde::de::Error::duplicate_field("email_auth_link_ttl"));
+                        return Err(serde::de::Error::duplicate_field("emailAuthLinkTTL"));
                     }
 
                     email_auth_link_ttl = match map.next_value()? {
@@ -214,7 +214,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "emailVerified" => {
                     if email_verified.is_some() {
-                        return Err(serde::de::Error::duplicate_field("email_verified"));
+                        return Err(serde::de::Error::duplicate_field("emailVerified"));
                     }
 
                     email_verified = match map.next_value()? {
@@ -224,7 +224,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "emailVerifyTTL" => {
                     if email_verify_ttl.is_some() {
-                        return Err(serde::de::Error::duplicate_field("email_verify_ttl"));
+                        return Err(serde::de::Error::duplicate_field("emailVerifyTTL"));
                     }
 
                     email_verify_ttl = match map.next_value()? {
@@ -234,7 +234,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "externalId" => {
                     if external_id.is_some() {
-                        return Err(serde::de::Error::duplicate_field("external_id"));
+                        return Err(serde::de::Error::duplicate_field("externalId"));
                     }
 
                     external_id = match map.next_value()? {
@@ -244,7 +244,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "githubProfile" => {
                     if github_profile.is_some() {
-                        return Err(serde::de::Error::duplicate_field("github_profile"));
+                        return Err(serde::de::Error::duplicate_field("githubProfile"));
                     }
 
                     github_profile = match map.next_value()? {
@@ -254,7 +254,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "is2018DataVisCert" => {
                     if is_2018_data_vis_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_2018_data_vis_cert"));
+                        return Err(serde::de::Error::duplicate_field("is2018DataVisCert"));
                     }
 
                     is_2018_data_vis_cert = match map.next_value()? {
@@ -264,7 +264,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "is2018FullStackCert" => {
                     if is_2018_full_stack_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_2018_full_stack_cert"));
+                        return Err(serde::de::Error::duplicate_field("is2018FullStackCert"));
                     }
 
                     is_2018_full_stack_cert = match map.next_value()? {
@@ -274,9 +274,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isApisMicroservicesCert" => {
                     if is_apis_microservices_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field(
-                            "is_apis_microservices_cert",
-                        ));
+                        return Err(serde::de::Error::duplicate_field("isApisMicroservicesCert"));
                     }
 
                     is_apis_microservices_cert = match map.next_value()? {
@@ -286,7 +284,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isBackEndCert" => {
                     if is_back_end_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_back_end_cert"));
+                        return Err(serde::de::Error::duplicate_field("isBackEndCert"));
                     }
 
                     is_back_end_cert = match map.next_value()? {
@@ -296,7 +294,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isBanned" => {
                     if is_banned.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_banned"));
+                        return Err(serde::de::Error::duplicate_field("isBanned"));
                     }
 
                     is_banned = match map.next_value()? {
@@ -306,7 +304,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isCheater" => {
                     if is_cheater.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_cheater"));
+                        return Err(serde::de::Error::duplicate_field("isCheater"));
                     }
 
                     is_cheater = match map.next_value()? {
@@ -316,7 +314,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isClassroomAccount" => {
                     if is_classroom_account.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_classroom_account"));
+                        return Err(serde::de::Error::duplicate_field("isClassroomAccount"));
                     }
 
                     is_classroom_account = match map.next_value()? {
@@ -327,7 +325,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "isCollegeAlgebraPyCertV8" => {
                     if is_college_algebra_py_cert_v8.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "is_college_algebra_py_cert_v8",
+                            "isCollegeAlgebraPyCertV8",
                         ));
                     }
 
@@ -338,9 +336,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isDataAnalysisPyCertV7" => {
                     if is_data_analysis_py_cert_v7.is_some() {
-                        return Err(serde::de::Error::duplicate_field(
-                            "is_data_analysis_py_cert_v7",
-                        ));
+                        return Err(serde::de::Error::duplicate_field("isDataAnalysisPyCertV7"));
                     }
 
                     is_data_analysis_py_cert_v7 = match map.next_value()? {
@@ -350,7 +346,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isDataVisCert" => {
                     if is_data_vis_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_data_vis_cert"));
+                        return Err(serde::de::Error::duplicate_field("isDataVisCert"));
                     }
 
                     is_data_vis_cert = match map.next_value()? {
@@ -360,7 +356,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isDonating" => {
                     if is_donating.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_donating"));
+                        return Err(serde::de::Error::duplicate_field("isDonating"));
                     }
 
                     is_donating = match map.next_value()? {
@@ -371,7 +367,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "isFoundationalCSharpCertV8" => {
                     if is_foundational_c_sharp_cert_v8.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "is_foundational_c_sharp_cert_v8",
+                            "isFoundationalCSharpCertV8",
                         ));
                     }
 
@@ -382,7 +378,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isFrontEndCert" => {
                     if is_front_end_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_front_end_cert"));
+                        return Err(serde::de::Error::duplicate_field("isFrontEndCert"));
                     }
 
                     is_front_end_cert = match map.next_value()? {
@@ -392,7 +388,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isFrontEndLibsCert" => {
                     if is_front_end_libs_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_front_end_libs_cert"));
+                        return Err(serde::de::Error::duplicate_field("isFrontEndLibsCert"));
                     }
 
                     is_front_end_libs_cert = match map.next_value()? {
@@ -402,7 +398,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isFullStackCert" => {
                     if is_full_stack_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_full_stack_cert"));
+                        return Err(serde::de::Error::duplicate_field("isFullStackCert"));
                     }
 
                     is_full_stack_cert = match map.next_value()? {
@@ -412,7 +408,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isHonest" => {
                     if is_honest.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_honest"));
+                        return Err(serde::de::Error::duplicate_field("isHonest"));
                     }
 
                     is_honest = match map.next_value()? {
@@ -422,7 +418,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isInfosecCertV7" => {
                     if is_infosec_cert_v7.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_infosec_cert_v7"));
+                        return Err(serde::de::Error::duplicate_field("isInfosecCertV7"));
                     }
 
                     is_infosec_cert_v7 = match map.next_value()? {
@@ -432,7 +428,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isInfosecQACert" => {
                     if is_infosec_qa_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_infosec_qa_cert"));
+                        return Err(serde::de::Error::duplicate_field("isInfosecQACert"));
                     }
 
                     is_infosec_qa_cert = match map.next_value()? {
@@ -442,9 +438,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isJsAlgoDataStructCert" => {
                     if is_js_algo_data_struct_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field(
-                            "is_js_algo_data_struct_cert",
-                        ));
+                        return Err(serde::de::Error::duplicate_field("isJsAlgoDataStructCert"));
                     }
 
                     is_js_algo_data_struct_cert = match map.next_value()? {
@@ -455,7 +449,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "isJsAlgoDataStructCertV8" => {
                     if is_js_algo_data_struct_cert_v8.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "is_js_algo_data_struct_cert_v8",
+                            "isJsAlgoDataStructCertV8",
                         ));
                     }
 
@@ -467,7 +461,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "isMachineLearningPyCertV7" => {
                     if is_machine_learning_py_cert_v7.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "is_machine_learning_py_cert_v7",
+                            "isMachineLearningPyCertV7",
                         ));
                     }
 
@@ -478,7 +472,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isQACertV7" => {
                     if is_qa_cert_v7.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_qa_cert_v7"));
+                        return Err(serde::de::Error::duplicate_field("isQaCertV7"));
                     }
 
                     is_qa_cert_v7 = match map.next_value()? {
@@ -489,7 +483,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "isRelationalDatabaseCertV8" => {
                     if is_relational_database_cert_v8.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "is_relational_database_cert_v8",
+                            "isRelationalDatabaseCertV8",
                         ));
                     }
 
@@ -500,7 +494,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isRespWebDesignCert" => {
                     if is_resp_web_design_cert.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_resp_web_design_cert"));
+                        return Err(serde::de::Error::duplicate_field("isRespWebDesignCert"));
                     }
 
                     is_resp_web_design_cert = match map.next_value()? {
@@ -510,7 +504,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "isSciCompPyCertV7" => {
                     if is_sci_comp_py_cert_v7.is_some() {
-                        return Err(serde::de::Error::duplicate_field("is_sci_comp_py_cert_v7"));
+                        return Err(serde::de::Error::duplicate_field("isSciCompPyCertV7"));
                     }
 
                     is_sci_comp_py_cert_v7 = match map.next_value()? {
@@ -560,7 +554,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "needsModeration" => {
                     if needs_moderation.is_some() {
-                        return Err(serde::de::Error::duplicate_field("needs_moderation"));
+                        return Err(serde::de::Error::duplicate_field("needsModeration"));
                     }
 
                     needs_moderation = match map.next_value()? {
@@ -570,7 +564,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "newEmail" => {
                     if new_email.is_some() {
-                        return Err(serde::de::Error::duplicate_field("new_email"));
+                        return Err(serde::de::Error::duplicate_field("newEmail"));
                     }
 
                     new_email = match map.next_value()? {
@@ -581,7 +575,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 "partiallyCompletedChallenges" => {
                     if partially_completed_challenges.is_some() {
                         return Err(serde::de::Error::duplicate_field(
-                            "partially_completed_challenges",
+                            "partiallyCompletedChallenges",
                         ));
                     }
 
@@ -627,7 +621,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "profileUI" => {
                     if profile_ui.is_some() {
-                        return Err(serde::de::Error::duplicate_field("profile_ui"));
+                        return Err(serde::de::Error::duplicate_field("profileUI"));
                     }
 
                     profile_ui = match map.next_value()? {
@@ -641,7 +635,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "progressTimestamps" => {
                     if progress_timestamps.is_some() {
-                        return Err(serde::de::Error::duplicate_field("progress_timestamps"));
+                        return Err(serde::de::Error::duplicate_field("progressTimestamps"));
                     }
 
                     progress_timestamps = match map.next_value()? {
@@ -698,7 +692,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "savedChallenges" => {
                     if saved_challenges.is_some() {
-                        return Err(serde::de::Error::duplicate_field("saved_challenges"));
+                        return Err(serde::de::Error::duplicate_field("savedChallenges"));
                     }
 
                     saved_challenges = match map.next_value()? {
@@ -716,7 +710,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "sendQuincyEmail" => {
                     if send_quincy_email.is_some() {
-                        return Err(serde::de::Error::duplicate_field("send_quincy_email"));
+                        return Err(serde::de::Error::duplicate_field("sendQuincyEmail"));
                     }
 
                     send_quincy_email = match map.next_value()? {
@@ -731,7 +725,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
 
                     theme = match map.next_value()? {
                         Bson::String(v) => Some(v),
-                        _ => None,
+                        _ => Some("default".to_string()),
                     };
                 }
                 "twitter" => {
@@ -746,17 +740,17 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "unsubscribeId" => {
                     if unsubscribe_id.is_some() {
-                        return Err(serde::de::Error::duplicate_field("unsubscribe_id"));
+                        return Err(serde::de::Error::duplicate_field("unsubscribeId"));
                     }
 
                     unsubscribe_id = match map.next_value()? {
-                        Bson::String(v) => Some(NOption::Some(v)),
-                        _ => Some(NOption::Null),
+                        Bson::String(v) => Some(v),
+                        _ => None,
                     };
                 }
                 "usernameDisplay" => {
                     if username_display.is_some() {
-                        return Err(serde::de::Error::duplicate_field("username_display"));
+                        return Err(serde::de::Error::duplicate_field("usernameDisplay"));
                     }
 
                     username_display = match map.next_value()? {
@@ -776,7 +770,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                 }
                 "yearsTopContributor" => {
                     if years_top_contributor.is_some() {
-                        return Err(serde::de::Error::duplicate_field("years_top_contributor"));
+                        return Err(serde::de::Error::duplicate_field("yearsTopContributor"));
                     }
 
                     years_top_contributor = match map.next_value()? {
@@ -857,9 +851,10 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let progress_timestamps = progress_timestamps.unwrap_or_default();
         let saved_challenges = saved_challenges.unwrap_or_default();
         let send_quincy_email = send_quincy_email.unwrap_or_default();
-        let theme = theme.unwrap_or_default();
+        let theme = theme.unwrap_or("default".to_string());
         let twitter = twitter.unwrap_or_default();
-        let unsubscribe_id = unsubscribe_id.unwrap_or_default();
+        let unsubscribe_id =
+            unsubscribe_id.ok_or(serde::de::Error::missing_field("unsubscribeId"))?;
         let username_display = username_display.unwrap_or_default();
         let website = website.unwrap_or_default();
         let years_top_contributor = years_top_contributor.unwrap_or_default();
@@ -1074,7 +1069,7 @@ mod tests {
             send_quincy_email: false,
             theme: "light".to_string(),
             twitter: "".to_string(),
-            unsubscribe_id: NOption::Null,
+            unsubscribe_id: "some-uuid-string".to_string(),
             username_display: "".to_string(),
             website: "".to_string(),
             years_top_contributor: vec![],

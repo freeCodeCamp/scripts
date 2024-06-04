@@ -1,7 +1,7 @@
 use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
-use crate::record::{File, NOption, SavedChallenge};
+use crate::record::{File, SavedChallenge};
 
 struct SavedChallengeVisitor;
 

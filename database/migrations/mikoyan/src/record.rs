@@ -71,7 +71,7 @@ pub struct User {
     pub send_quincy_email: bool,
     pub theme: String,
     pub twitter: String,
-    pub unsubscribe_id: NOption<String>,
+    pub unsubscribe_id: String,
     pub username_display: String,
     pub website: String,
     pub years_top_contributor: Vec<i32>,

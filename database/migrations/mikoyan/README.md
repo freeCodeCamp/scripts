@@ -80,6 +80,7 @@ struct User {
 - `isWebsite`
 - `password`
 - `timezone`
+  // Still created in LB, but never used
 - `rand`
 - `completedChallenges.$[el].__cachedRelations`
 - `completedChallenges.$[el].__data`

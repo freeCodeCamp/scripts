@@ -9,11 +9,12 @@ pub enum NormalizeError {
 }
 
 pub fn normalize_user(user: Document) -> Result<Document, NormalizeError> {
-    let normal_user: User =
-        bson::from_document(user.clone()).map_err(|e| NormalizeError::UnhandledType {
-            id: user.get_object_id("_id").unwrap(),
-            error: e,
-        })?;
-    let new_user_document: Document = bson::to_document(&normal_user).unwrap();
-    Ok(new_user_document)
+    if let Ok(id) = user.get_object_id("_id") {
+        let normal_user: User = bson::from_document(user)
+            .map_err(|e| NormalizeError::UnhandledType { id, error: e })?;
+        let new_user_document: Document = bson::to_document(&normal_user).unwrap();
+        Ok(new_user_document)
+    } else {
+        Err(NormalizeError::ConfusedId { doc: user })
+    }
 }
