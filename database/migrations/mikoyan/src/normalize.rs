@@ -1,4 +1,4 @@
-use mongodb::bson::{self, de::Error, oid::ObjectId, Document};
+use mongodb::bson::{self, de::Error, oid::ObjectId, DateTime, Document};
 
 use crate::record::User;
 
@@ -17,4 +17,28 @@ pub fn normalize_user(user: Document) -> Result<Document, NormalizeError> {
     } else {
         Err(NormalizeError::ConfusedId { doc: user })
     }
+}
+
+pub fn num_to_datetime<N>(num: N) -> DateTime
+where
+    N: ToString,
+{
+    let s = num.to_string();
+
+    // If float, remove the decimal part
+    let s = if let Some(pos) = s.find('.') {
+        &s[..pos]
+    } else {
+        &s
+    };
+
+    // Handle seconds, but assume milliseconds
+    let num = if s.len() == 10 {
+        let num = s.parse::<i64>().unwrap();
+        num * 1000
+    } else {
+        s.parse::<i64>().unwrap()
+    };
+
+    DateTime::from_millis(num as i64)
 }

@@ -1,9 +1,12 @@
 use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
-use crate::record::{
-    CompletedChallenge, CompletedExam, NOption, PartiallyCompletedChallenge, Portfolio, ProfileUI,
-    SavedChallenge, User,
+use crate::{
+    normalize::num_to_datetime,
+    record::{
+        CompletedChallenge, CompletedExam, NOption, PartiallyCompletedChallenge, Portfolio,
+        ProfileUI, SavedChallenge, User,
+    },
 };
 
 struct UserVisitor;
@@ -127,8 +130,13 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         Bson::Array(array) => {
                             let mut completed_challenges = vec![];
                             for challenge in array {
-                                let challenge: CompletedChallenge =
-                                    bson::from_bson(challenge).expect("Error");
+                                let challenge: CompletedChallenge = bson::from_bson(challenge)
+                                    .map_err(|e| {
+                                        serde::de::Error::invalid_value(
+                                            serde::de::Unexpected::Other(&e.to_string()),
+                                            &"a valid CompletedChallenge",
+                                        )
+                                    })?;
                                 completed_challenges.push(challenge);
                             }
                             Some(completed_challenges)
@@ -205,9 +213,28 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                     email_auth_link_ttl = match map.next_value()? {
                         Bson::DateTime(v) => Some(NOption::Some(v)),
                         Bson::String(s) => {
-                            let t = bson::DateTime::parse_rfc3339_str(&s).unwrap();
-                            let nullable = NOption::Some(t);
-                            Some(nullable)
+                            if let Ok(t) = DateTime::parse_rfc3339_str(&s) {
+                                let nullable = NOption::Some(t);
+                                Some(nullable)
+                            } else {
+                                Some(NOption::Null)
+                            }
+                        }
+                        Bson::Int32(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Int64(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Double(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Timestamp(i) => {
+                            let t = num_to_datetime(i.time);
+                            Some(NOption::Some(t))
                         }
                         _ => Some(NOption::Null),
                     };
@@ -229,6 +256,33 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
 
                     email_verify_ttl = match map.next_value()? {
                         Bson::DateTime(v) => Some(NOption::Some(v)),
+                        Bson::String(s) => {
+                            if let Ok(t) = DateTime::parse_rfc3339_str(&s) {
+                                let nullable = NOption::Some(t);
+                                Some(nullable)
+                            } else if let Ok(t) = s.parse::<i64>() {
+                                let nullable = NOption::Some(num_to_datetime(t));
+                                Some(nullable)
+                            } else {
+                                Some(NOption::Null)
+                            }
+                        }
+                        Bson::Int32(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Int64(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Double(i) => {
+                            let t = num_to_datetime(i);
+                            Some(NOption::Some(t))
+                        }
+                        Bson::Timestamp(i) => {
+                            let t = num_to_datetime(i.time);
+                            Some(NOption::Some(t))
+                        }
                         _ => Some(NOption::Null),
                     };
                 }
@@ -239,7 +293,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
 
                     external_id = match map.next_value()? {
                         Bson::String(v) => Some(NOption::Some(v)),
-                        _ => Some(NOption::Undefined),
+                        _ => Some(NOption::Null),
                     };
                 }
                 "githubProfile" => {
@@ -584,7 +638,12 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             let mut partially_completed_challenges = vec![];
                             for challenge in array {
                                 let challenge: PartiallyCompletedChallenge =
-                                    bson::from_bson(challenge).expect("TODO");
+                                    bson::from_bson(challenge).map_err(|e| {
+                                        serde::de::Error::invalid_value(
+                                            serde::de::Unexpected::Other(&e.to_string()),
+                                            &"a valid PartiallyCompletedChallenge",
+                                        )
+                                    })?;
                                 partially_completed_challenges.push(challenge);
                             }
                             Some(partially_completed_challenges)
@@ -644,7 +703,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for (_, value) in doc {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(DateTime::from_millis(v as i64));
+                                        progress_timestamps.push(num_to_datetime(v));
                                     }
                                     _ => {
                                         // No-Op
@@ -658,25 +717,24 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for value in arr {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(DateTime::from_millis(v as i64));
+                                        progress_timestamps.push(num_to_datetime(v));
                                     }
                                     Bson::DateTime(v) => {
                                         progress_timestamps.push(v);
                                     }
                                     Bson::Int32(v) => {
-                                        progress_timestamps.push(DateTime::from_millis(v as i64));
+                                        progress_timestamps.push(num_to_datetime(v));
                                     }
                                     Bson::Int64(v) => {
-                                        progress_timestamps.push(DateTime::from_millis(v));
+                                        progress_timestamps.push(num_to_datetime(v));
                                     }
                                     Bson::String(v) => {
                                         if let Ok(v) = v.parse::<i64>() {
-                                            progress_timestamps.push(DateTime::from_millis(v));
+                                            progress_timestamps.push(num_to_datetime(v));
                                         }
                                     }
                                     Bson::Timestamp(v) => {
-                                        progress_timestamps
-                                            .push(DateTime::from_millis(v.time as i64));
+                                        progress_timestamps.push(num_to_datetime(v.time));
                                     }
                                     _ => {
                                         // No-Op
@@ -697,8 +755,13 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         Bson::Array(array) => {
                             let mut saved_challenges = vec![];
                             for challenge in array {
-                                let challenge: SavedChallenge =
-                                    bson::from_bson(challenge).expect("Error");
+                                let challenge: SavedChallenge = bson::from_bson(challenge)
+                                    .map_err(|e| {
+                                        serde::de::Error::invalid_value(
+                                            serde::de::Unexpected::Other(&e.to_string()),
+                                            &"a valid SavedChallenge",
+                                        )
+                                    })?;
                                 saved_challenges.push(challenge);
                             }
                             Some(saved_challenges)
