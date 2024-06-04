@@ -4,10 +4,11 @@ use mongodb::{
 };
 use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum NOption<T> {
     Some(T),
     Null,
+    #[default]
     Undefined,
 }
 
@@ -112,25 +113,13 @@ pub struct PartiallyCompletedChallenge {
     pub id: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct Portfolio {
     pub description: String,
     pub id: String,
     pub image: String,
     pub title: String,
     pub url: String,
-}
-
-impl Default for Portfolio {
-    fn default() -> Self {
-        Self {
-            description: Default::default(),
-            id: Default::default(),
-            image: Default::default(),
-            title: Default::default(),
-            url: Default::default(),
-        }
-    }
 }
 
 #[derive(Debug, Serialize)]

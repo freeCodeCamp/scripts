@@ -667,13 +667,11 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                                         progress_timestamps.push(DateTime::from_millis(v as i64));
                                     }
                                     Bson::Int64(v) => {
-                                        progress_timestamps
-                                            .push(DateTime::from_millis(v.try_into().unwrap()));
+                                        progress_timestamps.push(DateTime::from_millis(v));
                                     }
                                     Bson::String(v) => {
                                         if let Ok(v) = v.parse::<i64>() {
-                                            progress_timestamps
-                                                .push(DateTime::from_millis(v.try_into().unwrap()));
+                                            progress_timestamps.push(DateTime::from_millis(v));
                                         }
                                     }
                                     Bson::Timestamp(v) => {

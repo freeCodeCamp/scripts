@@ -2,12 +2,6 @@ use serde::{ser::SerializeStruct, Deserialize, Serialize};
 
 use crate::record::NOption;
 
-impl<'a, T: Serialize> Default for NOption<T> {
-    fn default() -> Self {
-        NOption::Undefined
-    }
-}
-
 impl<'de, T> Deserialize<'de> for NOption<T>
 where
     T: Deserialize<'de>,
@@ -89,9 +83,8 @@ impl std::fmt::Display for Error {
 
 impl std::error::Error for Error {
     fn cause(&self) -> Option<&dyn std::error::Error> {
-        match *self {
-            _ => None,
-        }
+        // TODO: Is this method useful?
+        None
     }
 }
 
