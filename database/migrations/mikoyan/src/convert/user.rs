@@ -1010,6 +1010,7 @@ mod tests {
         let object_id = ObjectId::new();
         let doc_1 = mongodb::bson::doc! {
             "id": object_id,
+            "unsubscribeId": "some-uuid".to_string()
         };
 
         let user_1: User = mongodb::bson::from_document(doc_1).unwrap();
@@ -1021,6 +1022,7 @@ mod tests {
     fn bad_document_to_user() {
         let doc_3 = mongodb::bson::doc! {
         "id": ObjectId::new(),
+        "unsubscribeId": "some-uuid".to_string(),
         "name": "John",
         "completedChallenges": [
             {
@@ -1085,10 +1087,10 @@ mod tests {
             current_challenge_id: object_id.to_hex(),
             donation_emails: vec!["fcc@freecodecamp.org".to_string()],
             email: "fcc@freecodecamp.org".to_string(),
-            email_auth_link_ttl,
+            email_auth_link_ttl: email_auth_link_ttl.clone(),
             email_verified: true,
-            email_verify_ttl,
-            external_id: NOption::Undefined,
+            email_verify_ttl: email_verify_ttl.clone(),
+            external_id: NOption::Null,
             github_profile: "".to_string(),
             is_2018_data_vis_cert: false,
             is_2018_full_stack_cert: false,
@@ -1157,17 +1159,16 @@ mod tests {
             "fcc@freecodecamp.org".to_string()
         );
         assert_eq!(doc.get_str("email").unwrap(), "fcc@freecodecamp.org");
-        // TODO
-        // assert_eq!(
-        //     doc.get_datetime("email_auth_link_ttl").unwrap(),
-        //     &email_auth_link_ttl
-        // );
+        assert_eq!(
+            NOption::Some(*doc.get_datetime("emailAuthLinkTTL").unwrap()),
+            email_auth_link_ttl
+        );
         assert_eq!(doc.get_bool("emailVerified").unwrap(), true);
-        // assert_eq!(
-        //     doc.get_datetime("email_verify_ttl").unwrap(),
-        //     &email_verify_ttl
-        // );
-        // assert_eq!(doc.get_str("externalId").unwrap(), "");
+        assert_eq!(
+            NOption::Some(*doc.get_datetime("emailVerifyTTL").unwrap()),
+            email_verify_ttl
+        );
+        assert_eq!(doc.get("externalId").unwrap(), &Bson::Null);
         assert_eq!(doc.get_str("githubProfile").unwrap(), "");
         assert_eq!(doc.get_bool("is2018DataVisCert").unwrap(), false);
         assert_eq!(doc.get_bool("is2018FullStackCert").unwrap(), false);

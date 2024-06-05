@@ -4,7 +4,7 @@ use mongodb::{
 };
 use serde::Serialize;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Clone)]
 pub enum NOption<T> {
     Some(T),
     Null,
@@ -24,8 +24,10 @@ pub struct User {
     pub current_challenge_id: String,
     pub donation_emails: Vec<String>,
     pub email: String,
+    #[serde(rename = "emailAuthLinkTTL")]
     pub email_auth_link_ttl: NOption<bson::DateTime>,
     pub email_verified: bool,
+    #[serde(rename = "emailVerifyTTL")]
     pub email_verify_ttl: NOption<bson::DateTime>,
     pub external_id: NOption<String>,
     pub github_profile: String,

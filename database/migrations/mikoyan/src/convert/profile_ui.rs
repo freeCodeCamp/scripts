@@ -221,3 +221,77 @@ impl<'de> Deserialize<'de> for ProfileUI {
         deserializer.deserialize_seq(ProfileUIVisitor)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use mongodb::bson::{self, doc};
+
+    use super::*;
+
+    #[test]
+    fn deserialize_profile_ui() {
+        let doc = doc! {
+            "isLocked": true,
+            "showAbout": true,
+            "showCerts": true,
+            "showDonation": true,
+            "showHeatMap": true,
+            "showLocation": true,
+            "showName": true,
+            "showPoints": true,
+            "showPortfolio": true,
+            "showTimeLine": true,
+        };
+
+        let profile_ui: ProfileUI = bson::from_document(doc).unwrap();
+
+        assert_eq!(profile_ui.is_locked, true);
+        assert_eq!(profile_ui.show_about, true);
+        assert_eq!(profile_ui.show_certs, true);
+        assert_eq!(profile_ui.show_donation, true);
+        assert_eq!(profile_ui.show_heat_map, true);
+        assert_eq!(profile_ui.show_location, true);
+        assert_eq!(profile_ui.show_name, true);
+        assert_eq!(profile_ui.show_points, true);
+        assert_eq!(profile_ui.show_portfolio, true);
+        assert_eq!(profile_ui.show_time_line, true);
+    }
+
+    #[test]
+    fn default_profile_ui() {
+        let doc = doc! {};
+
+        let profile_ui: ProfileUI = bson::from_document(doc).unwrap();
+
+        assert_eq!(profile_ui.is_locked, true);
+        assert_eq!(profile_ui.show_about, false);
+        assert_eq!(profile_ui.show_certs, false);
+        assert_eq!(profile_ui.show_donation, false);
+        assert_eq!(profile_ui.show_heat_map, false);
+        assert_eq!(profile_ui.show_location, false);
+        assert_eq!(profile_ui.show_name, false);
+        assert_eq!(profile_ui.show_points, false);
+        assert_eq!(profile_ui.show_portfolio, false);
+        assert_eq!(profile_ui.show_time_line, false);
+    }
+
+    #[test]
+    fn bad_profile_ui() {
+        let doc = doc! {
+            "unknownField": ["a", "b", "c"],
+        };
+
+        let profile_ui: ProfileUI = bson::from_document(doc).unwrap();
+
+        assert_eq!(profile_ui.is_locked, true);
+        assert_eq!(profile_ui.show_about, false);
+        assert_eq!(profile_ui.show_certs, false);
+        assert_eq!(profile_ui.show_donation, false);
+        assert_eq!(profile_ui.show_heat_map, false);
+        assert_eq!(profile_ui.show_location, false);
+        assert_eq!(profile_ui.show_name, false);
+        assert_eq!(profile_ui.show_points, false);
+        assert_eq!(profile_ui.show_portfolio, false);
+        assert_eq!(profile_ui.show_time_line, false);
+    }
+}

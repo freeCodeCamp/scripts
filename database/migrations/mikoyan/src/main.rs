@@ -96,15 +96,15 @@ async fn connect_and_process(
     let find_ops = FindOptions::builder()
         .limit(num_docs_to_handle as i64)
         .skip((thread_id * num_docs_to_handle) as u64)
-        .projection(doc! {
-            "_id": 1,
-            "completedChallenges": 1,
-            "progressTimestamps": 1,
-            "partiallyCompletedChallenges": 1,
-            "yearsTopContributor": 1,
-            "savedChallenges": 1,
-            "badges": 1,
-        })
+        // .projection(doc! {
+        //     "_id": 1,
+        //     "completedChallenges": 1,
+        //     "progressTimestamps": 1,
+        //     "partiallyCompletedChallenges": 1,
+        //     "yearsTopContributor": 1,
+        //     "savedChallenges": 1,
+        //     "badges": 1,
+        // })
         .build();
     let mut cursor = collection.find(doc! {}, find_ops).await?;
 
