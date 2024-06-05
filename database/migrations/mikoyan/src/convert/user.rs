@@ -1000,7 +1000,7 @@ impl<'de> Deserialize<'de> for User {
 
 #[cfg(test)]
 mod tests {
-    use crate::record::ProfileUI;
+    use crate::record::{File, ProfileUI};
 
     use super::*;
     use bson::oid::ObjectId;
@@ -1020,44 +1020,139 @@ mod tests {
 
     #[test]
     fn bad_document_to_user() {
-        let doc_3 = mongodb::bson::doc! {
-        "id": ObjectId::new(),
-        "unsubscribeId": "some-uuid".to_string(),
-        "name": "John",
-        "completedChallenges": [
-            {
-                "challengeType": Bson::Null,
-                "completedDate": Bson::Double(1620000000.0),
-                "files": [
+        let doc_1 = mongodb::bson::doc! {
+            "id": ObjectId::new(),
+            "unsubscribeId": "some-uuid".to_string(),
+            "name": "John",
+            "completedChallenges": [
+                {
+                    "challengeType": Bson::Null,
+                    "completedDate": Bson::Double(1620000000.0),
+                    "files": [
 
-                    {
-                        "__cachedRelations": [{}],
-                        "__data": [
-                            {
-                                "contents": "test __data",
-                                "ext": "test __data",
-                                "key": "test __data",
-                                "name": "test __data",
-                                "path": ""
+                        {
+                            "__cachedRelations": [{}],
+                            "__data": [
+                                {
+                                    "contents": "test __data",
+                                    "ext": "test __data",
+                                    "key": "test __data",
+                                    "name": "test __data",
+                                    "path": ""
+                                }
+                                ],
+                                "__dataSource": Bson::Null,
+                                "__persisted": true,
+                                "__strict": false,
+                                "contents": "String",
+                                "ext": "String",
+                                "key": "String",
+                                "name": "String",
                             }
                             ],
-                            "__dataSource": Bson::Null,
-                            "__persisted": true,
-                            "__strict": false,
-                            "contents": "String",
-                            "ext": "String",
-                            "key": "String",
-                            "name": "String",
-                            "path": "String"
-                        }
-                        ],
-                "id": "1234"
+                    "id": "1234"
+                }
+            ],
+            "profileUI": {
+                "showAbout": false,
+                "showCerts": Bson::Null,
+                "showName": "test",
             }
-            ]
         };
 
-        let user_3: User = mongodb::bson::from_document(doc_3).unwrap();
-        println!("user3: {:?}", user_3);
+        let actual_user: User = mongodb::bson::from_document(doc_1).unwrap();
+
+        let object_id = ObjectId::new();
+        let email_auth_link_ttl = NOption::Some(bson::DateTime::now());
+        let email_verify_ttl = NOption::Some(bson::DateTime::now());
+        let profile_ui = ProfileUI {
+            is_locked: true,
+            show_about: false,
+            show_certs: false,
+            show_donation: false,
+            show_heat_map: false,
+            show_location: false,
+            show_name: false,
+            show_points: false,
+            show_portfolio: false,
+            show_time_line: false,
+        };
+
+        let expected_user = User {
+            _id: object_id,
+            about: "about".to_string(),
+            accepted_privacy_terms: true,
+            completed_challenges: vec![CompletedChallenge {
+                challenge_type: 0,
+                completed_date: 1620000000,
+                files: vec![File {
+                    contents: "String".to_string(),
+                    ext: "String".to_string(),
+                    key: "String".to_string(),
+                    name: "String".to_string(),
+                    path: "".to_string(),
+                }],
+                github_link: NOption::Null,
+                id: "1234".to_string(),
+                is_manually_approved: NOption::Undefined,
+                solution: NOption::Null,
+            }],
+            completed_exams: vec![],
+            current_challenge_id: object_id.to_hex(),
+            donation_emails: vec!["fcc@freecodecamp.org".to_string()],
+            email: "fcc@freecodecamp.org".to_string(),
+            email_auth_link_ttl: email_auth_link_ttl.clone(),
+            email_verified: true,
+            email_verify_ttl: email_verify_ttl.clone(),
+            external_id: NOption::Null,
+            github_profile: "".to_string(),
+            is_2018_data_vis_cert: false,
+            is_2018_full_stack_cert: false,
+            is_apis_microservices_cert: false,
+            is_back_end_cert: false,
+            is_banned: false,
+            is_cheater: false,
+            is_classroom_account: false,
+            is_college_algebra_py_cert_v8: false,
+            is_data_analysis_py_cert_v7: false,
+            is_data_vis_cert: false,
+            is_donating: false,
+            is_foundational_c_sharp_cert_v8: false,
+            is_front_end_cert: false,
+            is_front_end_libs_cert: false,
+            is_full_stack_cert: false,
+            is_honest: false,
+            is_infosec_cert_v7: false,
+            is_infosec_qa_cert: false,
+            is_js_algo_data_struct_cert: false,
+            is_js_algo_data_struct_cert_v8: false,
+            is_machine_learning_py_cert_v7: false,
+            is_qa_cert_v7: false,
+            is_relational_database_cert_v8: false,
+            is_resp_web_design_cert: false,
+            is_sci_comp_py_cert_v7: false,
+            keyboard_shortcuts: false,
+            linkedin: "".to_string(),
+            location: "".to_string(),
+            name: "name".to_string(),
+            needs_moderation: false,
+            new_email: NOption::Null,
+            partially_completed_challenges: vec![],
+            picture: "".to_string(),
+            portfolio: vec![],
+            profile_ui,
+            progress_timestamps: vec![],
+            saved_challenges: vec![],
+            send_quincy_email: false,
+            theme: "light".to_string(),
+            twitter: "".to_string(),
+            unsubscribe_id: "some-uuid-string".to_string(),
+            username_display: "".to_string(),
+            website: "".to_string(),
+            years_top_contributor: vec![],
+        };
+
+        assert_eq!(actual_user, expected_user);
     }
 
     #[test]

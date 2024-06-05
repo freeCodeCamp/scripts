@@ -12,7 +12,7 @@ pub enum NOption<T> {
     Undefined,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     #[serde(rename = "id")]
@@ -80,10 +80,10 @@ pub struct User {
     pub years_top_contributor: Vec<i32>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct CompletedChallenge {
     pub challenge_type: i32,
-    pub completed_date: bson::DateTime,
+    pub completed_date: i64,
     pub files: Vec<File>,
     pub github_link: NOption<String>,
     pub id: String,
@@ -91,15 +91,15 @@ pub struct CompletedChallenge {
     pub solution: NOption<String>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct CompletedExam {
     pub challenge_type: i32,
-    pub completed_date: bson::DateTime,
+    pub completed_date: i64,
     pub exam_results: ExamResults,
     pub id: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct ExamResults {
     pub exam_time_in_seconds: i32,
     pub number_of_correct_answers: i32,
@@ -109,13 +109,13 @@ pub struct ExamResults {
     pub percent_correct: f64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct PartiallyCompletedChallenge {
-    pub completed_date: bson::DateTime,
+    pub completed_date: i64,
     pub id: String,
 }
 
-#[derive(Debug, Serialize, Default)]
+#[derive(Debug, Serialize, Default, PartialEq)]
 pub struct Portfolio {
     pub description: String,
     pub id: String,
@@ -124,7 +124,7 @@ pub struct Portfolio {
     pub url: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct ProfileUI {
     pub is_locked: bool,
     pub show_about: bool,
@@ -155,15 +155,15 @@ impl Default for ProfileUI {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct SavedChallenge {
     pub challenge_type: i32,
     pub files: Vec<File>,
     pub id: String,
-    pub last_saved_date: bson::DateTime,
+    pub last_saved_date: i64,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct File {
     pub contents: String,
     pub ext: String,

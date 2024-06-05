@@ -32,7 +32,13 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
                         Bson::Int32(v) => Some(v),
                         Bson::Int64(v) => Some(v as i32),
                         Bson::Double(v) => Some(v as i32),
-                        Bson::String(v) => Some(v.parse().unwrap()),
+                        Bson::String(v) => {
+                            if let Ok(v) = v.parse() {
+                                Some(v)
+                            } else {
+                                None
+                            }
+                        }
                         _ => None,
                     };
                 }
@@ -45,7 +51,12 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
                         Bson::Array(array) => {
                             let mut files = vec![];
                             for file in array {
-                                let file: File = bson::from_bson(file).expect("Error");
+                                let file: File = bson::from_bson(file).map_err(|e| {
+                                    serde::de::Error::invalid_value(
+                                        serde::de::Unexpected::Other(&e.to_string()),
+                                        &"a valid File",
+                                    )
+                                })?;
                                 files.push(file);
                             }
                             Some(files)
@@ -69,14 +80,11 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
                     }
 
                     last_saved_date = match map.next_value()? {
-                        Bson::Double(v) => Some(DateTime::from_millis(v as i64)),
-                        Bson::DateTime(v) => Some(v),
-                        Bson::Int32(v) => Some(DateTime::from_millis(v as i64)),
-                        Bson::Int64(v) => Some(DateTime::from_millis(v)),
-                        Bson::Decimal128(v) => {
-                            Some(DateTime::from_millis(v.to_string().parse().unwrap()))
-                        }
-                        Bson::Timestamp(v) => Some(DateTime::from_millis((v.time * 1000) as i64)),
+                        Bson::Double(v) => Some(v as i64),
+                        Bson::DateTime(v) => Some(v.timestamp_millis()),
+                        Bson::Int32(v) => Some(v as i64),
+                        Bson::Int64(v) => Some(v),
+                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
                         _ => None,
                     };
                 }
@@ -89,7 +97,7 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
         let challenge_type = challenge_type.unwrap_or_default();
         let files = files.unwrap_or_default();
         let id = id.unwrap_or_default();
-        let last_saved_date = last_saved_date.unwrap_or(DateTime::now());
+        let last_saved_date = last_saved_date.unwrap_or(DateTime::now().timestamp_millis());
 
         Ok(SavedChallenge {
             challenge_type,

@@ -27,14 +27,11 @@ impl<'de> serde::de::Visitor<'de> for PartiallyCompletedChallengeVisitor {
                     }
 
                     completed_date = match map.next_value()? {
-                        Bson::Double(v) => Some(DateTime::from_millis(v as i64)),
-                        Bson::DateTime(v) => Some(v),
-                        Bson::Int32(v) => Some(DateTime::from_millis(v as i64)),
-                        Bson::Int64(v) => Some(DateTime::from_millis(v)),
-                        Bson::Decimal128(v) => {
-                            Some(DateTime::from_millis(v.to_string().parse().unwrap()))
-                        }
-                        Bson::Timestamp(v) => Some(DateTime::from_millis((v.time * 1000) as i64)),
+                        Bson::Double(v) => Some(v as i64),
+                        Bson::DateTime(v) => Some(v.timestamp_millis()),
+                        Bson::Int32(v) => Some(v as i64),
+                        Bson::Int64(v) => Some(v),
+                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
                         _ => None,
                     };
                 }
@@ -54,7 +51,7 @@ impl<'de> serde::de::Visitor<'de> for PartiallyCompletedChallengeVisitor {
             }
         }
 
-        let completed_date = completed_date.unwrap_or(DateTime::now());
+        let completed_date = completed_date.unwrap_or(DateTime::now().timestamp_millis());
         let id = id.unwrap_or_default();
 
         Ok(PartiallyCompletedChallenge { completed_date, id })
