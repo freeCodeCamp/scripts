@@ -216,6 +216,9 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             if let Ok(t) = DateTime::parse_rfc3339_str(&s) {
                                 let nullable = NOption::Some(t);
                                 Some(nullable)
+                            } else if let Ok(t) = s.parse::<i64>() {
+                                let nullable = NOption::Some(num_to_datetime(t));
+                                Some(nullable)
                             } else {
                                 Some(NOption::Null)
                             }
