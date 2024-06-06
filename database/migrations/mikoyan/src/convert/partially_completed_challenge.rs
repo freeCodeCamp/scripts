@@ -46,7 +46,7 @@ impl<'de> serde::de::Visitor<'de> for PartiallyCompletedChallengeVisitor {
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }

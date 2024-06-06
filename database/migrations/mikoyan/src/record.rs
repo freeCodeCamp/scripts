@@ -3,19 +3,20 @@ use mongodb::{
     bson::{self, oid::ObjectId},
 };
 use serde::Serialize;
+use std::fmt::Debug;
 
 #[derive(Debug, Default, PartialEq, Clone)]
 pub enum NOption<T> {
     Some(T),
-    Null,
     #[default]
+    Null,
     Undefined,
 }
 
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
-    #[serde(rename = "id")]
+    #[serde(rename = "_id")]
     pub _id: ObjectId,
     pub about: String,
     pub accepted_privacy_terms: bool,
@@ -75,12 +76,14 @@ pub struct User {
     pub theme: String,
     pub twitter: String,
     pub unsubscribe_id: String,
+    pub username: String,
     pub username_display: String,
     pub website: String,
     pub years_top_contributor: Vec<i32>,
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct CompletedChallenge {
     pub challenge_type: i32,
     pub completed_date: i64,
@@ -92,6 +95,7 @@ pub struct CompletedChallenge {
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct CompletedExam {
     pub challenge_type: i32,
     pub completed_date: i64,
@@ -100,6 +104,7 @@ pub struct CompletedExam {
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct ExamResults {
     pub exam_time_in_seconds: i32,
     pub number_of_correct_answers: i32,
@@ -110,6 +115,7 @@ pub struct ExamResults {
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct PartiallyCompletedChallenge {
     pub completed_date: i64,
     pub id: String,
@@ -125,6 +131,7 @@ pub struct Portfolio {
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct ProfileUI {
     pub is_locked: bool,
     pub show_about: bool,
@@ -156,6 +163,7 @@ impl Default for ProfileUI {
 }
 
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct SavedChallenge {
     pub challenge_type: i32,
     pub files: Vec<File>,

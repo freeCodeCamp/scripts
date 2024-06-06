@@ -34,7 +34,7 @@ where
                 E: serde::de::Error,
             {
                 // TODO: Confirm this is all that is wanted
-                Ok(NOption::Undefined)
+                Ok(NOption::Null)
             }
 
             fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>

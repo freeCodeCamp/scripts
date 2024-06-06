@@ -88,7 +88,7 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
 
                     github_link = match map.next_value()? {
                         Bson::String(v) => Some(NOption::Some(v)),
-                        _ => None,
+                        _ => Some(NOption::Null),
                     };
                 }
                 "id" => {
@@ -108,7 +108,7 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
 
                     is_manually_approved = match map.next_value()? {
                         Bson::Boolean(v) => Some(NOption::Some(v)),
-                        _ => Some(NOption::Undefined),
+                        _ => Some(NOption::Null),
                     };
                 }
                 "solution" => {
@@ -118,11 +118,11 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
 
                     solution = match map.next_value()? {
                         Bson::String(v) => Some(NOption::Some(v)),
-                        _ => Some(NOption::Undefined),
+                        _ => Some(NOption::Null),
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }

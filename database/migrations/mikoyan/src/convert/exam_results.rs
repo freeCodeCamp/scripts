@@ -101,7 +101,7 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }

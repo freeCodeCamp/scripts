@@ -89,7 +89,7 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }

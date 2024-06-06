@@ -75,7 +75,7 @@ impl<'de> Visitor<'de> for PortfolioVisitor {
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }

@@ -257,6 +257,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
+name = "cmp"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4292b48ad12f62c0ecb53d47c5542fb7a938171f536458fc52ceb97726a54cd"
+
+[[package]]
 name = "codespan-reporting"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -857,6 +863,7 @@ name = "mikoyan"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "cmp",
  "futures-util",
  "indicatif",
  "mongodb",

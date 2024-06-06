@@ -76,15 +76,16 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let mut theme = None;
         let mut twitter = None;
         let mut unsubscribe_id = None;
+        let mut username = None;
         let mut username_display = None;
         let mut website = None;
         let mut years_top_contributor = None;
 
         while let Some(key) = map.next_key::<String>()? {
             match key.as_str() {
-                "id" => {
+                "_id" => {
                     if _id.is_some() {
-                        return Err(serde::de::Error::duplicate_field("id"));
+                        return Err(serde::de::Error::duplicate_field("_id"));
                     }
 
                     _id = match map.next_value()? {
@@ -708,6 +709,20 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                                     Bson::Double(v) => {
                                         progress_timestamps.push(num_to_datetime(v));
                                     }
+                                    Bson::Int32(v) => {
+                                        progress_timestamps.push(num_to_datetime(v));
+                                    }
+                                    Bson::Int64(v) => {
+                                        progress_timestamps.push(num_to_datetime(v));
+                                    }
+                                    Bson::String(v) => {
+                                        if let Ok(v) = v.parse::<i64>() {
+                                            progress_timestamps.push(num_to_datetime(v));
+                                        }
+                                    }
+                                    Bson::Timestamp(v) => {
+                                        progress_timestamps.push(num_to_datetime(v.time));
+                                    }
                                     _ => {
                                         // No-Op
                                     }
@@ -738,6 +753,34 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                                     }
                                     Bson::Timestamp(v) => {
                                         progress_timestamps.push(num_to_datetime(v.time));
+                                    }
+                                    Bson::Document(doc) => {
+                                        let mut pts = vec![];
+                                        for (_, value) in doc {
+                                            match value {
+                                                Bson::Double(v) => {
+                                                    pts.push(num_to_datetime(v));
+                                                }
+                                                Bson::Int32(v) => {
+                                                    pts.push(num_to_datetime(v));
+                                                }
+                                                Bson::Int64(v) => {
+                                                    pts.push(num_to_datetime(v));
+                                                }
+                                                Bson::String(v) => {
+                                                    if let Ok(v) = v.parse::<i64>() {
+                                                        pts.push(num_to_datetime(v));
+                                                    }
+                                                }
+                                                Bson::Timestamp(v) => {
+                                                    pts.push(num_to_datetime(v.time));
+                                                }
+                                                _ => {
+                                                    // No-Op
+                                                }
+                                            };
+                                        }
+                                        progress_timestamps.append(&mut pts);
                                     }
                                     _ => {
                                         // No-Op
@@ -812,6 +855,16 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
+                "username" => {
+                    if username.is_some() {
+                        return Err(serde::de::Error::duplicate_field("username"));
+                    }
+
+                    username = match map.next_value()? {
+                        Bson::String(v) => Some(v),
+                        _ => None,
+                    };
+                }
                 "usernameDisplay" => {
                     if username_display.is_some() {
                         return Err(serde::de::Error::duplicate_field("usernameDisplay"));
@@ -859,12 +912,12 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                     };
                 }
                 _ => {
-                    println!("Skipping {key:?}");
+                    // println!("Skipping {key:?}");
                 }
             }
         }
 
-        let _id = _id.ok_or(serde::de::Error::missing_field("id"))?;
+        let _id = _id.ok_or(serde::de::Error::missing_field("_id"))?;
         let about = about.unwrap_or_default();
         let accepted_privacy_terms = accepted_privacy_terms.unwrap_or_default();
         let completed_challenges = completed_challenges.unwrap_or_default();
@@ -919,6 +972,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let twitter = twitter.unwrap_or_default();
         let unsubscribe_id =
             unsubscribe_id.ok_or(serde::de::Error::missing_field("unsubscribeId"))?;
+        let username = username.ok_or(serde::de::Error::missing_field("username"))?;
         let username_display = username_display.unwrap_or_default();
         let website = website.unwrap_or_default();
         let years_top_contributor = years_top_contributor.unwrap_or_default();
@@ -978,6 +1032,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
             theme,
             twitter,
             unsubscribe_id,
+            username,
             username_display,
             website,
             years_top_contributor,
@@ -1007,26 +1062,160 @@ mod tests {
 
     use super::*;
     use bson::oid::ObjectId;
+    use cmp::compare_structs;
 
     #[test]
     fn empty_document_to_user() {
         let object_id = ObjectId::new();
+        let unsubscribe_id = "some-uuid".to_string();
+        let username = "username".to_string();
         let doc_1 = mongodb::bson::doc! {
-            "id": object_id,
-            "unsubscribeId": "some-uuid".to_string()
+            "_id": object_id,
+            "unsubscribeId": &unsubscribe_id,
+            "username": &username,
         };
 
-        let user_1: User = mongodb::bson::from_document(doc_1).unwrap();
+        let actual_user: User = mongodb::bson::from_document(doc_1).unwrap();
 
-        assert_eq!(user_1._id, object_id);
+        let expected_user = User {
+            _id: object_id,
+            about: String::default(),
+            accepted_privacy_terms: bool::default(),
+            completed_challenges: Vec::default(),
+            completed_exams: Vec::default(),
+            current_challenge_id: String::default(),
+            donation_emails: Vec::default(),
+            email: String::default(),
+            email_auth_link_ttl: NOption::default(),
+            email_verified: bool::default(),
+            email_verify_ttl: NOption::default(),
+            external_id: NOption::default(),
+            github_profile: String::default(),
+            is_2018_data_vis_cert: bool::default(),
+            is_2018_full_stack_cert: bool::default(),
+            is_apis_microservices_cert: bool::default(),
+            is_back_end_cert: bool::default(),
+            is_banned: bool::default(),
+            is_cheater: bool::default(),
+            is_classroom_account: bool::default(),
+            is_college_algebra_py_cert_v8: bool::default(),
+            is_data_analysis_py_cert_v7: bool::default(),
+            is_data_vis_cert: bool::default(),
+            is_donating: bool::default(),
+            is_foundational_c_sharp_cert_v8: bool::default(),
+            is_front_end_cert: bool::default(),
+            is_front_end_libs_cert: bool::default(),
+            is_full_stack_cert: bool::default(),
+            is_honest: bool::default(),
+            is_infosec_cert_v7: bool::default(),
+            is_infosec_qa_cert: bool::default(),
+            is_js_algo_data_struct_cert: bool::default(),
+            is_js_algo_data_struct_cert_v8: bool::default(),
+            is_machine_learning_py_cert_v7: bool::default(),
+            is_qa_cert_v7: bool::default(),
+            is_relational_database_cert_v8: bool::default(),
+            is_resp_web_design_cert: bool::default(),
+            is_sci_comp_py_cert_v7: bool::default(),
+            keyboard_shortcuts: bool::default(),
+            linkedin: String::default(),
+            location: String::default(),
+            name: String::default(),
+            needs_moderation: bool::default(),
+            new_email: NOption::default(),
+            partially_completed_challenges: Vec::default(),
+            picture: String::default(),
+            portfolio: Vec::default(),
+            profile_ui: ProfileUI::default(),
+            progress_timestamps: Vec::default(),
+            saved_challenges: Vec::default(),
+            send_quincy_email: bool::default(),
+            theme: "default".to_string(),
+            twitter: String::default(),
+            unsubscribe_id,
+            username,
+            username_display: String::default(),
+            website: String::default(),
+            years_top_contributor: Vec::default(),
+        };
+
+        compare_structs!(
+            actual_user,
+            expected_user,
+            _id,
+            about,
+            accepted_privacy_terms,
+            completed_challenges,
+            completed_exams,
+            current_challenge_id,
+            donation_emails,
+            email,
+            email_auth_link_ttl,
+            email_verified,
+            email_verify_ttl,
+            external_id,
+            github_profile,
+            is_2018_data_vis_cert,
+            is_2018_full_stack_cert,
+            is_apis_microservices_cert,
+            is_back_end_cert,
+            is_banned,
+            is_cheater,
+            is_classroom_account,
+            is_college_algebra_py_cert_v8,
+            is_data_analysis_py_cert_v7,
+            is_data_vis_cert,
+            is_donating,
+            is_foundational_c_sharp_cert_v8,
+            is_front_end_cert,
+            is_front_end_libs_cert,
+            is_full_stack_cert,
+            is_honest,
+            is_infosec_cert_v7,
+            is_infosec_qa_cert,
+            is_js_algo_data_struct_cert,
+            is_js_algo_data_struct_cert_v8,
+            is_machine_learning_py_cert_v7,
+            is_qa_cert_v7,
+            is_relational_database_cert_v8,
+            is_resp_web_design_cert,
+            is_sci_comp_py_cert_v7,
+            keyboard_shortcuts,
+            linkedin,
+            location,
+            name,
+            needs_moderation,
+            new_email,
+            partially_completed_challenges,
+            picture,
+            portfolio,
+            profile_ui,
+            progress_timestamps,
+            saved_challenges,
+            send_quincy_email,
+            theme,
+            twitter,
+            unsubscribe_id,
+            username,
+            username_display,
+            website,
+            years_top_contributor
+        );
     }
 
     #[test]
     fn bad_document_to_user() {
+        let object_id = ObjectId::new();
+        let email_verify_datetime = DateTime::now();
+        let email_verify_ttl = NOption::Some(email_verify_datetime);
         let doc_1 = mongodb::bson::doc! {
-            "id": ObjectId::new(),
+            "_id": object_id,
+            "about": ["ab", "out"],
+            "email": "fCC@freecodecamp.org",
+            "emailVerifyTTL": email_verify_datetime.clone(),
             "unsubscribeId": "some-uuid".to_string(),
-            "name": "John",
+            "name": "name",
+            "username": "UsErNaMe",
+            "currentChallengeId": object_id,
             "completedChallenges": [
                 {
                     "challengeType": Bson::Null,
@@ -1060,14 +1249,21 @@ mod tests {
                 "showAbout": false,
                 "showCerts": Bson::Null,
                 "showName": "test",
-            }
+            },
+            "progressTimestamps": [
+                Bson::Double(1620000000.0),
+                DateTime::from_millis(10_000_000_000),
+                {
+                    "timestamp": 16890000000i64
+                },
+                {
+                    "stamp": 16890000001i64
+                }
+            ]
         };
 
         let actual_user: User = mongodb::bson::from_document(doc_1).unwrap();
 
-        let object_id = ObjectId::new();
-        let email_auth_link_ttl = NOption::Some(bson::DateTime::now());
-        let email_verify_ttl = NOption::Some(bson::DateTime::now());
         let profile_ui = ProfileUI {
             is_locked: true,
             show_about: false,
@@ -1084,7 +1280,7 @@ mod tests {
         let expected_user = User {
             _id: object_id,
             about: "about".to_string(),
-            accepted_privacy_terms: true,
+            accepted_privacy_terms: false,
             completed_challenges: vec![CompletedChallenge {
                 challenge_type: 0,
                 completed_date: 1620000000,
@@ -1097,15 +1293,15 @@ mod tests {
                 }],
                 github_link: NOption::Null,
                 id: "1234".to_string(),
-                is_manually_approved: NOption::Undefined,
+                is_manually_approved: NOption::Null,
                 solution: NOption::Null,
             }],
             completed_exams: vec![],
             current_challenge_id: object_id.to_hex(),
-            donation_emails: vec!["fcc@freecodecamp.org".to_string()],
+            donation_emails: vec![],
             email: "fcc@freecodecamp.org".to_string(),
-            email_auth_link_ttl: email_auth_link_ttl.clone(),
-            email_verified: true,
+            email_auth_link_ttl: NOption::Null,
+            email_verified: false,
             email_verify_ttl: email_verify_ttl.clone(),
             external_id: NOption::Null,
             github_profile: "".to_string(),
@@ -1144,18 +1340,84 @@ mod tests {
             picture: "".to_string(),
             portfolio: vec![],
             profile_ui,
-            progress_timestamps: vec![],
+            progress_timestamps: vec![
+                DateTime::from_millis(1620000000 * 1000),
+                DateTime::from_millis(10_000_000_000),
+                DateTime::from_millis(16890000000i64),
+                DateTime::from_millis(16890000001i64),
+            ],
             saved_challenges: vec![],
             send_quincy_email: false,
-            theme: "light".to_string(),
+            theme: "default".to_string(),
             twitter: "".to_string(),
-            unsubscribe_id: "some-uuid-string".to_string(),
+            unsubscribe_id: "some-uuid".to_string(),
+            username: "username".to_string(),
             username_display: "".to_string(),
             website: "".to_string(),
             years_top_contributor: vec![],
         };
 
-        assert_eq!(actual_user, expected_user);
+        compare_structs!(
+            actual_user,
+            expected_user,
+            _id,
+            about,
+            accepted_privacy_terms,
+            completed_challenges,
+            completed_exams,
+            current_challenge_id,
+            donation_emails,
+            email,
+            email_auth_link_ttl,
+            email_verified,
+            email_verify_ttl,
+            external_id,
+            github_profile,
+            is_2018_data_vis_cert,
+            is_2018_full_stack_cert,
+            is_apis_microservices_cert,
+            is_back_end_cert,
+            is_banned,
+            is_cheater,
+            is_classroom_account,
+            is_college_algebra_py_cert_v8,
+            is_data_analysis_py_cert_v7,
+            is_data_vis_cert,
+            is_donating,
+            is_foundational_c_sharp_cert_v8,
+            is_front_end_cert,
+            is_front_end_libs_cert,
+            is_full_stack_cert,
+            is_honest,
+            is_infosec_cert_v7,
+            is_infosec_qa_cert,
+            is_js_algo_data_struct_cert,
+            is_js_algo_data_struct_cert_v8,
+            is_machine_learning_py_cert_v7,
+            is_qa_cert_v7,
+            is_relational_database_cert_v8,
+            is_resp_web_design_cert,
+            is_sci_comp_py_cert_v7,
+            keyboard_shortcuts,
+            linkedin,
+            location,
+            name,
+            needs_moderation,
+            new_email,
+            partially_completed_challenges,
+            picture,
+            portfolio,
+            profile_ui,
+            progress_timestamps,
+            saved_challenges,
+            send_quincy_email,
+            theme,
+            twitter,
+            unsubscribe_id,
+            username_display,
+            website,
+            years_top_contributor
+        );
     }
 
     #[test]
@@ -1231,6 +1493,7 @@ mod tests {
             theme: "light".to_string(),
             twitter: "".to_string(),
             unsubscribe_id: "some-uuid-string".to_string(),
+            username: "my-username".to_string(),
             username_display: "".to_string(),
             website: "".to_string(),
             years_top_contributor: vec![],
@@ -1238,7 +1501,7 @@ mod tests {
 
         let doc = mongodb::bson::to_document(&user).unwrap();
 
-        assert_eq!(doc.get_object_id("id").unwrap(), object_id);
+        assert_eq!(doc.get_object_id("_id").unwrap(), object_id);
         assert_eq!(doc.get_str("about").unwrap(), "about");
         assert_eq!(doc.get_bool("acceptedPrivacyTerms").unwrap(), true);
         assert_eq!(doc.get_array("completedChallenges").unwrap().len(), 0);
@@ -1297,5 +1560,38 @@ mod tests {
         assert_eq!(doc.get_str("linkedin").unwrap(), "");
         assert_eq!(doc.get_str("location").unwrap(), "");
         assert_eq!(doc.get_str("name").unwrap(), "name");
+        assert_eq!(doc.get_bool("needsModeration").unwrap(), false);
+        assert_eq!(doc.get("newEmail").unwrap(), &Bson::Null);
+        assert_eq!(
+            doc.get_array("partiallyCompletedChallenges").unwrap().len(),
+            0
+        );
+        assert_eq!(doc.get_str("picture").unwrap(), "");
+        assert_eq!(doc.get_array("portfolio").unwrap().len(), 0);
+        assert_eq!(
+            doc.get_document("profileUI").unwrap(),
+            &mongodb::bson::doc! {
+                "isLocked": true,
+                "showAbout": false,
+                "showCerts": false,
+                "showDonation": false,
+                "showHeatMap": false,
+                "showLocation": false,
+                "showName": false,
+                "showPoints": false,
+                "showPortfolio": false,
+                "showTimeLine": false,
+            }
+        );
+        assert_eq!(doc.get_array("progressTimestamps").unwrap().len(), 0);
+        assert_eq!(doc.get_array("savedChallenges").unwrap().len(), 0);
+        assert_eq!(doc.get_bool("sendQuincyEmail").unwrap(), false);
+        assert_eq!(doc.get_str("theme").unwrap(), "light");
+        assert_eq!(doc.get_str("twitter").unwrap(), "");
+        assert_eq!(doc.get_str("unsubscribeId").unwrap(), "some-uuid-string");
+        assert_eq!(doc.get_str("username").unwrap(), "my-username");
+        assert_eq!(doc.get_str("usernameDisplay").unwrap(), "");
+        assert_eq!(doc.get_str("website").unwrap(), "");
+        assert_eq!(doc.get_array("yearsTopContributor").unwrap().len(), 0);
     }
 }

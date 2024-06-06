@@ -12,3 +12,4 @@ mongodb = "2.8.2"
 tokio = { version = "1.37.0", features = ["fs"] }
 indicatif = "0.17.8"
 serde = { version = "1.0.203", features = ["derive"] }
+cmp = "0.1.0"
