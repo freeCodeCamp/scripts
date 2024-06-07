@@ -1245,6 +1245,16 @@ mod tests {
                     "id": "1234"
                 }
             ],
+            "partiallyCompletedChallenges": [
+                {
+                    "completedDate": 10_000_000_000.0,
+                }
+            ],
+            "portfolio": [
+                {
+                    "bad":"document"
+                }
+            ],
             "profileUI": {
                 "showAbout": false,
                 "showCerts": Bson::Null,
@@ -1259,6 +1269,20 @@ mod tests {
                 {
                     "stamp": 16890000001i64
                 }
+            ],
+            "savedChallenges": [
+                {
+                    "files": [],
+                    "id": "1234",
+                    "lastSavedDate": DateTime::from_millis(10_000_000_000)
+                }
+            ],
+            "yearsTopContributor": [
+                "2020",
+                Bson::Int32(2021),
+                Bson::Int64(2022),
+                Bson::Double(2023.1),
+                "bad-2024"
             ]
         };
 
@@ -1336,9 +1360,12 @@ mod tests {
             name: "name".to_string(),
             needs_moderation: false,
             new_email: NOption::Null,
-            partially_completed_challenges: vec![],
+            partially_completed_challenges: vec![PartiallyCompletedChallenge {
+                completed_date: 10_000_000_000,
+                id: String::new(),
+            }],
             picture: "".to_string(),
-            portfolio: vec![],
+            portfolio: vec![Portfolio::default()],
             profile_ui,
             progress_timestamps: vec![
                 DateTime::from_millis(1620000000 * 1000),
@@ -1346,7 +1373,12 @@ mod tests {
                 DateTime::from_millis(16890000000i64),
                 DateTime::from_millis(16890000001i64),
             ],
-            saved_challenges: vec![],
+            saved_challenges: vec![SavedChallenge {
+                challenge_type: 0,
+                files: vec![],
+                id: "1234".to_string(),
+                last_saved_date: 10_000_000_000,
+            }],
             send_quincy_email: false,
             theme: "default".to_string(),
             twitter: "".to_string(),
@@ -1354,7 +1386,7 @@ mod tests {
             username: "username".to_string(),
             username_display: "".to_string(),
             website: "".to_string(),
-            years_top_contributor: vec![],
+            years_top_contributor: vec![2020, 2021, 2022, 2023],
         };
 
         compare_structs!(

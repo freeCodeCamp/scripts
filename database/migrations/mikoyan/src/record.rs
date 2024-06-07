@@ -10,6 +10,7 @@ pub enum NOption<T> {
     Some(T),
     #[default]
     Null,
+    #[allow(dead_code)]
     Undefined,
 }
 

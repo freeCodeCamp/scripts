@@ -12,7 +12,11 @@ pub struct Args {
 
     /// MongoDB connection string
     /// If not provided, will default to `mongodb://127.0.0.1:27017`
-    #[arg(short, long, default_value = "mongodb://127.0.0.1:27017")]
+    #[arg(
+        short,
+        long,
+        default_value = "mongodb://127.0.0.1:27017/freecodecamp?directConnection=true"
+    )]
     pub uri: String,
 
     /// Number of documents to process
@@ -22,6 +26,6 @@ pub struct Args {
 
     /// Number of threads to use
     /// If not provided, defaults to 1
-    #[arg(short, long, default_value = "1")]
+    #[arg(short = 't', long, default_value = "1")]
     pub num_threads: Option<usize>,
 }

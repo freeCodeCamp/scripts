@@ -1,10 +1,7 @@
 use clap::Parser;
 use db::get_collection;
 use futures_util::TryStreamExt;
-use mongodb::{
-    bson::doc,
-    options::{FindOptions, UpdateOptions},
-};
+use mongodb::{bson::doc, options::FindOptions};
 use tokio::{self, io::AsyncWriteExt, task::JoinHandle};
 
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
@@ -129,16 +126,10 @@ async fn connect_and_process(
         match normalize_user(user) {
             Ok(normalized_user) => {
                 // _id exists, because `normalize_user` returns an error if it does not
-                // TODO: Consider doing an `update_many` for all users with matching emails.
                 let id = normalized_user.get_object_id("_id").unwrap();
                 let filter = doc! {"_id": id};
-                let update_options = UpdateOptions::builder()
-                    .array_filters(vec![doc! {
-                        "el": {"$exists": true},
-                    }])
-                    .build();
-                collection
-                    .update_one(filter, normalized_user, update_options)
+                let _res = collection
+                    .replace_one(filter, normalized_user, None)
                     .await?;
             }
             Err(normalize_error) => {
