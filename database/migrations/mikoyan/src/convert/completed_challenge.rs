@@ -32,12 +32,12 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
                     }
 
                     challenge_type = match map.next_value()? {
-                        Bson::Int32(v) => Some(v),
-                        Bson::Int64(v) => Some(v as i32),
-                        Bson::Double(v) => Some(v as i32),
+                        Bson::Int32(v) => Some(NOption::Some(v)),
+                        Bson::Int64(v) => Some(NOption::Some(v as i32)),
+                        Bson::Double(v) => Some(NOption::Some(v as i32)),
                         Bson::String(v) => {
                             if let Ok(v) = v.parse() {
-                                Some(v)
+                                Some(NOption::Some(v))
                             } else {
                                 None
                             }
@@ -127,7 +127,7 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
             }
         }
 
-        let challenge_type = challenge_type.unwrap_or_default();
+        let challenge_type = challenge_type.unwrap_or(NOption::Undefined);
         let completed_date = completed_date.unwrap_or(DateTime::now().timestamp_millis());
         let files = files.unwrap_or_default();
         let github_link = github_link.unwrap_or_default();

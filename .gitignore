@@ -84,5 +84,11 @@ out/
 
 packages/**/prod/
 
-# Rust
-target
+# database/migrations/mikoyan
+database/migrations/mikoyan/target
+database/migrations/mikoyan/logs.log
+database/migrations/mikoyan/differ/comparison.json
+database/migrations/mikoyan/differ/diff.txt
+database/migrations/mikoyan/differ/normalized-users.json
+database/migrations/mikoyan/differ/sample-users.json
+

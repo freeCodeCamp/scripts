@@ -2,7 +2,7 @@ use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
 use crate::{
-    normalize::num_to_datetime,
+    normalize::{num_to_datetime, ToMillis},
     record::{
         CompletedChallenge, CompletedExam, NOption, PartiallyCompletedChallenge, Portfolio,
         ProfileUI, SavedChallenge, User,
@@ -71,6 +71,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let mut portfolio = None;
         let mut profile_ui = None;
         let mut progress_timestamps = None;
+        let mut rand = None;
         let mut saved_challenges = None;
         let mut send_quincy_email = None;
         let mut theme = None;
@@ -484,7 +485,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
-                "isInfosecQACert" => {
+                "isInfosecQaCert" => {
                     if is_infosec_qa_cert.is_some() {
                         return Err(serde::de::Error::duplicate_field("isInfosecQACert"));
                     }
@@ -528,7 +529,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         _ => None,
                     };
                 }
-                "isQACertV7" => {
+                "isQaCertV7" => {
                     if is_qa_cert_v7.is_some() {
                         return Err(serde::de::Error::duplicate_field("isQaCertV7"));
                     }
@@ -707,21 +708,21 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for (_, value) in doc {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::Int32(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::Int64(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::String(v) => {
                                         if let Ok(v) = v.parse::<i64>() {
-                                            progress_timestamps.push(num_to_datetime(v));
+                                            progress_timestamps.push(v.to_millis());
                                         }
                                     }
                                     Bson::Timestamp(v) => {
-                                        progress_timestamps.push(num_to_datetime(v.time));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     _ => {
                                         // No-Op
@@ -735,45 +736,45 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                             for value in arr {
                                 match value {
                                     Bson::Double(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::DateTime(v) => {
-                                        progress_timestamps.push(v);
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::Int32(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v as i64);
                                     }
                                     Bson::Int64(v) => {
-                                        progress_timestamps.push(num_to_datetime(v));
+                                        progress_timestamps.push(v);
                                     }
                                     Bson::String(v) => {
                                         if let Ok(v) = v.parse::<i64>() {
-                                            progress_timestamps.push(num_to_datetime(v));
+                                            progress_timestamps.push(v.to_millis());
                                         }
                                     }
                                     Bson::Timestamp(v) => {
-                                        progress_timestamps.push(num_to_datetime(v.time));
+                                        progress_timestamps.push(v.to_millis());
                                     }
                                     Bson::Document(doc) => {
                                         let mut pts = vec![];
                                         for (_, value) in doc {
                                             match value {
                                                 Bson::Double(v) => {
-                                                    pts.push(num_to_datetime(v));
+                                                    pts.push(v.to_millis());
                                                 }
                                                 Bson::Int32(v) => {
-                                                    pts.push(num_to_datetime(v));
+                                                    pts.push(v.to_millis());
                                                 }
                                                 Bson::Int64(v) => {
-                                                    pts.push(num_to_datetime(v));
+                                                    pts.push(v.to_millis());
                                                 }
                                                 Bson::String(v) => {
                                                     if let Ok(v) = v.parse::<i64>() {
-                                                        pts.push(num_to_datetime(v));
+                                                        pts.push(v.to_millis());
                                                     }
                                                 }
                                                 Bson::Timestamp(v) => {
-                                                    pts.push(num_to_datetime(v.time));
+                                                    pts.push(v.to_millis());
                                                 }
                                                 _ => {
                                                     // No-Op
@@ -791,6 +792,26 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                         }
                         _ => None,
                     }
+                }
+                // This is left in because it will continue to be added to new user records as long as we use loopback
+                "rand" => {
+                    if rand.is_some() {
+                        return Err(serde::de::Error::duplicate_field("rand"));
+                    }
+
+                    rand = match map.next_value()? {
+                        Bson::Double(v) => Some(v),
+                        Bson::Int32(v) => Some(v as f64),
+                        Bson::Int64(v) => Some(v as f64),
+                        Bson::String(v) => {
+                            if let Ok(v) = v.parse::<f64>() {
+                                Some(v)
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    };
                 }
                 "savedChallenges" => {
                     if saved_challenges.is_some() {
@@ -966,6 +987,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let portfolio = portfolio.unwrap_or_default();
         let profile_ui = profile_ui.unwrap_or_default();
         let progress_timestamps = progress_timestamps.unwrap_or_default();
+        let rand = rand.unwrap_or_default();
         let saved_challenges = saved_challenges.unwrap_or_default();
         let send_quincy_email = send_quincy_email.unwrap_or_default();
         let theme = theme.unwrap_or("default".to_string());
@@ -1026,6 +1048,7 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
             picture,
             portfolio,
             profile_ui,
+            rand,
             progress_timestamps,
             saved_challenges,
             send_quincy_email,
@@ -1127,6 +1150,7 @@ mod tests {
             portfolio: Vec::default(),
             profile_ui: ProfileUI::default(),
             progress_timestamps: Vec::default(),
+            rand: f64::default(),
             saved_challenges: Vec::default(),
             send_quincy_email: bool::default(),
             theme: "default".to_string(),
@@ -1190,6 +1214,7 @@ mod tests {
             portfolio,
             profile_ui,
             progress_timestamps,
+            rand,
             saved_challenges,
             send_quincy_email,
             theme,
@@ -1218,7 +1243,7 @@ mod tests {
             "currentChallengeId": object_id,
             "completedChallenges": [
                 {
-                    "challengeType": Bson::Null,
+                    "challengeType": Bson::Undefined,
                     "completedDate": Bson::Double(1620000000.0),
                     "files": [
 
@@ -1306,7 +1331,7 @@ mod tests {
             about: "about".to_string(),
             accepted_privacy_terms: false,
             completed_challenges: vec![CompletedChallenge {
-                challenge_type: 0,
+                challenge_type: NOption::Undefined,
                 completed_date: 1620000000,
                 files: vec![File {
                     contents: "String".to_string(),
@@ -1368,11 +1393,12 @@ mod tests {
             portfolio: vec![Portfolio::default()],
             profile_ui,
             progress_timestamps: vec![
-                DateTime::from_millis(1620000000 * 1000),
-                DateTime::from_millis(10_000_000_000),
-                DateTime::from_millis(16890000000i64),
-                DateTime::from_millis(16890000001i64),
+                1620000000 * 1000,
+                10_000_000_000,
+                16890000000i64,
+                16890000001i64,
             ],
+            rand: f64::default(),
             saved_challenges: vec![SavedChallenge {
                 challenge_type: 0,
                 files: vec![],
@@ -1441,6 +1467,7 @@ mod tests {
             portfolio,
             profile_ui,
             progress_timestamps,
+            rand,
             saved_challenges,
             send_quincy_email,
             theme,
@@ -1520,6 +1547,7 @@ mod tests {
             portfolio: vec![],
             profile_ui,
             progress_timestamps: vec![],
+            rand: 0.123456789,
             saved_challenges: vec![],
             send_quincy_email: false,
             theme: "light".to_string(),
@@ -1580,11 +1608,11 @@ mod tests {
         assert_eq!(doc.get_bool("isFullStackCert").unwrap(), false);
         assert_eq!(doc.get_bool("isHonest").unwrap(), false);
         assert_eq!(doc.get_bool("isInfosecCertV7").unwrap(), false);
-        assert_eq!(doc.get_bool("isInfosecQACert").unwrap(), false);
+        assert_eq!(doc.get_bool("isInfosecQaCert").unwrap(), false);
         assert_eq!(doc.get_bool("isJsAlgoDataStructCert").unwrap(), false);
         assert_eq!(doc.get_bool("isJsAlgoDataStructCertV8").unwrap(), false);
         assert_eq!(doc.get_bool("isMachineLearningPyCertV7").unwrap(), false);
-        assert_eq!(doc.get_bool("isQACertV7").unwrap(), false);
+        assert_eq!(doc.get_bool("isQaCertV7").unwrap(), false);
         assert_eq!(doc.get_bool("isRelationalDatabaseCertV8").unwrap(), false);
         assert_eq!(doc.get_bool("isRespWebDesignCert").unwrap(), false);
         assert_eq!(doc.get_bool("isSciCompPyCertV7").unwrap(), false);
@@ -1616,6 +1644,7 @@ mod tests {
             }
         );
         assert_eq!(doc.get_array("progressTimestamps").unwrap().len(), 0);
+        assert_eq!(doc.get_f64("rand").unwrap(), 0.123456789);
         assert_eq!(doc.get_array("savedChallenges").unwrap().len(), 0);
         assert_eq!(doc.get_bool("sendQuincyEmail").unwrap(), false);
         assert_eq!(doc.get_str("theme").unwrap(), "light");

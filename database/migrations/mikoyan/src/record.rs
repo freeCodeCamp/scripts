@@ -50,12 +50,12 @@ pub struct User {
     pub is_full_stack_cert: bool,
     pub is_honest: bool,
     pub is_infosec_cert_v7: bool,
-    #[serde(rename = "isInfosecQACert")]
+    // #[serde(rename = "isInfosecQACert")]
     pub is_infosec_qa_cert: bool,
     pub is_js_algo_data_struct_cert: bool,
     pub is_js_algo_data_struct_cert_v8: bool,
     pub is_machine_learning_py_cert_v7: bool,
-    #[serde(rename = "isQACertV7")]
+    // #[serde(rename = "isQACertV7")]
     pub is_qa_cert_v7: bool,
     pub is_relational_database_cert_v8: bool,
     pub is_resp_web_design_cert: bool,
@@ -71,7 +71,9 @@ pub struct User {
     pub portfolio: Vec<Portfolio>,
     #[serde(rename = "profileUI")]
     pub profile_ui: ProfileUI,
-    pub progress_timestamps: Vec<bson::DateTime>,
+    pub progress_timestamps: Vec<i64>,
+    // This is unnecessary, but will continue to be added to new records until LB migration
+    pub rand: f64,
     pub saved_challenges: Vec<SavedChallenge>,
     pub send_quincy_email: bool,
     pub theme: String,
@@ -86,7 +88,7 @@ pub struct User {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CompletedChallenge {
-    pub challenge_type: i32,
+    pub challenge_type: NOption<i32>,
     pub completed_date: i64,
     pub files: Vec<File>,
     pub github_link: NOption<String>,

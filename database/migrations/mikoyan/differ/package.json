@@ -1,0 +1,15 @@
+{
+  "name": "differ",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A simple differ",
+  "main": "index.js",
+  "scripts": {
+    "comp": "node compare.js",
+    "diff": "node index.js"
+  },
+  "dependencies": {
+    "colors": "1.4.0",
+    "diff": "5.2.0"
+  }
+}
