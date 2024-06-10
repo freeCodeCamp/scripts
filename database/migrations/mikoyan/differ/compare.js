@@ -12,6 +12,8 @@ const WRITE_QUEUE = {
 const SAMPLE_USERS_PATH = "sample-users.json";
 const NORMALIZED_USERS_PATH = "normalized-users.json";
 
+const REMOVED_FIELDS = ["history", "sound", "badges"];
+
 async function main() {
   const sample_users = await get_users(SAMPLE_USERS_PATH); // TODO
   const normalized_users = await get_users(NORMALIZED_USERS_PATH); // TODO
@@ -33,16 +35,8 @@ async function get_users(path) {
 }
 
 /**
- * Compares the user passed in with the user in the  after parsing.
+ * Compares the user passed in with the user in after parsing.
  *
- * ```json
- * [{
- *   "_id": string,
- *   "property": string,
- *   "expected": JSON,
- *   "actual": JSON | undefined
- * }]
- * ```
  * @param {Object} sample_user - The original user before normalization
  * @param {Object} normalized_user - The user after normalization
  */
@@ -51,118 +45,97 @@ async function compare_sample_to_normalized_user(sample_user, normalized_user) {
     return await add_to_log({
       _id: sample_user._id.$oid,
       property: null,
-      expected: sample_user,
-      actual: "fcc-undefined",
+      original: sample_user,
+      normalized: "fcc-undefined",
     });
   }
 
-  const user_keys = Object.keys(sample_user);
-
-  for (const key of user_keys) {
-    const res = deep_compare(key, sample_user[key], normalized_user[key]);
-    if (res?.loc) {
-      await add_to_log({
-        _id: sample_user._id.$oid,
-        property: res.loc,
-        expected: res.expected,
-        actual: res.actual,
-      });
-    }
-    // if (!is_deep_equal(sample_user[key], normalized_user[key]), key) {
-    //   await add_to_log({
-    //     _id: sample_user._id.$oid,
-    //     property: key,
-    //     expected: fcc_undefined(sample_user[key]),
-    //     actual: fcc_undefined(normalized_user[key]),
-    //   });
-    // }
-  }
+  await deep_compare(sample_user, normalized_user, `[${sample_user._id.$oid}]`);
 }
 
 function fcc_undefined(val) {
   return typeof val === "undefined" ? "fcc-undefined" : val;
 }
 
-function deep_compare(key, a, b) {
-  if (a === b) {
+/// Compare the original with the normalized object
+/// Output:
+/// - If equal, return undefined
+/// - If not equal, { expected: any, actual: any, loc: string }
+///
+/// If original and normalized are objects:
+/// - Append `.${key}` to the loc for object literals, or `[${index}]` for arrays
+async function deep_compare(original, normalized, key) {
+  if (original === normalized) {
     return;
   }
 
+  /// Ignore common, expected differences:
+  /// | Original  | Normalized |
+  /// | --------- | ---------- |
+  /// | undefined | [] |
+  /// | undefined | null |
   {
-    // Sample has undefined for props which are empty arrays.
-    // For the sake of less diff, empty arrays are treated equivalent to undefined.
-    if (empty_array_eq_undefined(a, b)) {
+    if (undefined_eq_empty_array(original, normalized)) {
       return;
     }
 
-    // For the sake of less diff, undefined props are treated equivalent to null.
-    if (undefined_eq_null(a, b)) {
+    if (undefined_eq_null(original, normalized)) {
       return;
     }
   }
 
-  if (typeof a !== typeof b) {
-    return { expected: a, actual: b, loc: key };
+  if (typeof original !== typeof normalized) {
+    await add_to_log({
+      property: key,
+      original: fcc_undefined(original),
+      normalized: fcc_undefined(normalized),
+    });
   }
 
-  if (typeof a === "object" && a !== null && b !== null) {
-    // Handle arrays such that order does not matter
-    if (Array.isArray(a) && Array.isArray(b)) {
-      const a_copy = a.slice().sort();
-      const b_copy = b.slice().sort();
+  if (
+    typeof original === "object" &&
+    original !== null &&
+    normalized !== null
+  ) {
+    if (Array.isArray(original) && Array.isArray(normalized)) {
+      const original_copy = original.slice().sort();
+      const normalized_copy = normalized.slice().sort();
 
-      const expected = [];
-      const actual = [];
-      let loc = key;
-
-      for (let i = 0; i < a_copy.length; i++) {
-        const res = deep_compare(key + `[${i}]`, a_copy[i], b_copy[i]);
-        if (res) {
-          expected.push(res.expected);
-          actual.push(res.actual);
-          loc = res.loc;
-        }
+      for (let i = 0; i < original_copy.length; i++) {
+        await deep_compare(
+          original_copy[i],
+          normalized_copy[i],
+          key + `[${i}]`
+        );
       }
-
-      return { expected, actual, loc };
     }
 
-    const a_keys = Object.keys(a);
-    const b_keys = Object.keys(b);
+    const original_keys = Object.keys(original);
+    // const normalized_keys = Object.keys(normalized);
 
     // Objects do not have to be the same length
-    // if (a_keys.length !== b_keys.length) {
-    //   return false;
-    // }
-
-    for (const k of a_keys) {
-      const res = deep_compare(key + `.${k}`, a[k], b[k]);
-      if (res) {
-        return res;
+    for (const k of original_keys) {
+      // If key is removed prop, then skip
+      if (REMOVED_FIELDS.includes(k)) {
+        continue;
       }
-    }
-    for (const k of b_keys) {
-      const res = deep_compare(key + `.${k}`, a[k], b[k]);
-      if (res) {
-        return res;
-      }
+      await deep_compare(original?.[k], normalized?.[k], key + `.${k}`);
     }
 
     return;
+  } else {
+    await add_to_log({
+      property: key,
+      original: fcc_undefined(original),
+      normalized: fcc_undefined(normalized),
+    });
   }
-
-  return { expected: a, actual: b, loc: key };
 }
 
-function empty_array_eq_undefined(a, b) {
-  if (Array.isArray(a) && a.length === 0) {
-    return typeof b === "undefined";
-  }
-
+function undefined_eq_empty_array(a, b) {
   if (Array.isArray(b) && b.length === 0) {
     return typeof a === "undefined";
   }
-
   return false;
 }
 
@@ -177,9 +150,6 @@ async function add_to_log(value) {
   }
   WRITE_QUEUE.is_writing = true;
   const data = await readFile(DIFF_LOG_PATH, "utf-8");
-  // console.log('Data: ', data);
-  // console.log('-----------');
-  // console.log('Value: ', value);
   const logs = JSON.parse(data);
   logs.push(value);
   await writeFile(DIFF_LOG_PATH, JSON.stringify(logs, null, 2));

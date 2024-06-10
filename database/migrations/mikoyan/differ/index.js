@@ -10,8 +10,8 @@ async function main() {
   const json = JSON.parse(data);
 
   for (const val of json) {
-    const diff = Diff.diffJson(val.expected, val.actual);
-    let nicer = `|---- ${val._id} > ${val.property} ----|\n`;
+    const diff = Diff.diffJson(val.original, val.normalized);
+    let nicer = `|---- ${val.property} ----|\n`;
     diff.forEach((part) => {
       // green for additions, red for deletions
       let text = part.added
