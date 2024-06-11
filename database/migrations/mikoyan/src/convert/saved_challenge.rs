@@ -1,7 +1,10 @@
 use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
-use crate::record::{File, SavedChallenge};
+use crate::{
+    normalize::ToMillis,
+    record::{File, SavedChallenge},
+};
 
 struct SavedChallengeVisitor;
 
@@ -80,11 +83,11 @@ impl<'de> serde::de::Visitor<'de> for SavedChallengeVisitor {
                     }
 
                     last_saved_date = match map.next_value()? {
-                        Bson::Double(v) => Some(v as i64),
-                        Bson::DateTime(v) => Some(v.timestamp_millis()),
-                        Bson::Int32(v) => Some(v as i64),
-                        Bson::Int64(v) => Some(v),
-                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
+                        Bson::Double(v) => Some(v.to_millis()),
+                        Bson::DateTime(v) => Some(v.to_millis()),
+                        Bson::Int32(v) => Some(v.to_millis()),
+                        Bson::Int64(v) => Some(v.to_millis()),
+                        Bson::Timestamp(v) => Some(v.to_millis()),
                         _ => None,
                     };
                 }

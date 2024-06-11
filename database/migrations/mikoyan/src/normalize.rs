@@ -40,7 +40,7 @@ where
         s.parse::<i64>().unwrap()
     };
 
-    DateTime::from_millis(num as i64)
+    DateTime::from_millis(num)
 }
 
 pub trait ToMillis: ToString {
@@ -60,14 +60,12 @@ pub trait ToMillis: ToString {
         }
 
         // Handle seconds, but assume milliseconds
-        let num = if s.len() == 10 {
+        if s.len() == 10 {
             let num = s.parse::<i64>().unwrap();
             num * 1000
         } else {
             s.parse::<i64>().unwrap()
-        };
-
-        num
+        }
     }
 }
 

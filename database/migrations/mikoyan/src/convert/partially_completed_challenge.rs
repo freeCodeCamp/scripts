@@ -1,7 +1,7 @@
 use mongodb::bson::{Bson, DateTime};
 use serde::Deserialize;
 
-use crate::record::PartiallyCompletedChallenge;
+use crate::{normalize::ToMillis, record::PartiallyCompletedChallenge};
 
 struct PartiallyCompletedChallengeVisitor;
 
@@ -27,11 +27,11 @@ impl<'de> serde::de::Visitor<'de> for PartiallyCompletedChallengeVisitor {
                     }
 
                     completed_date = match map.next_value()? {
-                        Bson::Double(v) => Some(v as i64),
-                        Bson::DateTime(v) => Some(v.timestamp_millis()),
-                        Bson::Int32(v) => Some(v as i64),
-                        Bson::Int64(v) => Some(v),
-                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
+                        Bson::Double(v) => Some(v.to_millis()),
+                        Bson::DateTime(v) => Some(v.to_millis()),
+                        Bson::Int32(v) => Some(v.to_millis()),
+                        Bson::Int64(v) => Some(v.to_millis()),
+                        Bson::Timestamp(v) => Some(v.to_millis()),
                         _ => None,
                     };
                 }

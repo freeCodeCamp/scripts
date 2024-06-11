@@ -12,15 +12,6 @@ impl<'de> serde::de::Visitor<'de> for FileVisitor {
         formatter.write_str("struct File")
     }
 
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-    where
-        A: serde::de::SeqAccess<'de>,
-    {
-        // TODO
-        let file: File = seq.next_element()?.unwrap();
-        Ok(file)
-    }
-
     fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
     where
         A: serde::de::MapAccess<'de>,

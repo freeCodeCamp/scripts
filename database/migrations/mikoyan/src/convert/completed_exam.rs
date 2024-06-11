@@ -1,7 +1,10 @@
 use mongodb::bson::{self, Bson};
 use serde::Deserialize;
 
-use crate::record::{CompletedExam, ExamResults};
+use crate::{
+    normalize::ToMillis,
+    record::{CompletedExam, ExamResults},
+};
 
 struct CompletedExamVisitor;
 
@@ -32,7 +35,6 @@ impl<'de> serde::de::Visitor<'de> for CompletedExamVisitor {
                         Bson::Int32(v) => Some(v),
                         Bson::Int64(v) => Some(v as i32),
                         Bson::Double(v) => Some(v as i32),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
@@ -42,11 +44,11 @@ impl<'de> serde::de::Visitor<'de> for CompletedExamVisitor {
                     }
 
                     completed_date = match map.next_value()? {
-                        Bson::Double(v) => Some(v as i64),
-                        Bson::DateTime(v) => Some(v.timestamp_millis()),
-                        Bson::Int32(v) => Some(v as i64),
-                        Bson::Int64(v) => Some(v),
-                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
+                        Bson::Double(v) => Some(v.to_millis()),
+                        Bson::DateTime(v) => Some(v.to_millis()),
+                        Bson::Int32(v) => Some(v.to_millis()),
+                        Bson::Int64(v) => Some(v.to_millis()),
+                        Bson::Timestamp(v) => Some(v.to_millis()),
                         _ => None,
                     };
                 }
@@ -58,7 +60,12 @@ impl<'de> serde::de::Visitor<'de> for CompletedExamVisitor {
                     exam_results = match map.next_value()? {
                         Bson::Document(doc) => {
                             let exam_results: ExamResults =
-                                bson::from_document(doc).expect("Error");
+                                bson::from_document(doc).map_err(|e| {
+                                    serde::de::Error::invalid_value(
+                                        serde::de::Unexpected::Other(&e.to_string()),
+                                        &"a valid ExamResults",
+                                    )
+                                })?;
                             Some(exam_results)
                         }
                         _ => None,

@@ -1332,7 +1332,7 @@ mod tests {
             accepted_privacy_terms: false,
             completed_challenges: vec![CompletedChallenge {
                 challenge_type: NOption::Undefined,
-                completed_date: 1620000000,
+                completed_date: 1_620_000_000_000,
                 files: vec![File {
                     contents: "String".to_string(),
                     ext: "String".to_string(),

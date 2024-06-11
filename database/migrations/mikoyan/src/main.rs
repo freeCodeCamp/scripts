@@ -9,15 +9,17 @@ use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 mod clapper;
 mod convert;
 mod db;
+mod error;
 mod normalize;
 mod record;
 
+use error::Error;
 use normalize::{normalize_user, NormalizeError};
 
 use clapper::Args;
 
 #[tokio::main]
-async fn main() -> mongodb::error::Result<()> {
+async fn main() -> Result<(), Error> {
     let args = Args::parse();
 
     let num_threads = if let Some(num_threads) = args.num_threads {

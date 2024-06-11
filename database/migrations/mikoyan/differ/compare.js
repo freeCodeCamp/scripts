@@ -15,8 +15,8 @@ const NORMALIZED_USERS_PATH = "normalized-users.json";
 const REMOVED_FIELDS = ["history", "sound", "badges"];
 
 async function main() {
-  const sample_users = await get_users(SAMPLE_USERS_PATH); // TODO
-  const normalized_users = await get_users(NORMALIZED_USERS_PATH); // TODO
+  const sample_users = await get_users(SAMPLE_USERS_PATH);
+  const normalized_users = await get_users(NORMALIZED_USERS_PATH);
 
   for (const sample_user of sample_users) {
     const normalized_user = normalized_users.find(

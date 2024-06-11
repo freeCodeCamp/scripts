@@ -1,7 +1,10 @@
 use mongodb::bson::{self, Bson, DateTime};
 use serde::Deserialize;
 
-use crate::record::{CompletedChallenge, File, NOption};
+use crate::{
+    normalize::ToMillis,
+    record::{CompletedChallenge, File, NOption},
+};
 
 struct CompletedChallengeVisitor;
 
@@ -35,13 +38,6 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
                         Bson::Int32(v) => Some(NOption::Some(v)),
                         Bson::Int64(v) => Some(NOption::Some(v as i32)),
                         Bson::Double(v) => Some(NOption::Some(v as i32)),
-                        Bson::String(v) => {
-                            if let Ok(v) = v.parse() {
-                                Some(NOption::Some(v))
-                            } else {
-                                None
-                            }
-                        }
                         _ => None,
                     };
                 }
@@ -51,11 +47,11 @@ impl<'de> serde::de::Visitor<'de> for CompletedChallengeVisitor {
                     }
 
                     completed_date = match map.next_value()? {
-                        Bson::Double(v) => Some(v as i64),
-                        Bson::DateTime(v) => Some(v.timestamp_millis()),
-                        Bson::Int32(v) => Some(v as i64),
-                        Bson::Int64(v) => Some(v),
-                        Bson::Timestamp(v) => Some((v.time * 1000) as i64),
+                        Bson::Double(v) => Some(v.to_millis()),
+                        Bson::DateTime(v) => Some(v.to_millis()),
+                        Bson::Int32(v) => Some(v.to_millis()),
+                        Bson::Int64(v) => Some(v.to_millis()),
+                        Bson::Timestamp(v) => Some(v.to_millis()),
                         _ => None,
                     };
                 }

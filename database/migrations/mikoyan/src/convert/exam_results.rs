@@ -34,7 +34,6 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                         Bson::Int32(v) => Some(v),
                         Bson::Int64(v) => Some(v as i32),
                         Bson::Double(v) => Some(v as i32),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
@@ -47,7 +46,6 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                         Bson::Int32(v) => Some(v),
                         Bson::Int64(v) => Some(v as i32),
                         Bson::Double(v) => Some(v as i32),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
@@ -60,7 +58,6 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                         Bson::Int32(v) => Some(v),
                         Bson::Int64(v) => Some(v as i32),
                         Bson::Double(v) => Some(v as i32),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
@@ -83,7 +80,6 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                         Bson::Double(v) => Some(v),
                         Bson::Int32(v) => Some(v as f64),
                         Bson::Int64(v) => Some(v as f64),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
@@ -96,7 +92,6 @@ impl<'de> serde::de::Visitor<'de> for ExamResultsVisitor {
                         Bson::Double(v) => Some(v),
                         Bson::Int32(v) => Some(v as f64),
                         Bson::Int64(v) => Some(v as f64),
-                        Bson::String(v) => Some(v.parse().unwrap()),
                         _ => None,
                     };
                 }
