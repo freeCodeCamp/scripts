@@ -31,7 +31,7 @@ async fn main() -> Result<(), Error> {
     let mut handles = Vec::new();
 
     let num_docs_in_collection = {
-        let collection = get_collection(&args.uri).await?;
+        let collection = get_collection(&args.uri, "user").await?;
         collection.estimated_document_count(None).await? as usize
     };
 
@@ -90,7 +90,7 @@ async fn connect_and_process(
     thread_id: usize,
     m: MultiProgress,
 ) -> Result<(), mongodb::error::Error> {
-    let collection = get_collection(&args.uri).await?;
+    let user_collection = get_collection(&args.uri, "user").await?;
 
     let find_ops = FindOptions::builder()
         .limit(num_docs_to_handle as i64)
@@ -105,7 +105,7 @@ async fn connect_and_process(
         //     "badges": 1,
         // })
         .build();
-    let mut cursor = collection.find(doc! {}, find_ops).await?;
+    let mut cursor = user_collection.find(doc! {}, find_ops).await?;
 
     let sty = ProgressStyle::with_template(
         "[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}",
@@ -130,7 +130,7 @@ async fn connect_and_process(
                 // _id exists, because `normalize_user` returns an error if it does not
                 let id = normalized_user.get_object_id("_id").unwrap();
                 let filter = doc! {"_id": id};
-                let _res = collection
+                let _res = user_collection
                     .replace_one(filter, normalized_user, None)
                     .await?;
             }
@@ -147,6 +147,17 @@ async fn connect_and_process(
                         logs_file
                             .write_all(format!("{}: {}\n", "Confused ID", doc).as_bytes())
                             .await?;
+                    }
+                    NormalizeError::NullEmail { doc } => {
+                        let id = doc.get_object_id("_id").unwrap();
+                        // Add user record to own collection
+                        let recovered_users_collection =
+                            get_collection(&args.uri, "recovered_users").await?;
+                        recovered_users_collection.insert_one(doc, None).await?;
+
+                        // Remove user from normalized database
+                        let filter = doc! {"_id": id};
+                        user_collection.delete_one(filter, None).await?;
                     }
                 }
             }

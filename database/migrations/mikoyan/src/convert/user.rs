@@ -203,7 +203,13 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
                     }
 
                     email = match map.next_value()? {
-                        Bson::String(v) => Some(v.to_ascii_lowercase()),
+                        Bson::String(v) => {
+                            if v.is_empty() {
+                                None
+                            } else {
+                                Some(v.to_ascii_lowercase())
+                            }
+                        }
                         _ => None,
                     };
                 }
@@ -945,7 +951,10 @@ impl<'de> serde::de::Visitor<'de> for UserVisitor {
         let completed_exams = completed_exams.unwrap_or_default();
         let current_challenge_id = current_challenge_id.unwrap_or_default();
         let donation_emails = donation_emails.unwrap_or_default();
-        let email = email.unwrap_or_default();
+        let email = email.ok_or(serde::de::Error::invalid_value(
+            serde::de::Unexpected::Other("bad email"),
+            &"a non-empty string email",
+        ))?;
         let email_auth_link_ttl = email_auth_link_ttl.unwrap_or_default();
         let email_verified = email_verified.unwrap_or_default();
         let email_verify_ttl = email_verify_ttl.unwrap_or_default();
@@ -1096,6 +1105,7 @@ mod tests {
             "_id": object_id,
             "unsubscribeId": &unsubscribe_id,
             "username": &username,
+            "email": "non-empty string"
         };
 
         let actual_user: User = mongodb::bson::from_document(doc_1).unwrap();
@@ -1108,7 +1118,7 @@ mod tests {
             completed_exams: Vec::default(),
             current_challenge_id: String::default(),
             donation_emails: Vec::default(),
-            email: String::default(),
+            email: "non-empty string".to_string(),
             email_auth_link_ttl: NOption::default(),
             email_verified: bool::default(),
             email_verify_ttl: NOption::default(),

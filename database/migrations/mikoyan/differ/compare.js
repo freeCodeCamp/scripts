@@ -9,10 +9,20 @@ const WRITE_QUEUE = {
   is_writing: false,
 };
 
-const SAMPLE_USERS_PATH = "sample-users.json";
-const NORMALIZED_USERS_PATH = "normalized-users.json";
+const SAMPLE_USERS_PATH = "sample-live.user.json";
+const NORMALIZED_USERS_PATH = "normalized-live.user.json";
 
-const REMOVED_FIELDS = ["history", "sound", "badges"];
+const REMOVED_FIELDS = [
+  "history",
+  "sound",
+  "badges",
+  "password",
+  "__data",
+  "__cachedRelations",
+  "__strict",
+  "__persisted",
+  "__dataSource",
+];
 
 async function main() {
   const sample_users = await get_users(SAMPLE_USERS_PATH);
@@ -43,8 +53,7 @@ async function get_users(path) {
 async function compare_sample_to_normalized_user(sample_user, normalized_user) {
   if (!normalized_user) {
     return await add_to_log({
-      _id: sample_user._id.$oid,
-      property: null,
+      property: sample_user._id.$oid,
       original: sample_user,
       normalized: "fcc-undefined",
     });
@@ -85,7 +94,7 @@ async function deep_compare(original, normalized, key) {
   }
 
   if (typeof original !== typeof normalized) {
-    await add_to_log({
+    return await add_to_log({
       property: key,
       original: fcc_undefined(original),
       normalized: fcc_undefined(normalized),
@@ -108,6 +117,7 @@ async function deep_compare(original, normalized, key) {
           key + `[${i}]`
         );
       }
+      return;
     }
 
     const original_keys = Object.keys(original);
@@ -124,13 +134,19 @@ async function deep_compare(original, normalized, key) {
 
     return;
   } else {
-    await add_to_log({
+    return await add_to_log({
       property: key,
       original: fcc_undefined(original),
       normalized: fcc_undefined(normalized),
     });
   }
 }
+
+// Find all records with email: null
+// Move records to own collection
+// Normalized DB removing them from user coll
+// Create platform for Campers to claim their accounts from old external platforms
+//  - Recreate user record
 
 function undefined_eq_empty_array(a, b) {
   if (Array.isArray(b) && b.length === 0) {

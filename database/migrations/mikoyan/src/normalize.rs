@@ -5,13 +5,24 @@ use crate::record::User;
 #[derive(Debug)]
 pub enum NormalizeError {
     UnhandledType { id: ObjectId, error: Error },
+    NullEmail { doc: Document },
     ConfusedId { doc: Document },
 }
 
 pub fn normalize_user(user: Document) -> Result<Document, NormalizeError> {
     if let Ok(id) = user.get_object_id("_id") {
-        let normal_user: User = bson::from_document(user)
-            .map_err(|e| NormalizeError::UnhandledType { id, error: e })?;
+        let normal_user: User = bson::from_document(user.clone()).map_err(|e| match e {
+            Error::DeserializationError { message, .. } => {
+                if message.contains("expected a non-empty string email") {
+                    return NormalizeError::NullEmail { doc: user };
+                }
+                NormalizeError::UnhandledType {
+                    id,
+                    error: Error::EndOfStream,
+                }
+            }
+            _ => NormalizeError::UnhandledType { id, error: e },
+        })?;
         let new_user_document: Document = bson::to_document(&normal_user).unwrap();
         Ok(new_user_document)
     } else {
@@ -94,7 +105,32 @@ impl ToMillis for Timestamp {
 
 #[cfg(test)]
 mod tests {
+    use bson::doc;
+
     use super::*;
+
+    #[test]
+    fn normalize_bad_email_user() {
+        let doc_1 = doc! {
+            "_id": ObjectId::new(),
+            "email": null,
+            "username": "username",
+            "unsubscribeId": "some-uuid".to_string()
+        };
+
+        let result = normalize_user(doc_1);
+        assert!(matches!(result, Err(NormalizeError::NullEmail { .. })));
+
+        let doc_1 = doc! {
+            "_id": ObjectId::new(),
+            "email": "",
+            "username": "username",
+            "unsubscribeId": "some-uuid".to_string()
+        };
+
+        let result = normalize_user(doc_1);
+        assert!(matches!(result, Err(NormalizeError::NullEmail { .. })));
+    }
 
     #[test]
     fn test_num_to_datetime() {

@@ -4,10 +4,12 @@ use mongodb::{
     Client, Collection,
 };
 
-pub async fn get_collection(uri: &str) -> mongodb::error::Result<Collection<Document>> {
+pub async fn get_collection(
+    uri: &str,
+    collection_name: &str,
+) -> mongodb::error::Result<Collection<Document>> {
     let mut client_options = ClientOptions::parse(uri).await?;
 
-    // Manually set an option
     client_options.app_name = Some("Rust Mongeese".to_string());
 
     // Get a handle to the cluster
@@ -18,9 +20,8 @@ pub async fn get_collection(uri: &str) -> mongodb::error::Result<Collection<Docu
         .database("freecodecamp")
         .run_command(doc! {"ping": 1}, None)
         .await?;
-    println!("Connected successfully.");
     let db = client.database("freecodecamp");
 
-    let collection = db.collection::<Document>("user");
+    let collection = db.collection::<Document>(collection_name);
     Ok(collection)
 }
