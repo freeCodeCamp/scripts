@@ -84,8 +84,8 @@ out/
 
 packages/**/prod/
 
+target
 # database/migrations/mikoyan
-database/migrations/mikoyan/target
 database/migrations/mikoyan/logs.log
 database/migrations/mikoyan/differ/comparison.json
 database/migrations/mikoyan/differ/diff.txt

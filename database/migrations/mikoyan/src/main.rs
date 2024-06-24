@@ -95,15 +95,7 @@ async fn connect_and_process(
     let find_ops = FindOptions::builder()
         .limit(num_docs_to_handle as i64)
         .skip((thread_id * num_docs_to_handle) as u64)
-        // .projection(doc! {
-        //     "_id": 1,
-        //     "completedChallenges": 1,
-        //     "progressTimestamps": 1,
-        //     "partiallyCompletedChallenges": 1,
-        //     "yearsTopContributor": 1,
-        //     "savedChallenges": 1,
-        //     "badges": 1,
-        // })
+        .batch_size(10)
         .build();
     let mut cursor = user_collection.find(doc! {}, find_ops).await?;
 
@@ -123,7 +115,8 @@ async fn connect_and_process(
         .await?;
 
     let mut count: usize = 0;
-    let epoch = (num_docs_to_handle / 1000).max(1);
+    let epoch_size = 1000;
+    let epoch = (num_docs_to_handle / epoch_size).max(1);
     while let Some(user) = cursor.try_next().await? {
         match normalize_user(user) {
             Ok(normalized_user) => {
@@ -165,7 +158,8 @@ async fn connect_and_process(
 
         count += 1;
         if count % epoch == 0 {
-            pb.set_message(format!("{}%", count / num_docs_to_handle * 100));
+            let per = (count as f64 / epoch as f64) / (epoch_size as f64 * 100.0);
+            pb.set_message(format!("{}%", per));
             pb.inc(epoch as u64);
         }
     }
