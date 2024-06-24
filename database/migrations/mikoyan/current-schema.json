@@ -1,0 +1,586 @@
+{
+  "_id": ["ObjectId"],
+  "about": ["String"],
+  "acceptedPrivacyTerms": ["Boolean"],
+  "badges": [
+    "Undefined",
+    {
+      "coreTeam": [[[]]]
+    }
+  ],
+  "completedChallenges": [
+    [
+      [
+        {
+          "completedDate": ["Double"],
+          "id": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "__dataSource": ["Null"],
+                      "__persisted": ["Boolean"],
+                      "__strict": ["Boolean"],
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"],
+                      "path": ["String"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Null"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"],
+          "solution": ["Null"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"],
+          "solution": ["Null"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "githubLink": ["String"],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"],
+                      "path": ["String"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["DateTime"],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"],
+          "isManuallyApproved": ["Boolean"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "githubLink": ["String"],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["Null"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"],
+                      "path": ["Null"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["Null"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "__cachedRelations": [{}],
+          "__data": [
+            {
+              "__dataSource": ["Null"],
+              "__persisted": ["Boolean"],
+              "__strict": ["Boolean"],
+              "completedDate": ["Double"],
+              "id": ["String"]
+            }
+          ],
+          "__dataSource": ["Null"],
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "challengeType": ["Null"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["Null"]
+        },
+        {
+          "__cachedRelations": [{}],
+          "__data": [
+            {
+              "__dataSource": ["Null"],
+              "__persisted": ["Boolean"],
+              "__strict": ["Boolean"],
+              "challengeType": ["Null"],
+              "completedDate": ["Double"],
+              "id": ["String"],
+              "solution": ["Null"]
+            }
+          ],
+          "__dataSource": ["Null"],
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "challengeType": ["Null"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["Null"]
+        },
+        {
+          "challengeType": ["Null"],
+          "completedDate": ["Double"],
+          "files": [[[]]],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "__dataSource": ["Null"],
+                      "__persisted": ["Boolean"],
+                      "__strict": ["Boolean"],
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"],
+                      "path": ["Null"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["Null"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "completedDate": ["Double"],
+          "files": [
+            [
+              [
+                {
+                  "__cachedRelations": [{}],
+                  "__data": [
+                    {
+                      "__dataSource": ["Null"],
+                      "__persisted": ["Boolean"],
+                      "__strict": ["Boolean"],
+                      "contents": ["String"],
+                      "ext": ["String"],
+                      "key": ["String"],
+                      "name": ["String"],
+                      "path": ["Null"]
+                    }
+                  ],
+                  "__dataSource": ["Null"],
+                  "__persisted": ["Boolean"],
+                  "__strict": ["Boolean"],
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "key": ["String"],
+                  "name": ["String"],
+                  "path": ["Null"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"]
+        },
+        {
+          "__cachedRelations": [{}],
+          "__data": [
+            {
+              "__dataSource": ["Null"],
+              "__persisted": ["Boolean"],
+              "__strict": ["Boolean"],
+              "challengeType": ["Int32"],
+              "completedDate": ["Double"],
+              "id": ["String"]
+            }
+          ],
+          "__dataSource": ["Null"],
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["Null"]
+        },
+        {
+          "__cachedRelations": [{}],
+          "__data": [
+            {
+              "__dataSource": ["Null"],
+              "__persisted": ["Boolean"],
+              "__strict": ["Boolean"],
+              "challengeType": ["Int32"],
+              "completedDate": ["Double"],
+              "id": ["String"],
+              "solution": ["String"]
+            }
+          ],
+          "__dataSource": ["Null"],
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["String"]
+        },
+        {
+          "__cachedRelations": [{}],
+          "__data": [
+            {
+              "__dataSource": ["Null"],
+              "__persisted": ["Boolean"],
+              "__strict": ["Boolean"],
+              "challengeType": ["Int32"],
+              "completedDate": ["Double"],
+              "id": ["String"],
+              "solution": ["Null"]
+            }
+          ],
+          "__dataSource": ["Null"],
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "challengeType": ["Int32"],
+          "completedDate": ["Double"],
+          "id": ["String"],
+          "solution": ["Null"]
+        }
+      ]
+    ]
+  ],
+  "currentChallengeId": ["String", "Undefined"],
+  "donationEmails": ["Undefined", [["String"]]],
+  "email": ["String"],
+  "emailAuthLinkTTL": ["Null", "DateTime", "Undefined"],
+  "emailVerified": ["Boolean"],
+  "emailVerifyTTL": ["Null", "DateTime", "Undefined"],
+  "externalId": ["String"],
+  "github": ["Null", "Undefined"],
+  "githubProfile": ["String", "Undefined"],
+  "is2018DataVisCert": ["Boolean", "Undefined"],
+  "is2018FullStackCert": ["Boolean", "Undefined"],
+  "isApisMicroservicesCert": ["Boolean", "Undefined"],
+  "isBackEndCert": ["Boolean", "Undefined"],
+  "isBanned": ["Boolean", "Undefined"],
+  "isCheater": ["Boolean", "Undefined"],
+  "isDataAnalysisPyCertV7": ["Boolean", "Undefined"],
+  "isDataVisCert": ["Boolean", "Undefined"],
+  "isDonating": ["Boolean"],
+  "isFrontEndCert": ["Boolean", "Undefined"],
+  "isFrontEndLibsCert": ["Boolean", "Undefined"],
+  "isFullStackCert": ["Boolean", "Undefined"],
+  "isGithub": ["Boolean", "Undefined"],
+  "isHonest": ["Boolean", "Undefined"],
+  "isInfosecCertV7": ["Boolean", "Undefined"],
+  "isInfosecQaCert": ["Boolean", "Undefined"],
+  "isJsAlgoDataStructCert": ["Boolean", "Undefined"],
+  "isLinkedIn": ["Boolean", "Undefined"],
+  "isMachineLearningPyCertV7": ["Boolean", "Undefined"],
+  "isQaCertV7": ["Boolean", "Undefined"],
+  "isRelationalDatabaseCertV8": ["Boolean", "Undefined"],
+  "isRespWebDesignCert": ["Boolean", "Undefined"],
+  "isSciCompPyCertV7": ["Boolean", "Undefined"],
+  "isTwitter": ["Boolean", "Undefined"],
+  "isWebsite": ["Boolean", "Undefined"],
+  "keyboardShortcuts": ["Boolean", "Undefined"],
+  "linkedin": ["Null", "String", "Undefined"],
+  "location": ["String", "Null"],
+  "name": ["String", "Null"],
+  "needsModeration": ["Boolean", "Undefined"],
+  "newEmail": ["Null", "Undefined", "String"],
+  "partiallyCompletedChallenges": ["Undefined", [[]]],
+  "password": ["String", "Undefined"],
+  "picture": ["String"],
+  "portfolio": [
+    [
+      [
+        {
+          "description": ["String"],
+          "id": ["String"],
+          "image": ["String"],
+          "title": ["String"],
+          "url": ["String"]
+        }
+      ]
+    ]
+  ],
+  "profileUI": [
+    "Undefined",
+    {
+      "__cachedRelations": ["Undefined", {}],
+      "__data": [
+        "Undefined",
+        {
+          "__persisted": ["Boolean"],
+          "__strict": ["Boolean"],
+          "isLocked": ["Boolean"],
+          "showAbout": ["Boolean"],
+          "showCerts": ["Boolean"],
+          "showDonation": ["Boolean", "Undefined"],
+          "showHeatMap": ["Boolean"],
+          "showLocation": ["Boolean"],
+          "showName": ["Boolean"],
+          "showPoints": ["Boolean"],
+          "showPortfolio": ["Boolean"],
+          "showTimeLine": ["Boolean"]
+        }
+      ],
+      "__persisted": ["Boolean", "Undefined"],
+      "__strict": ["Boolean", "Undefined"],
+      "isLocked": ["Boolean", "Undefined"],
+      "showAbout": ["Boolean", "Undefined"],
+      "showCerts": ["Boolean", "Undefined"],
+      "showDonation": ["Boolean", "Undefined"],
+      "showHeatMap": ["Boolean", "Undefined"],
+      "showLocation": ["Boolean", "Undefined"],
+      "showName": ["Boolean", "Undefined"],
+      "showPoints": ["Boolean", "Undefined"],
+      "showPortfolio": ["Boolean", "Undefined"],
+      "showTimeLine": ["Boolean", "Undefined"]
+    }
+  ],
+  "progressTimestamps": [
+    [
+      [
+        {
+          "timestamp": ["Double"]
+        },
+        "Double",
+        "Null",
+        "Int64"
+      ]
+    ]
+  ],
+  "rand": ["Double", "Undefined"],
+  "savedChallenges": [
+    "Undefined",
+    [
+      [
+        {
+          "files": [
+            [
+              [
+                {
+                  "contents": ["String"],
+                  "ext": ["String"],
+                  "history": [[["String"]]],
+                  "key": ["String"],
+                  "name": ["String"]
+                }
+              ]
+            ]
+          ],
+          "id": ["String"],
+          "lastSavedDate": ["Double"]
+        }
+      ]
+    ]
+  ],
+  "sendQuincyEmail": ["Boolean"],
+  "sound": ["Boolean", "Undefined"],
+  "theme": ["String", "Undefined"],
+  "timezone": ["String", "Undefined"],
+  "twitter": ["Null", "String", "Undefined"],
+  "unsubscribeId": ["String"],
+  "username": ["String"],
+  "usernameDisplay": ["String", "Undefined"],
+  "verificationToken": ["String", "Undefined"],
+  "website": ["String", "Undefined"],
+  "yearsTopContributor": ["Undefined", [["String"]]]
+}
