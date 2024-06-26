@@ -2,7 +2,7 @@ import {
   MARKUP_SECTION_TYPE,
   IMAGE_SECTION_TYPE,
   LIST_SECTION_TYPE,
-  CARD_SECTION_TYPE
+  CARD_SECTION_TYPE,
 } from '../utils/section-types.js';
 import { isValidSectionTagName } from '../utils/tag-names.js';
 
@@ -10,6 +10,23 @@ export default class Renderer_0_3 {
   constructor(mobiledoc, options) {
     this.mobiledoc = mobiledoc;
     this.options = options;
+    this.atoms = this.mobiledoc.atoms || [];
+    this.cards = this.mobiledoc.cards || [];
+    this.markups = this.mobiledoc.markups || [];
+  }
+
+  _findCardByIndex(index) {
+    let card = this.cards[index];
+    if (!card) {
+      throw new Error(`No card definition found at index ${index}`);
+    }
+
+    let [cardType, payload] = card;
+
+    return {
+      cardType,
+      payload,
+    };
   }
 
   render() {
@@ -76,9 +93,10 @@ export default class Renderer_0_3 {
     }
   }
 
-  renderCardSection([name, payload]) {
+  renderCardSection([cardIndex]) {
     try {
-      switch (name) {
+      const { cardType, payload } = this._findCardByIndex(cardIndex);
+      switch (cardType) {
         case 'image':
           return this.renderImageCard(payload);
         case 'embed':
@@ -86,7 +104,7 @@ export default class Renderer_0_3 {
         case 'html':
           return this.renderHtmlCard(payload);
         default:
-          return `<!-- Card: ${name} -->`;
+          return `<!-- Card: ${cardType} -->`;
       }
     } catch (error) {
       console.error(`Error rendering card section: ${error.message}`);
@@ -96,6 +114,7 @@ export default class Renderer_0_3 {
 
   renderImageCard(payload) {
     try {
+      // NOTE: Where do we put caption as Hashnode doesn't support them yet and we're making use of alt text for captions
       const { src, caption } = payload;
       let imageMarkdown = `![Image](${src})`;
       if (caption) {
