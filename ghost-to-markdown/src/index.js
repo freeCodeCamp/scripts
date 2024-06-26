@@ -163,7 +163,7 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10) {
 
       for (let post of posts) {
         try {
-          logger.info(`Fetched post "${post.title}" (slug: ${slug})`);
+          logger.info(`Fetched post "${post.title}" (slug: ${post.slug})`);
           // logger.info(
           //   `mobileDoc: ${JSON.parse(JSON.stringify(post.mobiledoc, null, 2))}`
           // );
