@@ -17,6 +17,21 @@ export default class Renderer_0_3 {
     this.currentLink = null;
   }
 
+  _findAtomByIndex(index) {
+    let atom = this.atoms[index];
+    if (!atom) {
+      throw new Error(`No atom definition found at index ${index}`);
+    }
+
+    let [atomName, atomText, payload] = atom;
+
+    return {
+      atomName,
+      atomText,
+      payload,
+    };
+  }
+
   _findCardByIndex(index) {
     let card = this.cards[index];
     if (!card) {
@@ -194,7 +209,7 @@ export default class Renderer_0_3 {
     }
   }
 
-  renderMarker([type, openTypes, closeCount, text]) {
+  renderTextMarker([type, openTypes, closeCount, text]) {
     try {
       if (openTypes.length !== 0) {
         openTypes.reverse().forEach((markupIndex) => {
@@ -263,6 +278,43 @@ export default class Renderer_0_3 {
     } catch (error) {
       console.error(`Error rendering marker: ${error.message}`);
       return text;
+    }
+  }
+
+  renderAtomMarker([type, openTypes, closeCount, atomIndex]) {
+    try {
+      const { atomName, atomText, payload } = this._findAtomByIndex(atomIndex);
+      switch (atomName) {
+        case "soft-return":
+          return "\n\n\t";
+        default:
+          console.log(`Unknown atom type: ${atomName}`);
+          return "";
+      }
+    } catch (error) {
+      console.error(`Error rendering atom marker: ${error.message}`);
+      return "";
+    }
+  }
+
+  renderMarker([type, openTypes, closeCount, textOrAtomIndex]) {
+    if (type === 0) {
+      return this.renderTextMarker([
+        type,
+        openTypes,
+        closeCount,
+        textOrAtomIndex,
+      ]);
+    } else if (type === 1) {
+      return this.renderAtomMarker([
+        type,
+        openTypes,
+        closeCount,
+        textOrAtomIndex,
+      ]);
+    } else {
+      console.log(`Unknown marker type: ${type}`);
+      return "";
     }
   }
 
