@@ -335,6 +335,8 @@ export default class Renderer_0_3 {
           return `###### ${content}`;
         case "p":
           return content;
+        case "blockquote":
+          return `> ${content}`;
         default:
           console.log(`Unknown tag: ${tagName}`);
           return content;
