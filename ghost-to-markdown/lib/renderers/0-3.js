@@ -185,7 +185,8 @@ export default class Renderer_0_3 {
 
   renderCodeCard(payload) {
     try {
-      const { code, language } = payload;
+      // TODO: Check if no language works, if not we set it to "plaintext"
+      const { code, language = "" } = payload;
       return `\`\`\`${language.toLowerCase()}\n${code}\n\`\`\``;
     } catch (error) {
       console.error(`Error rendering code card: ${error.message}`);
