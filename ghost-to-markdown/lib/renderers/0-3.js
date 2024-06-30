@@ -119,6 +119,8 @@ export default class Renderer_0_3 {
           return this.renderEmbedCard(payload);
         case "html":
           return this.renderHtmlCard(payload);
+        case "code":
+          return this.renderCodeCard(payload);
         default:
           return `<!-- Card: ${cardType} -->`;
       }
@@ -162,6 +164,16 @@ export default class Renderer_0_3 {
       return html;
     } catch (error) {
       console.error(`Error rendering HTML card: ${error.message}`);
+      return "";
+    }
+  }
+
+  renderCodeCard(payload) {
+    try {
+      const { code, language } = payload;
+      return `\`\`\`${language.toLowerCase()}\n${code}\n\`\`\``;
+    } catch (error) {
+      console.error(`Error rendering code card: ${error.message}`);
       return "";
     }
   }
