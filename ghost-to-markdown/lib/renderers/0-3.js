@@ -97,12 +97,27 @@ export default class Renderer_0_3 {
 
   renderListSection([tagName, items]) {
     try {
-      return items
-        .map(
-          (item) =>
-            `- ${item[1].map((marker) => this.renderMarker(marker)).join("")}`
-        )
-        .join("\n");
+      let listMarkdown = "";
+      if (tagName === "ul") {
+        listMarkdown = items
+          .map(
+            (item) =>
+              `- ${item.map((marker) => this.renderMarker(marker)).join("")}`
+          )
+          .join("\n");
+      } else if (tagName === "ol") {
+        listMarkdown = items
+          .map(
+            (item, i) =>
+              `${i + 1}. ${item
+                .map((marker) => this.renderMarker(marker))
+                .join("")}`
+          )
+          .join("\n");
+      } else {
+        console.error(`Unknown list type: ${tagName}`);
+      }
+      return listMarkdown;
     } catch (error) {
       console.error(`Error rendering list section: ${error.message}`);
       return "";
