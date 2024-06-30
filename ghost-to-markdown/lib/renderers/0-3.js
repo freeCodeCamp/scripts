@@ -102,7 +102,7 @@ export default class Renderer_0_3 {
         listMarkdown = items
           .map(
             (item) =>
-              `- ${item.map((marker) => this.renderMarker(marker)).join("")}`
+              `* ${item.map((marker) => this.renderMarker(marker)).join("")}`
           )
           .join("\n");
       } else if (tagName === "ol") {
