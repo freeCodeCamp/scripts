@@ -3,8 +3,8 @@ import {
   IMAGE_SECTION_TYPE,
   LIST_SECTION_TYPE,
   CARD_SECTION_TYPE,
-} from '../utils/section-types.js';
-import { isValidSectionTagName } from '../utils/tag-names.js';
+} from "../utils/section-types.js";
+import { isValidSectionTagName } from "../utils/tag-names.js";
 
 export default class Renderer_0_3 {
   constructor(mobiledoc, options) {
@@ -13,6 +13,8 @@ export default class Renderer_0_3 {
     this.atoms = this.mobiledoc.atoms || [];
     this.cards = this.mobiledoc.cards || [];
     this.markups = this.mobiledoc.markups || [];
+    this.markupStack = [];
+    this.currentLink = null;
   }
 
   _findCardByIndex(index) {
@@ -25,6 +27,20 @@ export default class Renderer_0_3 {
 
     return {
       cardType,
+      payload,
+    };
+  }
+
+  _findMarkupByIndex(index) {
+    let markup = this.markups[index];
+    if (!markup) {
+      throw new Error(`No markup definition found at index ${index}`);
+    }
+
+    let [markupType, payload] = markup;
+
+    return {
+      markupType,
       payload,
     };
   }
@@ -57,16 +73,16 @@ export default class Renderer_0_3 {
       }
     });
 
-    return result.join('\n\n');
+    return result.join("\n\n");
   }
 
   renderMarkupSection([tagName, markers]) {
     try {
-      let content = markers.map((marker) => this.renderMarker(marker)).join('');
+      let content = markers.map((marker) => this.renderMarker(marker)).join("");
       return this.wrapWithTag(tagName, content);
     } catch (error) {
       console.error(`Error rendering markup section: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
@@ -75,7 +91,7 @@ export default class Renderer_0_3 {
       return `![Image](${url})`;
     } catch (error) {
       console.error(`Error rendering image section: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
@@ -84,12 +100,12 @@ export default class Renderer_0_3 {
       return items
         .map(
           (item) =>
-            `- ${item[1].map((marker) => this.renderMarker(marker)).join('')}`
+            `- ${item[1].map((marker) => this.renderMarker(marker)).join("")}`
         )
-        .join('\n');
+        .join("\n");
     } catch (error) {
       console.error(`Error rendering list section: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
@@ -97,18 +113,18 @@ export default class Renderer_0_3 {
     try {
       const { cardType, payload } = this._findCardByIndex(cardIndex);
       switch (cardType) {
-        case 'image':
+        case "image":
           return this.renderImageCard(payload);
-        case 'embed':
+        case "embed":
           return this.renderEmbedCard(payload);
-        case 'html':
+        case "html":
           return this.renderHtmlCard(payload);
         default:
           return `<!-- Card: ${cardType} -->`;
       }
     } catch (error) {
       console.error(`Error rendering card section: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
@@ -123,20 +139,20 @@ export default class Renderer_0_3 {
       return imageMarkdown;
     } catch (error) {
       console.error(`Error rendering image card: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
   renderEmbedCard(payload) {
     try {
       const { url, html, type } = payload;
-      if (type === 'video' || type === 'rich') {
+      if (type === "video" || type === "rich") {
         return html;
       }
       return `[Embedded content](${url})`;
     } catch (error) {
       console.error(`Error rendering embed card: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
@@ -146,13 +162,75 @@ export default class Renderer_0_3 {
       return html;
     } catch (error) {
       console.error(`Error rendering HTML card: ${error.message}`);
-      return '';
+      return "";
     }
   }
 
   renderMarker([type, openTypes, closeCount, text]) {
     try {
-      // Implement marker rendering (e.g., bold, italic)
+      if (openTypes.length !== 0) {
+        openTypes.reverse().forEach((markupIndex) => {
+          const { markupType, payload } = this._findMarkupByIndex(markupIndex);
+          switch (markupType) {
+            case "a":
+              text = `[${text}`;
+              this.currentLink =
+                payload[payload.findIndex((item) => item === "href") + 1];
+              this.markupStack.push("a");
+              break;
+            case "strong":
+              text = `**${text}`;
+              this.markupStack.push("strong");
+              break;
+            case "em":
+              text = `_${text}`;
+              this.markupStack.push("em");
+              break;
+            case "code":
+              text = `\`${text}`;
+              this.markupStack.push("code");
+              break;
+            default:
+              console.log(`Unknown markup type: ${markupType}`);
+              break;
+          }
+        });
+      }
+
+      if (closeCount !== 0) {
+        const closingTags = this.markupStack.slice(-closeCount);
+        closingTags.forEach((markupType) => {
+          switch (markupType) {
+            case "a":
+              if (this.currentLink === null) {
+                console.error(`Link is null for text: ${text}`);
+              }
+              text += `](${this.currentLink})`;
+              this.currentLink = null;
+              break;
+            case "strong":
+              text += "**";
+              break;
+            case "em":
+              text += "_";
+              break;
+            case "code":
+              text += "`";
+              break;
+            default:
+              console.log(`Unknown markup type: ${markupType}`);
+              break;
+          }
+        });
+        if (closeCount > 1) {
+          console.log(
+            `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${text}`
+          );
+        }
+
+        this.markupStack = this.markupStack.slice(0, -closeCount);
+      }
+
       return text;
     } catch (error) {
       console.error(`Error rendering marker: ${error.message}`);
@@ -163,21 +241,22 @@ export default class Renderer_0_3 {
   wrapWithTag(tagName, content) {
     try {
       switch (tagName) {
-        case 'h1':
+        case "h1":
           return `# ${content}`;
-        case 'h2':
+        case "h2":
           return `## ${content}`;
-        case 'h3':
+        case "h3":
           return `### ${content}`;
-        case 'h4':
+        case "h4":
           return `#### ${content}`;
-        case 'h5':
+        case "h5":
           return `##### ${content}`;
-        case 'h6':
+        case "h6":
           return `###### ${content}`;
-        case 'p':
+        case "p":
           return content;
         default:
+          console.log(`Unknown tag: ${tagName}`);
           return content;
       }
     } catch (error) {
