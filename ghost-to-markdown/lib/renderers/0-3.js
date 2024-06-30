@@ -286,7 +286,9 @@ export default class Renderer_0_3 {
       const { atomName, atomText, payload } = this._findAtomByIndex(atomIndex);
       switch (atomName) {
         case "soft-return":
-          return "\n\n\t";
+          // TODO: Test this using GQL API
+          return "  \n";
+          // return "\n\n\t";
         default:
           console.log(`Unknown atom type: ${atomName}`);
           return "";
