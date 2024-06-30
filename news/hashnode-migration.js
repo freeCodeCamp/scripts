@@ -146,11 +146,13 @@ async function uploadPostsToHashnode(userId, posts) {
     }
   `;
 
+  const mdContent = fs.readFileSync("./sample.md", "utf8");
+
   const data = {
     title: "test post",
     subtitle: "this is a subtitle",
     slug: "draft-post",
-    contentMarkdown: "",
+    contentMarkdown: mdContent,
     publicationId: process.env.HASHNODE_PUBLICATION_ID,
     draftOwner: userId,
   };
