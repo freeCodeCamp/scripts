@@ -151,6 +151,8 @@ export default class Renderer_0_3 {
           return this.renderHtmlCard(payload);
         case "code":
           return this.renderCodeCard(payload);
+        case "markdown":
+          return this.renderMarkdownCard(payload);
         default:
           return `<!-- Card: ${cardType} -->`;
       }
@@ -205,6 +207,16 @@ export default class Renderer_0_3 {
       return `\`\`\`${language.toLowerCase()}\n${code}\n\`\`\``;
     } catch (error) {
       console.error(`Error rendering code card: ${error.message}`);
+      return "";
+    }
+  }
+
+  renderMarkdownCard(payload) {
+    try {
+      const { markdown } = payload;
+      return markdown;
+    } catch (error) {
+      console.error(`Error rendering markdown card: ${error.message}`);
       return "";
     }
   }
