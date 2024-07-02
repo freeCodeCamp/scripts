@@ -163,8 +163,8 @@ export default class Renderer_0_3 {
   renderImageCard(payload) {
     try {
       // NOTE: Where do we put caption as Hashnode doesn't support them yet and we're making use of alt text for captions
-      const { src, caption } = payload;
-      let imageMarkdown = `![Image](${src})`;
+      const { src, caption, alt } = payload;
+      let imageMarkdown = `![${alt ? alt : "Image"}](${src})`;
       if (caption) {
         imageMarkdown += `\n*${caption}*`;
       }
@@ -288,7 +288,7 @@ export default class Renderer_0_3 {
         case "soft-return":
           // TODO: Test this using GQL API
           return "  \n";
-          // return "\n\n\t";
+        // return "\n\n\t";
         default:
           console.log(`Unknown atom type: ${atomName}`);
           return "";
