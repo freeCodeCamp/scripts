@@ -2,3 +2,4 @@
 *.txt
 !package.json
 !package-lock.json
+sample.md
