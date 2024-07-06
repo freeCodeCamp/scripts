@@ -183,7 +183,7 @@ export default class Renderer_0_3 {
     try {
       const { url, html, type } = payload;
       if (type === "video" || type === "rich") {
-        return html;
+        return `%[${url}]`;
       }
       return `[Embedded content](${url})`;
     } catch (error) {
