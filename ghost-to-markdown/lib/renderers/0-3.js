@@ -153,6 +153,8 @@ export default class Renderer_0_3 {
           return this.renderCodeCard(payload);
         case "markdown":
           return this.renderMarkdownCard(payload);
+        case "bookmark":
+        // return this.renderBookmarkCard(payload);
         default:
           return `<!-- Card: ${cardType} -->`;
       }
@@ -202,7 +204,6 @@ export default class Renderer_0_3 {
 
   renderCodeCard(payload) {
     try {
-      // TODO: Check if no language works, if not we set it to "plaintext"
       const { code, language = "" } = payload;
       return `\`\`\`${language.toLowerCase()}\n${code}\n\`\`\``;
     } catch (error) {
@@ -298,9 +299,7 @@ export default class Renderer_0_3 {
       const { atomName, atomText, payload } = this._findAtomByIndex(atomIndex);
       switch (atomName) {
         case "soft-return":
-          // TODO: Test this using GQL API
           return "  \n";
-        // return "\n\n\t";
         default:
           console.log(`Unknown atom type: ${atomName}`);
           return "";
