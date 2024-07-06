@@ -223,27 +223,28 @@ export default class Renderer_0_3 {
   }
 
   renderTextMarker([type, openTypes, closeCount, text]) {
+    let newText = "";
     try {
       if (openTypes.length !== 0) {
-        openTypes.reverse().forEach((markupIndex) => {
+        openTypes.forEach((markupIndex) => {
           const { markupType, payload } = this._findMarkupByIndex(markupIndex);
           switch (markupType) {
             case "a":
-              text = `[${text}`;
+              newText += `[`;
               this.currentLink =
                 payload[payload.findIndex((item) => item === "href") + 1];
               this.markupStack.push("a");
               break;
             case "strong":
-              text = `**${text}`;
+              newText += `**`;
               this.markupStack.push("strong");
               break;
             case "em":
-              text = `_${text}`;
+              newText += `_`;
               this.markupStack.push("em");
               break;
             case "code":
-              text = `\`${text}`;
+              newText += `\``;
               this.markupStack.push("code");
               break;
             default:
@@ -253,25 +254,27 @@ export default class Renderer_0_3 {
         });
       }
 
+      newText += text;
+
       if (closeCount !== 0) {
         const closingTags = this.markupStack.slice(-closeCount);
-        closingTags.forEach((markupType) => {
+        closingTags.reverse().forEach((markupType) => {
           switch (markupType) {
             case "a":
               if (this.currentLink === null) {
                 console.error(`Link is null for text: ${text}`);
               }
-              text += `](${this.currentLink})`;
+              newText += `](${this.currentLink})`;
               this.currentLink = null;
               break;
             case "strong":
-              text += "**";
+              newText += "**";
               break;
             case "em":
-              text += "_";
+              newText += "_";
               break;
             case "code":
-              text += "`";
+              newText += "`";
               break;
             default:
               console.log(`Unknown markup type: ${markupType}`);
@@ -280,14 +283,14 @@ export default class Renderer_0_3 {
         });
         if (closeCount > 1) {
           console.log(
-            `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${text}`
+            `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${newText}`
           );
         }
 
         this.markupStack = this.markupStack.slice(0, -closeCount);
       }
 
-      return text;
+      return newText;
     } catch (error) {
       console.error(`Error rendering marker: ${error.message}`);
       return text;
