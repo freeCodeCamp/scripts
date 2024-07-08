@@ -145,7 +145,7 @@ async function fetchAndSavePostBySlug(slug, useFigure) {
   }
 }
 
-async function fetchAndSaveAllPosts(useFigure, batchSize = 10) {
+async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
   let currPage = 1;
   let lastPage = 1;
   let postsAdded = 0;
@@ -158,8 +158,16 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10) {
         formats: ["html", "mobiledoc"],
         limit: batchSize,
         include: "authors",
+        filter: authorSlug ? `authors.slug:${authorSlug}` : null,
       });
       const posts = [...data];
+
+      if (authorSlug && currPage === 1 && posts.length === 0) {
+        logger.error(
+          `No posts found for the specified author (author-slug: ${authorSlug}). Is the author-slug correct?`
+        );
+        return;
+      }
 
       currPage = data.meta.pagination.next;
       lastPage = data.meta.pagination.pages;
@@ -198,6 +206,10 @@ const argv = yargs(hideBin(process.argv))
     type: "string",
     description: "The slug of the post to fetch and save",
   })
+  .option("author-slug", {
+    type: "string",
+    description: "The slug of the author whose posts to fetch and save",
+  })
   .option("use-figure", {
     type: "boolean",
     description: "Render images with HTML figure tag",
@@ -211,6 +223,8 @@ const argv = yargs(hideBin(process.argv))
 
 if (argv.slug) {
   fetchAndSavePostBySlug(argv.slug, argv.useFigure);
+} else if (argv.authorSlug) {
+  fetchAndSaveAllPosts(argv.useFigure, argv.batchSize, argv.authorSlug);
 } else {
   fetchAndSaveAllPosts(argv.useFigure, argv.batchSize);
 }
