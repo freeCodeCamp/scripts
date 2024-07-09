@@ -226,7 +226,7 @@ export default class Renderer_0_3 {
     let newText = "";
     try {
       if (openTypes.length !== 0) {
-        openTypes.forEach((markupIndex) => {
+        [...new Set(openTypes)].forEach((markupIndex) => {
           const { markupType, payload } = this._findMarkupByIndex(markupIndex);
           switch (markupType) {
             case "a":
