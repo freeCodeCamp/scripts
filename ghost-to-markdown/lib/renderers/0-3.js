@@ -227,6 +227,7 @@ export default class Renderer_0_3 {
     try {
       if (openTypes.length !== 0) {
         [...new Set(openTypes)].forEach((markupIndex) => {
+          if (text === " ") return; // Ignore whitespace with formatting
           const { markupType, payload } = this._findMarkupByIndex(markupIndex);
           switch (markupType) {
             case "a":
