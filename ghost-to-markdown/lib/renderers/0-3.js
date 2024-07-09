@@ -352,7 +352,10 @@ export default class Renderer_0_3 {
         case "p":
           return content;
         case "blockquote":
-          return `> ${content}`;
+          return content
+            .split("\n")
+            .map((line) => `> ${line}`)
+            .join("\n");
         default:
           console.log(`Unknown tag: ${tagName}`);
           return content;
