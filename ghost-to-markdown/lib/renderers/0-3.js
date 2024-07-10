@@ -153,6 +153,7 @@ export default class Renderer_0_3 {
       switch (cardType) {
         case "image":
           return this.renderImageCard(payload);
+        case "bookmark":
         case "embed":
           return this.renderEmbedCard(payload);
         case "html":
@@ -163,8 +164,6 @@ export default class Renderer_0_3 {
         case "markdown":
           logger.warn("Raw markdown card");
           return this.renderMarkdownCard(payload);
-        case "bookmark":
-        // return this.renderBookmarkCard(payload);
         default:
           return `<!-- Card: ${cardType} -->`;
       }
@@ -213,7 +212,7 @@ export default class Renderer_0_3 {
   renderEmbedCard(payload) {
     try {
       const { url, type } = payload;
-      if (type === "video" || type === "rich") {
+      if (type === "video" || type === "rich" || type === "bookmark") {
         return `%[${url}]`;
       }
       return `[Embedded content](${url})`;
