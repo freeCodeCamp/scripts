@@ -1,3 +1,4 @@
+import converter from "@tryghost/html-to-mobiledoc";
 import {
   MARKUP_SECTION_TYPE,
   IMAGE_SECTION_TYPE,
@@ -62,6 +63,12 @@ export default class Renderer_0_3 {
 
   render() {
     const { sections } = this.mobiledoc;
+    const result = this.renderMobiledocSections(sections);
+
+    return result.join("\n\n");
+  }
+
+  renderMobiledocSections(sections) {
     let result = [];
 
     sections.forEach((section) => {
@@ -88,7 +95,7 @@ export default class Renderer_0_3 {
       }
     });
 
-    return result.join("\n\n");
+    return result;
   }
 
   renderMarkupSection([tagName, markers]) {
@@ -170,7 +177,28 @@ export default class Renderer_0_3 {
       const { src, caption, alt } = payload;
       let imageMarkdown = `![${alt ? alt : "Image"}](${src})`;
       if (caption) {
-        imageMarkdown += `\n*${caption}*`;
+        const temp = {
+          markups: this.markups,
+          atoms: this.atoms,
+          cards: this.cards,
+          markupStack: this.markupStack,
+          currentLink: this.currentLink,
+        };
+        const captionMobiledoc = converter.toMobiledoc(caption);
+        this.markups = captionMobiledoc.markups || [];
+        this.atoms = captionMobiledoc.atoms || [];
+        this.cards = captionMobiledoc.cards || [];
+        this.markupStack = [];
+        this.currentLink = null;
+        const { sections } = captionMobiledoc;
+        const captionMarkdown = this.renderMobiledocSections(sections);
+
+        imageMarkdown += `\n_${captionMarkdown}_`;
+
+        // Reset values in constructor to continue conversion
+        for (let key in temp) {
+          this[key] = temp[key];
+        }
       }
       return imageMarkdown;
     } catch (error) {
