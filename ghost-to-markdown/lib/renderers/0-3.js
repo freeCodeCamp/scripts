@@ -255,11 +255,19 @@ export default class Renderer_0_3 {
         });
       }
 
+      const openingWhitespace = text.match(/^\s+/g);
+      if (newText && openingWhitespace) {
+        // Move whitespace outside of formatting delimiters
+        newText += openingWhitespace.join("");
+        text = text.replace(/^\s+/g, "");
+      }
       newText += text;
 
       if (closeCount !== 0) {
         const closingTags = this.markupStack.slice(-closeCount);
         closingTags.reverse().forEach((markupType) => {
+          const closingWhitespace = newText.match(/\s+$/g);
+          if (closingWhitespace) newText = newText.replace(/\s+$/g, "");
           switch (markupType) {
             case "a":
               if (this.currentLink === null) {
@@ -281,6 +289,7 @@ export default class Renderer_0_3 {
               console.log(`Unknown markup type: ${markupType}`);
               break;
           }
+          if (closingWhitespace) newText += closingWhitespace.join("");
         });
         if (closeCount > 1) {
           console.log(
