@@ -7,28 +7,12 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import winston from "winston";
 
 import MarkdownRendererFactory from "../lib/index.js";
+import logger from "../lib/utils/logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// Configure Winston logger
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => {
-      return `${timestamp} ${level}: ${message}`;
-    })
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: "combined.log" }),
-  ],
-});
 
 const wait = (seconds) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
@@ -159,6 +143,7 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
         limit: batchSize,
         include: "authors",
         filter: authorSlug ? `authors.slug:${authorSlug}` : null,
+        filter: "status:published",
       });
       const posts = [...data];
 
@@ -177,9 +162,6 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
       for (let post of posts) {
         try {
           logger.info(`Fetched post "${post.title}" (slug: ${post.slug})`);
-          // logger.info(
-          //   `mobileDoc: ${JSON.parse(JSON.stringify(post.mobiledoc, null, 2))}`
-          // );
           savePostAsMarkdown(post, useFigure);
           postsAdded++;
         } catch (err) {
@@ -190,6 +172,11 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
           postsFailed++;
         }
       }
+      logger.info(
+        `Completed fetching page ${
+          currPage - 1
+        }/${lastPage} of posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
+      );
     } catch (error) {
       logger.error("Error fetching posts:", error);
       break;
