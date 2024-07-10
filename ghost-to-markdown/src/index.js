@@ -89,10 +89,11 @@ function savePostAsMarkdown(post, useFigure) {
       slug: post.slug,
     };
     const markdown = convert(doc, useFigure);
+    const postStatus = post.status;
     // NOTE: Why not use the primary_author field here?
     // NOTE: Add a warning for authors without a slug
     const authorName = post.authors[0]?.slug || "unknown-author";
-    const dirPath = join(__dirname, "..", "__out__", authorName);
+    const dirPath = join(__dirname, "..", "__out__", authorName, postStatus);
 
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -129,11 +130,26 @@ async function fetchAndSavePostBySlug(slug, useFigure) {
   }
 }
 
-async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
+async function fetchAndSaveAllPosts(
+  useFigure,
+  batchSize = 10,
+  postType,
+  authorSlug
+) {
   let currPage = 1;
   let lastPage = 1;
   let postsAdded = 0;
   let postsFailed = 0;
+  const filters = [];
+
+  if (authorSlug) {
+    filters.push(`authors.slug:${authorSlug}`);
+  }
+  if (postType !== "all") {
+    filters.push(`status:${postType}`);
+  } else {
+    filters.push(`status:[draft,published]`);
+  }
 
   while (currPage && currPage <= lastPage) {
     try {
@@ -142,8 +158,7 @@ async function fetchAndSaveAllPosts(useFigure, batchSize = 10, authorSlug) {
         formats: ["html", "mobiledoc"],
         limit: batchSize,
         include: "authors",
-        filter: authorSlug ? `authors.slug:${authorSlug}` : null,
-        filter: "status:published",
+        filter: filters.join("+"),
       });
       const posts = [...data];
 
@@ -197,6 +212,11 @@ const argv = yargs(hideBin(process.argv))
     type: "string",
     description: "The slug of the author whose posts to fetch and save",
   })
+  .option("post-type", {
+    choices: ["published", "draft", "all"],
+    description: "The type of posts to fetch",
+    default: "published",
+  })
   .option("use-figure", {
     type: "boolean",
     description: "Render images with HTML figure tag",
@@ -211,7 +231,12 @@ const argv = yargs(hideBin(process.argv))
 if (argv.slug) {
   fetchAndSavePostBySlug(argv.slug, argv.useFigure);
 } else if (argv.authorSlug) {
-  fetchAndSaveAllPosts(argv.useFigure, argv.batchSize, argv.authorSlug);
+  fetchAndSaveAllPosts(
+    argv.useFigure,
+    argv.batchSize,
+    argv.postType,
+    argv.authorSlug
+  );
 } else {
-  fetchAndSaveAllPosts(argv.useFigure, argv.batchSize);
+  fetchAndSaveAllPosts(argv.useFigure, argv.batchSize, argv.postType);
 }
