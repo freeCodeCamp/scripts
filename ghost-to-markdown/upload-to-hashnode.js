@@ -1,6 +1,24 @@
 import "dotenv/config";
 import fs from "fs";
 import { GraphQLClient, gql } from "graphql-request";
+import winston from "winston";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} ${level}: ${message}`;
+    })
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "upload.log" }),
+  ],
+});
 
 const hashnodeApi = new GraphQLClient("https://gql.hashnode.com", {
   headers: {
@@ -8,10 +26,7 @@ const hashnodeApi = new GraphQLClient("https://gql.hashnode.com", {
   },
 });
 
-const GHOST_USER_SLUG = "";
-const HASHNODE_USER_SLUG = "nirajtest";
-
-async function getHashnodeUserId() {
+async function getHashnodeUserId(hashnodeSlug) {
   const query = gql`
     query User($username: String!) {
       user(username: $username) {
@@ -23,18 +38,18 @@ async function getHashnodeUserId() {
   `;
 
   const res = await hashnodeApi.request(query, {
-    username: HASHNODE_USER_SLUG,
+    username: hashnodeSlug,
   });
 
   if (!res.user) {
-    console.log("User not found");
-    throw new Error("User not found");
+    logger.error(`User not found: ${hashnodeSlug}`);
+    throw new Error(`User not found: ${hashnodeSlug}`);
   }
 
   return res.user.id;
 }
 
-async function uploadPostsToHashnode(userId, posts) {
+async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
   const query = gql`
     mutation CreateDraftPost($input: CreateDraftInput!) {
       createDraft(input: $input) {
@@ -61,19 +76,40 @@ async function uploadPostsToHashnode(userId, posts) {
     slug: "draft-post",
     contentMarkdown: mdContent,
     publicationId: process.env.HASHNODE_PUBLICATION_ID,
-    draftOwner: userId,
+    draftOwner: hashnodeUserId,
   };
 
   const res = await hashnodeApi.request(query, {
     input: data,
   });
-
-  console.log(JSON.stringify(res));
+  console.log(`Post uploaded successfully`);
 }
 
-async function upload() {
-  const userId = await getHashnodeUserId();
-  await uploadPostsToHashnode(userId);
+async function upload(ghostSlug, hashnodeSlug, postType) {
+  const hashnodeUserId = await getHashnodeUserId(hashnodeSlug);
+  await uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType);
 }
 
-upload();
+const argv = yargs(hideBin(process.argv))
+  .option("ghost-slug", {
+    type: "string",
+    description: "The slug of the author in ghost",
+  })
+  .option("hashnode-slug", {
+    type: "string",
+    description: "The slug of the author in hashnode",
+  })
+  .option("post-type", {
+    choices: ["published", "draft", "all"],
+    description: "The type of posts to upload",
+    default: "published",
+  })
+  .demandOption(
+    ["ghost-slug", "hashnode-slug"],
+    "Please provide both ghost-slug and hashnode-slug of the author to upload posts"
+  )
+  .help().argv;
+
+if (argv.ghostSlug && argv.hashnodeSlug) {
+  upload(argv.ghostSlug, argv.hashnodeSlug, argv.postType);
+}
