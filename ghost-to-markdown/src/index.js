@@ -91,8 +91,10 @@ function savePostAsMarkdown(post, useFigure) {
     const markdown = convert(doc, useFigure);
     const postStatus = post.status;
     // NOTE: Why not use the primary_author field here?
-    // NOTE: Add a warning for authors without a slug
     const authorName = post.authors[0]?.slug || "unknown-author";
+    if(authorName === "unknown-author") {
+      logger.error(`Post "${post.title}" (slug: ${post.slug}) has no author slug`);
+    }
     const dirPath = join(__dirname, "..", "__out__", authorName, postStatus);
 
     if (!fs.existsSync(dirPath)) {
