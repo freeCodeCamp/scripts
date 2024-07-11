@@ -7,6 +7,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import matter from "gray-matter";
 
 import MarkdownRendererFactory from "../lib/index.js";
 import logger from "../lib/utils/logger.js";
@@ -69,10 +70,10 @@ function convert(doc, useFigure) {
     }
 
     if (doc.title) {
-      markdown = `${doc.header}\n\n# ${doc.title}\n\n` + markdown;
-    } else {
-      markdown = `${doc.header}\n\n` + markdown;
+      markdown = `# ${doc.title}\n\n` + markdown;
     }
+
+    markdown = matter.stringify(markdown, doc.metadata);
 
     return markdown;
   } catch (error) {
@@ -83,37 +84,31 @@ function convert(doc, useFigure) {
   }
 }
 
-function createPostHeaderTemplate(post) {
+function getPostMetadata(post) {
   const { title, published_at, slug, feature_image, authors, tags } = post;
 
-  const headerTemplate = `---
-title: "${title}"
-date: "${published_at}"
-slug: "${slug}"
-feature_image: "${feature_image ?? ""}"
-author:
-  name: ${authors[0].name}
-  slug: ${authors[0].slug}
-${
-  (tags ?? []).length > 0
-    ? `tags:\n${tags
-        .map(
-          (tag) =>
-            "   - name: " + tag.name + "\n" + "     slug: " + tag.slug + "\n"
-        )
-        .join("")}`
-    : ""
-}
----
-`;
+  const metadata = {
+    title,
+    slug,
+    publishedAt: published_at,
+    featureImage: feature_image ?? "",
+    author: {
+      name: authors[0].name,
+      slug: authors[0].slug,
+    },
+    tags: tags.map((tag) => ({
+      name: tag.name,
+      slug: tag.slug,
+    })),
+  };
 
-  return headerTemplate.replace(/(^[ \t]*\n)/gm, "");
+  return metadata;
 }
 
 function savePostAsMarkdown(post, useFigure) {
   try {
     const doc = {
-      header: createPostHeaderTemplate(post),
+      metadata: getPostMetadata(post),
       title: post.title,
       mobiledoc: post.mobiledoc,
       slug: post.slug,

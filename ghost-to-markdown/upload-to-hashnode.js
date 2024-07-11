@@ -4,6 +4,7 @@ import { GraphQLClient, gql } from "graphql-request";
 import winston from "winston";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import matter from "gray-matter";
 
 const logger = winston.createLogger({
   level: "info",
@@ -50,7 +51,7 @@ async function getHashnodeUserId(hashnodeSlug) {
 }
 
 async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
-  const query = gql`
+  const createDraftMutation = gql`
     mutation CreateDraftPost($input: CreateDraftInput!) {
       createDraft(input: $input) {
         draft {
@@ -67,19 +68,34 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
       }
     }
   `;
+  const createPublishedMutation = gql`
+    mutation PublishPost($input: PublishPostInput!) {
+      publishPost(input: $input) {
+        post {
+          id
+          slug
+          title
+          author {
+            id
+            username
+            name
+          }
+        }
+      }
+    }
+  `;
 
-  const mdContent = fs.readFileSync("./sample.md", "utf8");
+  const { content, data: metadata } = matter.read("./sample.md", "utf8");
 
   const data = {
-    title: "test post",
-    subtitle: "this is a subtitle",
-    slug: "draft-post",
-    contentMarkdown: mdContent,
+    title: metadata.title,
+    slug: metadata.slug,
+    contentMarkdown: content,
     publicationId: process.env.HASHNODE_PUBLICATION_ID,
     draftOwner: hashnodeUserId,
   };
 
-  const res = await hashnodeApi.request(query, {
+  const res = await hashnodeApi.request(createDraftMutation, {
     input: data,
   });
   console.log(`Post uploaded successfully`);
