@@ -84,7 +84,6 @@ function convert(doc, useFigure) {
 }
 
 function createPostHeaderTemplate(post) {
-
   const { title, published_at, slug, feature_image, authors, tags } = post;
 
   const headerTemplate = `---
@@ -93,13 +92,22 @@ date: "${published_at}"
 slug: "${slug}"
 feature_image: "${feature_image ?? ""}"
 author:
-  - name: ${authors[0].name}
-    slug: ${authors[0].slug}
-${(tags ?? []).length > 0 ? `tags:\n ${tags.map(tag => "  - name: " + tag.name + "\n" + "     slug: " + tag.slug + "\n").join("")}` : ""}
+  name: ${authors[0].name}
+  slug: ${authors[0].slug}
+${
+  (tags ?? []).length > 0
+    ? `tags:\n${tags
+        .map(
+          (tag) =>
+            "   - name: " + tag.name + "\n" + "     slug: " + tag.slug + "\n"
+        )
+        .join("")}`
+    : ""
+}
 ---
 `;
 
-  return headerTemplate.replace(/(^[ \t]*\n)/gm, "")
+  return headerTemplate.replace(/(^[ \t]*\n)/gm, "");
 }
 
 function savePostAsMarkdown(post, useFigure) {
@@ -115,7 +123,9 @@ function savePostAsMarkdown(post, useFigure) {
     // NOTE: Why not use the primary_author field here?
     const authorName = post.authors[0]?.slug || "unknown-author";
     if (authorName === "unknown-author") {
-      logger.error(`Post "${post.title}" (slug: ${post.slug}) has no author slug`);
+      logger.error(
+        `Post "${post.title}" (slug: ${post.slug}) has no author slug`
+      );
     }
     const dirPath = join(__dirname, "..", "__out__", authorName, postStatus);
 
@@ -181,7 +191,7 @@ async function fetchAndSaveAllPosts(
         page: currPage,
         formats: ["html", "mobiledoc"],
         limit: batchSize,
-        include: "authors",
+        include: "authors,tags",
         filter: filters.join("+"),
       });
       const posts = [...data];
@@ -212,7 +222,8 @@ async function fetchAndSaveAllPosts(
         }
       }
       logger.info(
-        `Completed fetching page ${currPage - 1
+        `Completed fetching page ${
+          currPage - 1
         }/${lastPage} of posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
       );
     } catch (error) {
