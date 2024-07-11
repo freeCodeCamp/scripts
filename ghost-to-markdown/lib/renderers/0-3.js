@@ -1,4 +1,3 @@
-import converter from "@tryghost/html-to-mobiledoc";
 import {
   MARKUP_SECTION_TYPE,
   IMAGE_SECTION_TYPE,
@@ -175,32 +174,22 @@ export default class Renderer_0_3 {
 
   renderImageCard(payload) {
     try {
-      // NOTE: Where do we put caption as Hashnode doesn't support them yet and we're making use of alt text for captions
       const { src, caption, alt } = payload;
       let imageMarkdown = `![${alt ? alt : "Image"}](${src})`;
       if (caption) {
-        const temp = {
-          markups: this.markups,
-          atoms: this.atoms,
-          cards: this.cards,
-          markupStack: this.markupStack,
-          currentLink: this.currentLink,
-        };
-        const captionMobiledoc = converter.toMobiledoc(caption);
-        this.markups = captionMobiledoc.markups || [];
-        this.atoms = captionMobiledoc.atoms || [];
-        this.cards = captionMobiledoc.cards || [];
-        this.markupStack = [];
-        this.currentLink = null;
-        const { sections } = captionMobiledoc;
-        const captionMarkdown = this.renderMobiledocSections(sections);
-
-        imageMarkdown += `\n_${captionMarkdown}_`;
-
-        // Reset values in constructor to continue conversion
-        for (let key in temp) {
-          this[key] = temp[key];
-        }
+        const markdownCaption = caption
+          .replace(/\&nbsp\;/g, " ")
+          .replace(
+            /\<a href="(?<href>.*)"\s*\>(?<openingWhitespace>\s*)(?<anchorText>(?:.(?!\<\/a\>))*.)(?<closingWhitespace>\s*)\<\/a\>/g,
+            "[$<openingWhitespace>$<anchorText>$<closingWhitespace>]($<href>)"
+          )
+          .replace(/\<strong\>(\s*)/g, "$1**")
+          .replace(/(\s*)\<\/strong\>/g, "**$1")
+          .replace(/\<em\>(\s*)/g, "$1_")
+          .replace(/(\s*)\<\/em\>/g, "_$1")
+          .replace(/\<code\>(\s*)/g, "$1`")
+          .replace(/(\s*)\<\/code\>/g, "`$1");
+        imageMarkdown += `\n_${markdownCaption.trim()}_`;
       }
       return imageMarkdown;
     } catch (error) {
