@@ -91,7 +91,7 @@ function getPostMetadata(post) {
     title,
     slug,
     publishedAt: published_at,
-    featureImage: feature_image ?? "",
+    featureImage: feature_image,
     author: {
       name: authors[0].name,
       slug: authors[0].slug,

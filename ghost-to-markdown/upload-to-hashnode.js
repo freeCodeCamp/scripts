@@ -27,6 +27,41 @@ const hashnodeApi = new GraphQLClient("https://gql.hashnode.com", {
   },
 });
 
+const createDraftMutation = gql`
+  mutation CreateDraftPost($input: CreateDraftInput!) {
+    createDraft(input: $input) {
+      draft {
+        id
+        slug
+        title
+        subtitle
+        author {
+          id
+          username
+          name
+        }
+      }
+    }
+  }
+`;
+
+const createPublishedMutation = gql`
+  mutation PublishPost($input: PublishPostInput!) {
+    publishPost(input: $input) {
+      post {
+        id
+        slug
+        title
+        author {
+          id
+          username
+          name
+        }
+      }
+    }
+  }
+`;
+
 async function getHashnodeUserId(hashnodeSlug) {
   const query = gql`
     query User($username: String!) {
@@ -51,52 +86,35 @@ async function getHashnodeUserId(hashnodeSlug) {
 }
 
 async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
-  const createDraftMutation = gql`
-    mutation CreateDraftPost($input: CreateDraftInput!) {
-      createDraft(input: $input) {
-        draft {
-          id
-          slug
-          title
-          subtitle
-          author {
-            id
-            username
-            name
-          }
-        }
-      }
-    }
-  `;
-  const createPublishedMutation = gql`
-    mutation PublishPost($input: PublishPostInput!) {
-      publishPost(input: $input) {
-        post {
-          id
-          slug
-          title
-          author {
-            id
-            username
-            name
-          }
-        }
-      }
-    }
-  `;
+  let mutation;
 
   const { content, data: metadata } = matter.read("./sample.md", "utf8");
 
-  const data = {
+  const uploadData = {
     title: metadata.title,
     slug: metadata.slug,
     contentMarkdown: content,
+    publishedAt: metadata.publishedAt,
     publicationId: process.env.HASHNODE_PUBLICATION_ID,
-    draftOwner: hashnodeUserId,
+    tags: metadata.tags,
   };
 
-  const res = await hashnodeApi.request(createDraftMutation, {
-    input: data,
+  if (metadata.featureImage) {
+    uploadData.coverImageOptions = {
+      coverImageURL: metadata.featureImage,
+    };
+  }
+
+  if (postType === "draft") {
+    mutation = createDraftMutation;
+    uploadData.draftOwner = hashnodeUserId;
+  } else {
+    mutation = createPublishedMutation;
+    uploadData.publishAs = hashnodeUserId;
+  }
+
+  const res = await hashnodeApi.request(mutation, {
+    input: uploadData,
   });
   console.log(`Post uploaded successfully`);
 }
