@@ -85,7 +85,7 @@ function convert(doc, useFigure) {
 }
 
 function getPostMetadata(post) {
-  const { title, published_at, slug, feature_image, authors, tags } = post;
+  const { title, published_at, slug, feature_image, primary_author, tags } = post;
 
   const metadata = {
     title,
@@ -93,8 +93,8 @@ function getPostMetadata(post) {
     publishedAt: published_at,
     featureImage: feature_image,
     author: {
-      name: authors[0].name,
-      slug: authors[0].slug,
+      name: primary_author.name,
+      slug: primary_author.slug,
     },
     tags: tags.map((tag) => ({
       name: tag.name,
@@ -115,8 +115,7 @@ function savePostAsMarkdown(post, useFigure) {
     };
     const markdown = convert(doc, useFigure);
     const postStatus = post.status;
-    // NOTE: Why not use the primary_author field here?
-    const authorName = post.authors[0]?.slug || "unknown-author";
+    const authorName = post.primary_author?.slug || "unknown-author";
     if (authorName === "unknown-author") {
       logger.error(
         `Post "${post.title}" (slug: ${post.slug}) has no author slug`
