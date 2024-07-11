@@ -35,39 +35,13 @@ const api = new GhostAdminAPI({
   version: apiVersion,
 });
 
-const figureTemplate = `
-<figure>
-  <img src="{{Src}}">
-  {{#Caption}}<figcaption>{{Caption}}</figcaption>{{/Caption}}
-</figure>
-`;
-
-function renderImage(src, caption) {
-  try {
-    const data = { Src: src, Caption: caption };
-    return render(figureTemplate, data);
-  } catch (error) {
-    logger.error(`Error rendering image: ${error.message}`);
-    return "";
-  }
-}
-
-function convert(doc, useFigure) {
+function convert(doc) {
   try {
     const mobiledoc = JSON.parse(doc.mobiledoc, null, 2);
 
     // Use the Markdown renderer
     const renderer = new MarkdownRendererFactory().render(mobiledoc);
     let markdown = renderer;
-
-    if (useFigure) {
-      markdown = markdown.replace(
-        /!\[(.*?)\]\((.*?)\)/g,
-        (match, caption, src) => {
-          return renderImage(src, caption);
-        }
-      );
-    }
 
     if (doc.title) {
       markdown = `# ${doc.title}\n\n` + markdown;
@@ -85,7 +59,8 @@ function convert(doc, useFigure) {
 }
 
 function getPostMetadata(post) {
-  const { title, published_at, slug, feature_image, primary_author, tags } = post;
+  const { title, published_at, slug, feature_image, primary_author, tags } =
+    post;
 
   const metadata = {
     title,
@@ -105,7 +80,7 @@ function getPostMetadata(post) {
   return metadata;
 }
 
-function savePostAsMarkdown(post, useFigure) {
+function savePostAsMarkdown(post) {
   try {
     const doc = {
       metadata: getPostMetadata(post),
@@ -113,7 +88,7 @@ function savePostAsMarkdown(post, useFigure) {
       mobiledoc: post.mobiledoc,
       slug: post.slug,
     };
-    const markdown = convert(doc, useFigure);
+    const markdown = convert(doc);
     const postStatus = post.status;
     const authorName = post.primary_author?.slug || "unknown-author";
     if (authorName === "unknown-author") {
@@ -143,7 +118,7 @@ function savePostAsMarkdown(post, useFigure) {
   }
 }
 
-async function fetchAndSavePostBySlug(slug, useFigure) {
+async function fetchAndSavePostBySlug(slug) {
   try {
     const post = await api.posts.read(
       { slug: slug },
@@ -152,18 +127,13 @@ async function fetchAndSavePostBySlug(slug, useFigure) {
 
     logger.info(`Fetched post "${post.title}" (slug: ${slug})`);
 
-    savePostAsMarkdown(post, useFigure);
+    savePostAsMarkdown(post);
   } catch (error) {
     logger.error(`Error fetching post with slug "${slug}": ${error.message}`);
   }
 }
 
-async function fetchAndSaveAllPosts(
-  useFigure,
-  batchSize = 10,
-  postType,
-  authorSlug
-) {
+async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
   let currPage = 1;
   let lastPage = 1;
   let postsAdded = 0;
@@ -205,7 +175,7 @@ async function fetchAndSaveAllPosts(
       for (let post of posts) {
         try {
           logger.info(`Fetched post "${post.title}" (slug: ${post.slug})`);
-          savePostAsMarkdown(post, useFigure);
+          savePostAsMarkdown(post);
           postsAdded++;
         } catch (err) {
           logger.error(
@@ -245,10 +215,6 @@ const argv = yargs(hideBin(process.argv))
     description: "The type of posts to fetch",
     default: "published",
   })
-  .option("use-figure", {
-    type: "boolean",
-    description: "Render images with HTML figure tag",
-  })
   .option("batch-size", {
     type: "number",
     description: "Number of posts to fetch in each batch",
@@ -257,14 +223,9 @@ const argv = yargs(hideBin(process.argv))
   .help().argv;
 
 if (argv.slug) {
-  fetchAndSavePostBySlug(argv.slug, argv.useFigure);
+  fetchAndSavePostBySlug(argv.slug);
 } else if (argv.authorSlug) {
-  fetchAndSaveAllPosts(
-    argv.useFigure,
-    argv.batchSize,
-    argv.postType,
-    argv.authorSlug
-  );
+  fetchAndSaveAllPosts(argv.batchSize, argv.postType, argv.authorSlug);
 } else {
-  fetchAndSaveAllPosts(argv.useFigure, argv.batchSize, argv.postType);
+  fetchAndSaveAllPosts(argv.batchSize, argv.postType);
 }
