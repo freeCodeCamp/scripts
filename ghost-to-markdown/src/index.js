@@ -69,7 +69,9 @@ function convert(doc, useFigure) {
     }
 
     if (doc.title) {
-      markdown = `# ${doc.title}\n\n` + markdown;
+      markdown = `${doc.header}\n\n# ${doc.title}\n\n` + markdown;
+    } else {
+      markdown = `${doc.header}\n\n` + markdown;
     }
 
     return markdown;
@@ -81,9 +83,29 @@ function convert(doc, useFigure) {
   }
 }
 
+function createPostHeaderTemplate(post) {
+
+  const { title, published_at, slug, feature_image, authors, tags } = post;
+
+  const headerTemplate = `---
+title: "${title}"
+date: "${published_at}"
+slug: "${slug}"
+feature_image: "${feature_image ?? ""}"
+author:
+  - name: ${authors[0].name}
+    slug: ${authors[0].slug}
+${(tags ?? []).length > 0 ? `tags:\n ${tags.map(tag => "  - name: " + tag.name + "\n" + "     slug: " + tag.slug + "\n").join("")}` : ""}
+---
+`;
+
+  return headerTemplate.replace(/(^[ \t]*\n)/gm, "")
+}
+
 function savePostAsMarkdown(post, useFigure) {
   try {
     const doc = {
+      header: createPostHeaderTemplate(post),
       title: post.title,
       mobiledoc: post.mobiledoc,
       slug: post.slug,
@@ -92,7 +114,7 @@ function savePostAsMarkdown(post, useFigure) {
     const postStatus = post.status;
     // NOTE: Why not use the primary_author field here?
     const authorName = post.authors[0]?.slug || "unknown-author";
-    if(authorName === "unknown-author") {
+    if (authorName === "unknown-author") {
       logger.error(`Post "${post.title}" (slug: ${post.slug}) has no author slug`);
     }
     const dirPath = join(__dirname, "..", "__out__", authorName, postStatus);
@@ -121,7 +143,7 @@ async function fetchAndSavePostBySlug(slug, useFigure) {
   try {
     const post = await api.posts.read(
       { slug: slug },
-      { formats: ["html", "mobiledoc"], include: "authors" }
+      { formats: ["html", "mobiledoc"], include: "authors,tags" }
     );
 
     logger.info(`Fetched post "${post.title}" (slug: ${slug})`);
@@ -190,8 +212,7 @@ async function fetchAndSaveAllPosts(
         }
       }
       logger.info(
-        `Completed fetching page ${
-          currPage - 1
+        `Completed fetching page ${currPage - 1
         }/${lastPage} of posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
       );
     } catch (error) {
