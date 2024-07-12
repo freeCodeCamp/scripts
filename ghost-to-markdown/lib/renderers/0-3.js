@@ -177,16 +177,19 @@ export default class Renderer_0_3 {
       const { src, caption, alt } = payload;
       let imageMarkdown = `![${alt ? alt : "Image"}](${src})`;
       if (caption) {
+        // Replace all whitespace character entities, and since the caption will
+        // be italicized remove <em> tags while preserving possible whitespace
+        // within the tags to prevent unintentional bold text
         const markdownCaption = caption
           .replace(/\&nbsp\;/g, " ")
+          .replace(/\<em\>(\s*)/g, "$1")
+          .replace(/(\s*)\<\/em\>/g, "$1")
           .replace(
             /\<a href="(?<href>.*)"\s*\>(?<openingWhitespace>\s*)(?<anchorText>(?:.(?!\<\/a\>))*.)(?<closingWhitespace>\s*)\<\/a\>/g,
             "[$<openingWhitespace>$<anchorText>$<closingWhitespace>]($<href>)"
           )
           .replace(/\<strong\>(\s*)/g, "$1**")
           .replace(/(\s*)\<\/strong\>/g, "**$1")
-          .replace(/\<em\>(\s*)/g, "$1_")
-          .replace(/(\s*)\<\/em\>/g, "_$1")
           .replace(/\<code\>(\s*)/g, "$1`")
           .replace(/(\s*)\<\/code\>/g, "`$1");
         imageMarkdown += `\n_${markdownCaption.trim()}_`;
