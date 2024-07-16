@@ -23,6 +23,10 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
+    new winston.transports.File({
+      filename: "upload-errors.log",
+      level: "error",
+    }),
     new winston.transports.File({ filename: "upload.log" }),
   ],
 });
