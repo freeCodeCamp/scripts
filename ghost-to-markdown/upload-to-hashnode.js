@@ -5,6 +5,12 @@ import winston from "winston";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import matter from "gray-matter";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import { exit } from "process";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const logger = winston.createLogger({
   level: "info",
@@ -32,14 +38,6 @@ const createDraftMutation = gql`
     createDraft(input: $input) {
       draft {
         id
-        slug
-        title
-        subtitle
-        author {
-          id
-          username
-          name
-        }
       }
     }
   }
@@ -50,13 +48,6 @@ const createPublishedMutation = gql`
     publishPost(input: $input) {
       post {
         id
-        slug
-        title
-        author {
-          id
-          username
-          name
-        }
       }
     }
   }
@@ -78,8 +69,8 @@ async function getHashnodeUserId(hashnodeSlug) {
   });
 
   if (!res.user) {
-    logger.error(`User not found: ${hashnodeSlug}`);
-    throw new Error(`User not found: ${hashnodeSlug}`);
+    logger.error(`Hashnode user not found: ${hashnodeSlug}`);
+    exit(1);
   }
 
   return res.user.id;
@@ -87,41 +78,73 @@ async function getHashnodeUserId(hashnodeSlug) {
 
 async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
   let mutation;
+  let postsUploaded = 0;
+  let postsFailed = 0;
 
-  const { content, data: metadata } = matter.read("./sample.md", "utf8");
+  let dirPath = join(__dirname, "__out__", ghostSlug, postType);
 
-  const uploadData = {
-    title: metadata.title,
-    slug: metadata.slug,
-    contentMarkdown: content,
-    publishedAt: metadata.publishedAt,
-    publicationId: process.env.HASHNODE_PUBLICATION_ID,
-    tags: metadata.tags,
-  };
+  try {
+    for (const file of fs.readdirSync(dirPath)) {
+      const filePath = join(dirPath, file);
 
-  if (metadata.featureImage) {
-    uploadData.coverImageOptions = {
-      coverImageURL: metadata.featureImage,
-    };
+      const { content, data: metadata } = matter.read(filePath);
+
+      const uploadData = {
+        title: metadata.title,
+        slug: metadata.slug,
+        contentMarkdown: content,
+        publicationId: process.env.HASHNODE_PUBLICATION_ID,
+        tags: metadata.tags,
+      };
+
+      if (metadata.featureImage) {
+        uploadData.coverImageOptions = {
+          coverImageURL: metadata.featureImage,
+        };
+      }
+
+      if (postType === "draft") {
+        mutation = createDraftMutation;
+        uploadData.draftOwner = hashnodeUserId;
+      } else {
+        mutation = createPublishedMutation;
+        uploadData.publishAs = hashnodeUserId;
+        uploadData.publishedAt = metadata.publishedAt;
+      }
+
+      try {
+        await hashnodeApi.request(mutation, {
+          input: uploadData,
+        });
+        logger.info(
+          `Uploaded post "${uploadData.title}" (slug: ${uploadData.slug})`
+        );
+        postsUploaded++;
+      } catch (error) {
+        logger.error(
+          `Failed to upload post "${uploadData.title}" (slug: ${uploadData.slug}). Error:`,
+          error
+        );
+        postsFailed++;
+      }
+    }
+  } catch (error) {
+    logger.error(`Error finding posts: ${error}`);
   }
 
-  if (postType === "draft") {
-    mutation = createDraftMutation;
-    uploadData.draftOwner = hashnodeUserId;
-  } else {
-    mutation = createPublishedMutation;
-    uploadData.publishAs = hashnodeUserId;
-  }
-
-  const res = await hashnodeApi.request(mutation, {
-    input: uploadData,
-  });
-  console.log(`Post uploaded successfully`);
+  logger.info(
+    `Completed uploading ${postType} posts. Uploaded: ${postsUploaded}, Failed: ${postsFailed}`
+  );
 }
 
 async function upload(ghostSlug, hashnodeSlug, postType) {
   const hashnodeUserId = await getHashnodeUserId(hashnodeSlug);
-  await uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType);
+  if (postType === "all") {
+    await uploadPostsToHashnode(hashnodeUserId, ghostSlug, "draft");
+    await uploadPostsToHashnode(hashnodeUserId, ghostSlug, "published");
+  } else {
+    await uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType);
+  }
 }
 
 const argv = yargs(hideBin(process.argv))
