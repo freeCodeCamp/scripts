@@ -90,13 +90,13 @@ function savePostAsMarkdown(post) {
     };
     const markdown = convert(doc);
     const postStatus = post.status;
-    const authorName = post.primary_author?.slug || "unknown-author";
-    if (authorName === "unknown-author") {
+    const authorSlug = post.primary_author?.slug || "unknown-author";
+    if (authorSlug === "unknown-author") {
       logger.error(
         `Post "${post.title}" (slug: ${post.slug}) has no author slug`
       );
     }
-    const dirPath = join(__dirname, "..", "__out__", authorName, postStatus);
+    const dirPath = join(__dirname, "..", "__out__", authorSlug, postStatus);
 
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
