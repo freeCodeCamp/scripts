@@ -197,7 +197,7 @@ async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
   }
 
   logger.info(
-    `Completed seeding posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
+    `Completed seeding ${postType} posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
   );
 }
 
