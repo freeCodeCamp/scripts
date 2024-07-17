@@ -162,6 +162,8 @@ export default class Renderer_0_3 {
         case "markdown":
           logger.warn("Raw markdown card");
           return this.renderMarkdownCard(payload);
+        case "hr":
+          return "---";
         default:
           logger.warn(`Unknown card type: ${cardType}`);
           return `<!-- Card: ${cardType} -->`;
