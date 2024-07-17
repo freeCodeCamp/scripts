@@ -15,6 +15,9 @@ export default class Renderer_0_3 {
     this.markups = this.mobiledoc.markups || [];
     this.markupStack = [];
     this.currentLink = null;
+    this.logger = logger.child({
+      slug: `${this.options.authorSlug} - ${this.options.postSlug}`,
+    });
   }
 
   _findAtomByIndex(index) {
@@ -90,7 +93,7 @@ export default class Renderer_0_3 {
             throw new Error(`Unexpected section type "${type}"`);
         }
       } catch (error) {
-        logger.error(`Error rendering section: ${error.message}`);
+        this.logger.error(`Error rendering section: ${error.message}`);
       }
     });
 
@@ -102,7 +105,7 @@ export default class Renderer_0_3 {
       let content = markers.map((marker) => this.renderMarker(marker)).join("");
       return this.wrapWithTag(tagName, content);
     } catch (error) {
-      logger.error(`Error rendering markup section: ${error.message}`);
+      this.logger.error(`Error rendering markup section: ${error.message}`);
       return "";
     }
   }
@@ -111,7 +114,7 @@ export default class Renderer_0_3 {
     try {
       return `![Image](${url})`;
     } catch (error) {
-      logger.error(`Error rendering image section: ${error.message}`);
+      this.logger.error(`Error rendering image section: ${error.message}`);
       return "";
     }
   }
@@ -136,11 +139,11 @@ export default class Renderer_0_3 {
           )
           .join("\n");
       } else {
-        logger.error(`Unknown list type: ${tagName}`);
+        this.logger.error(`Unknown list type: ${tagName}`);
       }
       return listMarkdown;
     } catch (error) {
-      logger.error(`Error rendering list section: ${error.message}`);
+      this.logger.error(`Error rendering list section: ${error.message}`);
       return "";
     }
   }
@@ -155,21 +158,21 @@ export default class Renderer_0_3 {
         case "embed":
           return this.renderEmbedCard(payload);
         case "html":
-          logger.warn("Raw HTML card");
+          this.logger.warn("Raw HTML card");
           return this.renderHtmlCard(payload);
         case "code":
           return this.renderCodeCard(payload);
         case "markdown":
-          logger.warn("Raw markdown card");
+          this.logger.warn("Raw markdown card");
           return this.renderMarkdownCard(payload);
         case "hr":
           return "---";
         default:
-          logger.warn(`Unknown card type: ${cardType}`);
+          this.logger.warn(`Unknown card type: ${cardType}`);
           return `<!-- Card: ${cardType} -->`;
       }
     } catch (error) {
-      logger.error(`Error rendering card section: ${error.message}`);
+      this.logger.error(`Error rendering card section: ${error.message}`);
       return "";
     }
   }
@@ -198,7 +201,7 @@ export default class Renderer_0_3 {
       }
       return imageMarkdown;
     } catch (error) {
-      logger.error(`Error rendering image card: ${error.message}`);
+      this.logger.error(`Error rendering image card: ${error.message}`);
       return "";
     }
   }
@@ -211,7 +214,7 @@ export default class Renderer_0_3 {
       }
       return `[Embedded content](${url})`;
     } catch (error) {
-      logger.error(`Error rendering embed card: ${error.message}`);
+      this.logger.error(`Error rendering embed card: ${error.message}`);
       return "";
     }
   }
@@ -221,7 +224,7 @@ export default class Renderer_0_3 {
       const { html } = payload;
       return html;
     } catch (error) {
-      logger.error(`Error rendering HTML card: ${error.message}`);
+      this.logger.error(`Error rendering HTML card: ${error.message}`);
       return "";
     }
   }
@@ -231,7 +234,7 @@ export default class Renderer_0_3 {
       const { code, language = "" } = payload;
       return `\`\`\`${language.toLowerCase()}\n${code}\n\`\`\``;
     } catch (error) {
-      logger.error(`Error rendering code card: ${error.message}`);
+      this.logger.error(`Error rendering code card: ${error.message}`);
       return "";
     }
   }
@@ -241,7 +244,7 @@ export default class Renderer_0_3 {
       const { markdown } = payload;
       return markdown;
     } catch (error) {
-      logger.error(`Error rendering markdown card: ${error.message}`);
+      this.logger.error(`Error rendering markdown card: ${error.message}`);
       return "";
     }
   }
@@ -273,7 +276,7 @@ export default class Renderer_0_3 {
               this.markupStack.push("code");
               break;
             default:
-              logger.warn(`Unknown markup type: ${markupType}`);
+              this.logger.warn(`Unknown markup type: ${markupType}`);
               break;
           }
         });
@@ -295,7 +298,7 @@ export default class Renderer_0_3 {
           switch (markupType) {
             case "a":
               if (this.currentLink === null) {
-                logger.error(`Link is null for text: ${text}`);
+                this.logger.error(`Link is null for text: ${text}`);
               }
               newText += `](${this.currentLink})`;
               this.currentLink = null;
@@ -310,13 +313,13 @@ export default class Renderer_0_3 {
               newText += "`";
               break;
             default:
-              logger.warn(`Unknown markup type: ${markupType}`);
+              this.logger.warn(`Unknown markup type: ${markupType}`);
               break;
           }
           if (closingWhitespace) newText += closingWhitespace.join("");
         });
         // if (closeCount > 1) {
-        //   logger.info(
+        //   this.logger.info(
         //     `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${newText}`
         //   );
         // }
@@ -326,7 +329,7 @@ export default class Renderer_0_3 {
 
       return newText;
     } catch (error) {
-      logger.error(`Error rendering marker: ${error.message}`);
+      this.logger.error(`Error rendering marker: ${error.message}`);
       return text;
     }
   }
@@ -338,11 +341,11 @@ export default class Renderer_0_3 {
         case "soft-return":
           return "  \n";
         default:
-          logger.warn(`Unknown atom type: ${atomName}`);
+          this.logger.warn(`Unknown atom type: ${atomName}`);
           return "";
       }
     } catch (error) {
-      logger.error(`Error rendering atom marker: ${error.message}`);
+      this.logger.error(`Error rendering atom marker: ${error.message}`);
       return "";
     }
   }
@@ -363,7 +366,7 @@ export default class Renderer_0_3 {
         textOrAtomIndex,
       ]);
     } else {
-      logger.warn(`Unknown marker type: ${type}`);
+      this.logger.warn(`Unknown marker type: ${type}`);
       return "";
     }
   }
@@ -391,11 +394,11 @@ export default class Renderer_0_3 {
             .map((line) => `> ${line}`)
             .join("\n");
         default:
-          logger.warn(`Unknown tag: ${tagName}`);
+          this.logger.warn(`Unknown tag: ${tagName}`);
           return content;
       }
     } catch (error) {
-      logger.error(`Error wrapping with tag: ${error.message}`);
+      this.logger.error(`Error wrapping with tag: ${error.message}`);
       return content;
     }
   }

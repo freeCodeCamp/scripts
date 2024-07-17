@@ -40,12 +40,11 @@ function convert(doc) {
     const mobiledoc = JSON.parse(doc.mobiledoc, null, 2);
 
     // Use the Markdown renderer
-    const renderer = new MarkdownRendererFactory().render(mobiledoc);
+    const renderer = new MarkdownRendererFactory({
+      postSlug: doc.postSlug,
+      authorSlug: doc.authorSlug,
+    }).render(mobiledoc);
     let markdown = renderer;
-
-    if (doc.title) {
-      markdown = `# ${doc.title}\n\n` + markdown;
-    }
 
     markdown = matter.stringify(markdown, doc.metadata);
 
@@ -86,11 +85,11 @@ function savePostAsMarkdown(post) {
       metadata: getPostMetadata(post),
       title: post.title,
       mobiledoc: post.mobiledoc,
-      slug: post.slug,
+      postSlug: post.slug,
     };
-    const markdown = convert(doc);
     const postStatus = post.status;
     const authorSlug = post.primary_author?.slug || "unknown-author";
+    doc.authorSlug = authorSlug;
     if (authorSlug === "unknown-author") {
       logger.error(
         `Post "${post.title}" (slug: ${post.slug}) has no author slug`
@@ -102,14 +101,12 @@ function savePostAsMarkdown(post) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
 
+    const markdown = convert(doc);
+
     const filePath = join(dirPath, `${post.slug}.md`);
     fs.writeFileSync(filePath, markdown, "utf8");
     // const mobileDocFilePath = join(dirPath, `${post.slug}.json`);
-    // fs.writeFileSync(
-    //   mobileDocFilePath,
-    //   doc.mobiledoc,
-    //   "utf8"
-    // );
+    // fs.writeFileSync(mobileDocFilePath, doc.mobiledoc, "utf8");
     logger.info(`Saved post "${post.title}" (slug: ${post.slug})`);
   } catch (error) {
     logger.error(
