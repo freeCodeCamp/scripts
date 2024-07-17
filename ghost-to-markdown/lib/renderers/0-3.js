@@ -4,7 +4,6 @@ import {
   LIST_SECTION_TYPE,
   CARD_SECTION_TYPE,
 } from "../utils/section-types.js";
-import { isValidSectionTagName } from "../utils/tag-names.js";
 import logger from "../utils/logger.js";
 
 export default class Renderer_0_3 {
@@ -164,6 +163,7 @@ export default class Renderer_0_3 {
           logger.warn("Raw markdown card");
           return this.renderMarkdownCard(payload);
         default:
+          logger.warn(`Unknown card type: ${cardType}`);
           return `<!-- Card: ${cardType} -->`;
       }
     } catch (error) {
@@ -313,11 +313,11 @@ export default class Renderer_0_3 {
           }
           if (closingWhitespace) newText += closingWhitespace.join("");
         });
-        if (closeCount > 1) {
-          logger.info(
-            `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${newText}`
-          );
-        }
+        // if (closeCount > 1) {
+        //   logger.info(
+        //     `Markup type: ${type} - closeCount: ${closeCount} - openTypes: ${openTypes} - text: ${newText}`
+        //   );
+        // }
 
         this.markupStack = this.markupStack.slice(0, -closeCount);
       }
