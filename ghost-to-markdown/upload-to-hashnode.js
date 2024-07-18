@@ -92,6 +92,10 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
 
   try {
     for (const file of fs.readdirSync(dirPath)) {
+      if (!file.endsWith(".md")) {
+        continue;
+      }
+
       const filePath = join(dirPath, file);
 
       const { content, data: metadata } = matter.read(filePath);
