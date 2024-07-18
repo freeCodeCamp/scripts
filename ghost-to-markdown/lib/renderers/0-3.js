@@ -267,6 +267,7 @@ export default class Renderer_0_3 {
               newText += `**`;
               this.markupStack.push("strong");
               break;
+            case "i":
             case "em":
               newText += `_`;
               this.markupStack.push("em");
@@ -274,6 +275,10 @@ export default class Renderer_0_3 {
             case "code":
               newText += `\``;
               this.markupStack.push("code");
+              break;
+            case "sup":
+              newText += "<sup>";
+              this.markupStack.push("sup");
               break;
             default:
               this.logger.warn(`Unknown markup type: ${markupType}`);
@@ -311,6 +316,9 @@ export default class Renderer_0_3 {
               break;
             case "code":
               newText += "`";
+              break;
+            case "sup":
+              newText += "</sup>";
               break;
             default:
               this.logger.warn(`Unknown markup type: ${markupType}`);
