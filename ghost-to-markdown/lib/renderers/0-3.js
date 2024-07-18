@@ -16,7 +16,7 @@ export default class Renderer_0_3 {
     this.markupStack = [];
     this.currentLink = null;
     this.logger = logger.child({
-      slug: `${this.options.authorSlug} - ${this.options.postSlug}`,
+      label: this.options.label,
     });
   }
 

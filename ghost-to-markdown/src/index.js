@@ -85,11 +85,10 @@ function savePostAsMarkdown(post) {
       metadata: getPostMetadata(post),
       title: post.title,
       mobiledoc: post.mobiledoc,
-      postSlug: post.slug,
     };
     const postStatus = post.status;
     const authorSlug = post.primary_author?.slug || "unknown-author";
-    doc.authorSlug = authorSlug;
+    doc.label = `${authorSlug} - ${postStatus} - ${post.slug}`;
     if (authorSlug === "unknown-author") {
       logger.error(
         `Post "${post.title}" (slug: ${post.slug}) has no author slug`
