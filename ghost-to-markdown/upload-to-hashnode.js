@@ -31,6 +31,9 @@ const logger = winston.createLogger({
   ],
 });
 
+const wait = (seconds) =>
+  new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+
 const hashnodeApi = new GraphQLClient("https://gql.hashnode.com", {
   headers: {
     Authorization: `Bearer ${process.env.HASHNODE_API_TOKEN}`,
@@ -131,6 +134,7 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
         );
         postsFailed++;
       }
+      await wait(1);
     }
   } catch (error) {
     logger.error(`Error finding posts: ${error}`);
