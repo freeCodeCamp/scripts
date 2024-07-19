@@ -145,7 +145,7 @@ async function fetchAndSavePostBySlug(slug) {
   }
 }
 
-async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
+async function fetchAndSaveAllPosts(batchSize = 25, postType, authorSlug) {
   let currPage = 1;
   let lastPage = 1;
   let postsAdded = 0;
