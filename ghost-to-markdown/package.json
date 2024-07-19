@@ -1,0 +1,29 @@
+{
+  "name": "ghost-to-markdown",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"Use npm run download or npm run upload\"",
+    "download": "node src/download.js",
+    "upload": "node src/upload.js"
+  },
+  "keywords": [],
+  "author": "Mrugesh Mohapatra <noreply@mrugesh.dev> (https://mrugesh.dev/)",
+  "license": "ISC",
+  "dependencies": {
+    "@tryghost/admin-api": "^1.13.12",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "graphql-request": "^7.1.0",
+    "gray-matter": "^4.0.3",
+    "mobiledoc-kit": "^0.15.0",
+    "mustache": "^4.2.0",
+    "ora": "^8.0.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "winston": "^3.13.0"
+  }
+}
