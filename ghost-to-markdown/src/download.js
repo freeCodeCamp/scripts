@@ -10,7 +10,7 @@ import { dirname } from 'path';
 import matter from 'gray-matter';
 
 import MarkdownRendererFactory from '../lib/index.js';
-import logger from '../lib/utils/logger.js';
+import logger from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,7 +24,8 @@ const apiVersion = 'v3.39';
 
 if (!apiUrl || !apiKey) {
   logger.error(
-    'GHOST_API_URL and GHOST_API_KEY must be set in the environment variables.'
+    'GHOST_API_URL and GHOST_API_KEY must be set in the environment variables.',
+    { label: 'SETUP' }
   );
   process.exit(1);
 }
@@ -51,7 +52,10 @@ function convert(doc) {
     return markdown;
   } catch (error) {
     logger.error(
-      `Error converting document (slug: ${doc.slug}): ${error.message}`
+      `Cannot convert -*- Slug: '${doc.slug}' -*- Error: ${error.message}`,
+      {
+        label: 'CNVRT'
+      }
     );
     return '';
   }
@@ -91,7 +95,10 @@ function savePostAsMarkdown(post) {
     doc.label = `${authorSlug} - ${postStatus} - ${post.slug}`;
     if (authorSlug === 'unknown-author') {
       logger.error(
-        `Post "${post.title}" (slug: ${post.slug}) has no author slug`
+        `No Author Slug -*- Post: '${post.title}' -*- Slug: '${post.slug}'`,
+        {
+          label: 'SPAMD'
+        }
       );
     }
     const dirPath = join(__dirname, '..', '__out__', authorSlug, postStatus);
@@ -106,10 +113,15 @@ function savePostAsMarkdown(post) {
     fs.writeFileSync(filePath, markdown, 'utf8');
     // const mobileDocFilePath = join(dirPath, `${post.slug}.json`);
     // fs.writeFileSync(mobileDocFilePath, doc.mobiledoc, "utf8");
-    logger.info(`Saved post "${post.title}" (slug: ${post.slug})`);
+    logger.info(`Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}'`, {
+      label: 'SPAMD'
+    });
   } catch (error) {
     logger.error(
-      `Error saving post "${post.title}" (slug: ${post.slug}): ${error.message}`
+      `Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- Error: ${error.message}`,
+      {
+        label: 'SPAMD'
+      }
     );
   }
 }
@@ -121,11 +133,15 @@ async function fetchAndSavePostBySlug(slug) {
       { formats: ['html', 'mobiledoc'], include: 'authors,tags' }
     );
 
-    logger.info(`Fetched post "${post.title}" (slug: ${slug})`);
+    logger.info(`Fetching -*- Post: '${post.title}' -*- Slug: '${slug}'`, {
+      label: 'SAVSG'
+    });
 
     savePostAsMarkdown(post);
   } catch (error) {
-    logger.error(`Error fetching post with slug "${slug}": ${error.message}`);
+    logger.error(`Fetching -*- Slug: '${slug}' -*- Error: ${error.message}`, {
+      label: 'SAVSG'
+    });
   }
 }
 
@@ -157,9 +173,9 @@ async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
       const posts = [...data];
 
       if (authorSlug && currPage === 1 && posts.length === 0) {
-        logger.error(
-          `No posts found for the specified author (author-slug: ${authorSlug}). Is the author-slug correct?`
-        );
+        logger.error(`No posts for Author: ${authorSlug}`, {
+          label: 'SAVAL'
+        });
         return;
       }
 
@@ -170,13 +186,20 @@ async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
 
       for (let post of posts) {
         try {
-          logger.info(`Fetched post "${post.title}" (slug: ${post.slug})`);
+          logger.info(
+            `Fetching -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- ID: '${post.id}'`,
+            {
+              label: 'SAVAL'
+            }
+          );
           savePostAsMarkdown(post);
           postsAdded++;
         } catch (err) {
           logger.error(
-            `Failed to save post "${post.title}" (slug: ${post.slug}):`,
-            err
+            `Fetching -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- ID: '${post.id}' -*- Error: ${err}`,
+            {
+              label: 'SAVAL'
+            }
           );
           postsFailed++;
         }
@@ -184,16 +207,24 @@ async function fetchAndSaveAllPosts(batchSize = 10, postType, authorSlug) {
       logger.info(
         `Completed fetching page ${
           currPage - 1
-        }/${lastPage} of posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
+        }/${lastPage} of posts. ${postsAdded} posts added. ${postsFailed} posts failed.`,
+        {
+          label: 'SAVAL'
+        }
       );
     } catch (error) {
-      logger.error('Error fetching posts:', error);
+      logger.error('Error fetching posts:', error, {
+        label: 'SAVAL'
+      });
       break;
     }
   }
 
   logger.info(
-    `Completed seeding ${postType} posts. ${postsAdded} posts added. ${postsFailed} posts failed.`
+    `Completed seeding post type: ${postType} posts. ${postsAdded} posts added. ${postsFailed} posts failed.`,
+    {
+      label: 'SAVAL'
+    }
   );
 }
 

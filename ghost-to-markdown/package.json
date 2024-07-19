@@ -2,12 +2,12 @@
   "name": "ghost-to-markdown",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "upload": "node upload-to-hashnode.js"
+    "start": "echo \"Use npm run download or npm run upload\"",
+    "download": "node src/download.js",
+    "upload": "node src/upload.js"
   },
   "keywords": [],
   "author": "Mrugesh Mohapatra <noreply@mrugesh.dev> (https://mrugesh.dev/)",
