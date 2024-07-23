@@ -288,18 +288,21 @@ export default class Renderer_0_3 {
       }
 
       const openingWhitespace = text.match(/^\s+/g);
+      let tempText;
       if (newText && openingWhitespace) {
         // Move whitespace outside of formatting delimiters
-        newText += openingWhitespace.join('');
-        text = text.replace(/^\s+/g, '');
+        newText = `${openingWhitespace.join('')}${newText}`;
+        tempText = text.replace(/^\s+/g, '');
       }
-      newText += text;
+      newText += tempText || text;
 
       if (closeCount !== 0) {
         const closingTags = this.markupStack.slice(-closeCount);
         closingTags.reverse().forEach((markupType) => {
           const closingWhitespace = newText.match(/\s+$/g);
-          if (closingWhitespace) newText = newText.replace(/\s+$/g, '');
+          if (closingWhitespace) {
+            newText = newText.replace(/\s+$/g, '');
+          }
           switch (markupType) {
             case 'a':
               if (this.currentLink === null) {
