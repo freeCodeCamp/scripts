@@ -8,14 +8,32 @@ import matter from 'gray-matter';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { exit } from 'process';
+import GhostAdminAPI from '@tryghost/admin-api';
+import logger from './logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import logger from './logger.js';
-
 const wait = (seconds) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+
+const apiUrl = process.env.GHOST_API_URL;
+const apiKey = process.env.GHOST_API_KEY;
+const apiVersion = 'v3.39';
+
+if (!apiUrl || !apiKey) {
+  logger.error(
+    'GHOST_API_URL and GHOST_API_KEY must be set in the environment variables.',
+    { label: 'SETUP' }
+  );
+  process.exit(1);
+}
+
+const ghostApi = new GhostAdminAPI({
+  url: apiUrl,
+  key: apiKey,
+  version: apiVersion
+});
 
 const hashnodeApi = new GraphQLClient('https://gql.hashnode.com', {
   headers: {
@@ -42,6 +60,26 @@ const createPublishedMutation = gql`
     }
   }
 `;
+
+async function unpublishGhostPost(postId, postSlug) {
+  try {
+    const ghostPost = await ghostApi.posts.read({ id: postId });
+    await ghostApi.posts.edit({
+      id: postId,
+      status: 'draft',
+      published_at: null,
+      tags: [...ghostPost.tags, { slug: 'toothbrush' }],
+      // It needs to be the same value as the original post
+      updated_at: ghostPost.updated_at
+    });
+    logger.info(`Unpublished Ghost post: ${postSlug} (postId: ${postId})`);
+  } catch (error) {
+    logger.error(
+      `Failed to unpublish Ghost post: ${postSlug} (postId: ${postId}). Error:`,
+      error
+    );
+  }
+}
 
 async function getHashnodeUserId(hashnodeSlug) {
   const query = gql`
@@ -71,7 +109,7 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
   let postsUploaded = 0;
   let postsFailed = 0;
 
-  let dirPath = join(__dirname, '__out__', ghostSlug, postType);
+  let dirPath = join(__dirname, '..', '__out__', ghostSlug, postType);
 
   try {
     for (const file of fs.readdirSync(dirPath)) {
@@ -110,6 +148,9 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
         await hashnodeApi.request(mutation, {
           input: uploadData
         });
+        if (postType === 'published') {
+          await unpublishGhostPost(metadata.ghostPostId, metadata.slug);
+        }
         logger.info(
           `Uploaded post "${uploadData.title}" (slug: ${uploadData.slug})`
         );

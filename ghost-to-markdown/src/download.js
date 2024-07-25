@@ -62,7 +62,7 @@ function convert(doc) {
 }
 
 function getPostMetadata(post) {
-  const { title, published_at, slug, feature_image, primary_author, tags } =
+  const { title, published_at, slug, feature_image, primary_author, tags, id } =
     post;
 
   const metadata = {
@@ -77,7 +77,8 @@ function getPostMetadata(post) {
     tags: tags.map((tag) => ({
       name: tag.name,
       slug: tag.slug
-    }))
+    })),
+    ghostPostId: id
   };
 
   return metadata;
