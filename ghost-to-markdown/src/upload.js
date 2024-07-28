@@ -72,11 +72,13 @@ async function unpublishGhostPost(postId, postSlug) {
       // It needs to be the same value as the original post
       updated_at: ghostPost.updated_at
     });
-    logger.info(`Unpublished Ghost post: ${postSlug} (postId: ${postId})`);
+    logger.info(`Unpublished -*- Post: '${postSlug}' -*- ID: '${postId}'`, {
+      label: 'UNPUB'
+    });
   } catch (error) {
     logger.error(
-      `Failed to unpublish Ghost post: ${postSlug} (postId: ${postId}). Error:`,
-      error
+      `Unpublishing -*- Post: '${postSlug}' -*- ID: '${postId}' -*- Error: ${error.message}`,
+      { label: 'UNPUB' }
     );
   }
 }
@@ -97,7 +99,9 @@ async function getHashnodeUserId(hashnodeSlug) {
   });
 
   if (!res.user) {
-    logger.error(`Hashnode user not found: ${hashnodeSlug}`);
+    logger.error(`No user found -*- Hashnode Slug: '${hashnodeSlug}'`, {
+      label: 'HNUSR'
+    });
     exit(1);
   }
 
@@ -152,24 +156,28 @@ async function uploadPostsToHashnode(hashnodeUserId, ghostSlug, postType) {
           await unpublishGhostPost(metadata.ghostPostId, metadata.slug);
         }
         logger.info(
-          `Uploaded post "${uploadData.title}" (slug: ${uploadData.slug})`
+          `Uploading -*- Post: '${uploadData.title}' -*- Slug: '${uploadData.slug}'`,
+          { label: 'UPLOD' }
         );
         postsUploaded++;
       } catch (error) {
         logger.error(
-          `Failed to upload post "${uploadData.title}" (slug: ${uploadData.slug}). Error:`,
-          error
+          `Uploading -*- Post: '${uploadData.title}' -*- Slug: '${uploadData.slug}' -*- Error: ${error.message}`,
+          { label: 'UPLOD' }
         );
         postsFailed++;
       }
       await wait(1);
     }
   } catch (error) {
-    logger.error(`Error finding posts: ${error}`);
+    logger.error(`Finding posts -*- Error: ${error.message}`, {
+      label: 'UPLOD'
+    });
   }
 
   logger.info(
-    `Completed uploading ${postType} posts. Uploaded: ${postsUploaded}, Failed: ${postsFailed}`
+    `Completed uploading ${postType} posts. ${postsUploaded} posts uploaded. ${postsFailed} posts failed.`,
+    { label: 'UPLOD' }
   );
 }
 
