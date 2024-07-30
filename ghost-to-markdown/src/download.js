@@ -36,7 +36,7 @@ const api = new GhostAdminAPI({
   version: apiVersion
 });
 
-function convert(doc) {
+function convert(doc, postID) {
   try {
     const mobiledoc = JSON.parse(doc.mobiledoc, null, 2);
 
@@ -52,7 +52,7 @@ function convert(doc) {
     return markdown;
   } catch (error) {
     logger.error(
-      `Cannot convert -*- Slug: '${doc.slug}' -*- Error: ${error.message}`,
+      `Cannot convert -*- Slug: '${doc.slug}' -*- ID: '${postID}' -*- Error: ${error}`,
       {
         label: 'CNVRT'
       }
@@ -96,7 +96,7 @@ function savePostAsMarkdown(post) {
     doc.label = `${authorSlug} - ${postStatus} - ${post.slug}`;
     if (authorSlug === 'unknown-author') {
       logger.error(
-        `No Author Slug -*- Post: '${post.title}' -*- Slug: '${post.slug}'`,
+        `No Author Slug -*- Post: '${post.title}' -*- Slug: '${post.slug} -*- ID: '${post.id}'`,
         {
           label: 'SPAMD'
         }
@@ -108,18 +108,21 @@ function savePostAsMarkdown(post) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
 
-    const markdown = convert(doc);
+    const markdown = convert(doc, post.id);
 
     const filePath = join(dirPath, `${post.slug}.md`);
     fs.writeFileSync(filePath, markdown, 'utf8');
     // const mobileDocFilePath = join(dirPath, `${post.slug}.json`);
     // fs.writeFileSync(mobileDocFilePath, doc.mobiledoc, "utf8");
-    logger.info(`Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}'`, {
-      label: 'SPAMD'
-    });
+    logger.info(
+      `Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- ID: '${post.id}'`,
+      {
+        label: 'SPAMD'
+      }
+    );
   } catch (error) {
     logger.error(
-      `Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- Error: ${error.message}`,
+      `Saving   -*- Post: '${post.title}' -*- Slug: '${post.slug}' -*- ID: '${post.id}' -*- Error: ${error.message}`,
       {
         label: 'SPAMD'
       }
