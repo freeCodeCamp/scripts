@@ -67,9 +67,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .get_object_id("_id")
         .expect("all records should have an _id field");
 
+    let mut cloned_doc = combined_record.clone();
+    cloned_doc
+        .remove("_id")
+        .expect("Failed to remove _id for update document");
+    let update = doc! { "$set": cloned_doc };
+
     // Update oldest record
     collection
-        .update_one(doc! {"_id": combined_id}, combined_record.clone())
+        .update_one(doc! {"_id": combined_id}, update)
         .await?;
 
     // Delete all other records
