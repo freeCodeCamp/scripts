@@ -88,7 +88,12 @@ pub fn merge_records(records: Vec<Document>) -> Result<Document, Box<dyn std::er
 pub fn get_oldest_record(records: &[Document]) -> &Document {
     records
         .iter()
-        .min_by_key(|record| record.get_object_id("_id").unwrap().timestamp())
+        .min_by_key(|record| {
+            record
+                .get_object_id("_id")
+                .expect("all records to have _id field")
+                .timestamp()
+        })
         .expect("No records found")
 }
 

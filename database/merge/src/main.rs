@@ -63,13 +63,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let combined_record = merge_records(records)?;
 
-    // Update oldest record, delete all others
+    let combined_id = combined_record
+        .get_object_id("_id")
+        .expect("all records should have an _id field");
+
+    // Update oldest record
     collection
-        .update_one(
-            doc! {"_id": combined_record.get_object_id("_id").unwrap()},
-            combined_record,
-        )
+        .update_one(doc! {"_id": combined_id}, combined_record.clone())
         .await?;
+
+    // Delete all other records
+    let delete_filter = doc! { "email": &args.email, "_id": { "$ne": combined_id } };
+    let delete_result = collection.delete_many(delete_filter).await?;
+    if delete_result.deleted_count > 0 {
+        println!("Deleted {} duplicate records", delete_result.deleted_count);
+    } else {
+        println!("No duplicate records found to delete");
+    }
+    println!("Merged records for email: {}", args.email);
 
     Ok(())
 }
