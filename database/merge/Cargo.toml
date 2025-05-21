@@ -1,0 +1,12 @@
+[package]
+name = "merge"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.38", features = ["derive"] }
+futures-util = "0.3.31"
+inquire = "0.7.5"
+mongodb = "3.2.3"
+serde = { version = "1.0.219", features = ["derive"] }
+tokio = { version = "1.45.0", features = ["full"] }
