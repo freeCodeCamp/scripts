@@ -4,17 +4,30 @@ This executable merges two or more `user` records into one.
 
 ## Usage
 
-Either install the binary locally to use as a CLI:
+### Prerequisites
+
+Requires Rust: https://www.rust-lang.org/tools/install
+
+### Recommended
+
+Install the binary locally:
 
 ```bash
-cargo install --path .
+scripts/database/merge $ cargo install --path .
+```
+
+Use anywhere:
+
+```bash
 merge --uri <MONGO_URI> --email <USER_EMAIL> default
 ```
 
-Or, build and run it directly:
+### Development and Testing
+
+Build and run it directly:
 
 ```bash
-cargo run --release -- --uri <MONGO_URI> --email <USER_EMAIL> default
+scripts/database/merge $ cargo run --release -- --uri <MONGO_URI> --email <USER_EMAIL> default
 ```
 
 ## Notes
