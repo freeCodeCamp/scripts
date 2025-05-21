@@ -13,6 +13,7 @@ mod cli;
 mod record;
 
 use cli::Args;
+use inquire::prompt_confirmation;
 use mongodb::{
     Client,
     bson::{Document, doc},
@@ -56,9 +57,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    if records.is_empty() {
+        println!("No records found for email: {}", args.email);
+        return Ok(());
+    }
+
     if records.len() < 2 {
         println!("No duplicate records found for email: {}", args.email);
         return Ok(());
+    }
+
+    match prompt_confirmation(&format!(
+        "This will merge {} records with the same email. Do you want to continue?",
+        records.len(),
+    )) {
+        Ok(true) => println!("Continuing..."),
+        Ok(false) => {
+            println!("Aborting...");
+            return Ok(());
+        }
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return Ok(());
+        }
     }
 
     let combined_record = merge_records(records)?;
