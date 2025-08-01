@@ -1,0 +1,17 @@
+[package]
+name = "prisma-migrate"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+chrono = { version = "0.4.41", features = ["serde"] }
+cmp = "1.0.0"
+dotenvy = "0.15.7"
+futures-util = "0.3.31"
+mongodb = { version = "3.2.4" }
+prisma-rust-schema = { git = "https://github.com/ShaunSHamilton/prisma-rust-schema.git", version = "1.1.0" }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.141"
+tokio = { version = "1.47.0", features = ["full"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
