@@ -22,18 +22,30 @@ use serde_json::Value;
 use crate::migrations::v1::{V1EnvExam, V1EnvExamAttempt, V1EnvGeneratedExam};
 
 prisma_rust_schema::import_types!(
-    schema_path = "./prisma/v2-schema.prisma",
+    schema_path = "https://raw.githubusercontent.com/ShaunSHamilton/freeCodeCamp/41343853e6cfd17f11c51a675586b09ecbb0f91c/api/prisma/schema.prisma",
     prefix = "V2",
     derive = [Clone, Debug, Serialize, Deserialize, PartialEq],
     patch = [
-      struct V2EnvConfig {
+      struct V2ExamEnvironmentExamAttempt {
+        #[serde(default = "version")]
+        pub version: i64
+      },
+      struct V2ExamEnvironmentExam {
+        #[serde(default = "version")]
+        pub version: i64
+      },
+      struct V2ExamEnvironmentConfig {
         #[serde(default)]
         pub passing_percent: f64
       }
     ]
 );
 
-impl From<V1EnvExam> for V2EnvExam {
+pub fn version() -> i64 {
+    2
+}
+
+impl From<V1EnvExam> for V2ExamEnvironmentExam {
     fn from(v1_env_exam: V1EnvExam) -> Self {
         let json: Value = serde_json::to_value(&v1_env_exam).unwrap();
         let v2: Self = serde_json::from_value(json).unwrap();
@@ -41,7 +53,7 @@ impl From<V1EnvExam> for V2EnvExam {
     }
 }
 
-impl From<V1EnvExamAttempt> for V2EnvExamAttempt {
+impl From<V1EnvExamAttempt> for V2ExamEnvironmentExamAttempt {
     fn from(value: V1EnvExamAttempt) -> Self {
         let json: Value = serde_json::to_value(&value).unwrap();
         let v2: Self = serde_json::from_value(json).unwrap();
@@ -49,7 +61,7 @@ impl From<V1EnvExamAttempt> for V2EnvExamAttempt {
     }
 }
 
-impl From<V1EnvGeneratedExam> for V2EnvGeneratedExam {
+impl From<V1EnvGeneratedExam> for V2ExamEnvironmentGeneratedExam {
     fn from(value: V1EnvGeneratedExam) -> Self {
         let json: Value = serde_json::to_value(&value).unwrap();
         let v2: Self = serde_json::from_value(json).unwrap();
@@ -64,7 +76,7 @@ mod v1_to_v2 {
 
     use crate::migrations::{
         v1::{V1EnvConfig, V1EnvExam, V1EnvExamAttempt},
-        v2::{V2EnvConfig, V2EnvExam, V2EnvExamAttempt},
+        v2::{V2ExamEnvironmentConfig, V2ExamEnvironmentExam, V2ExamEnvironmentExamAttempt},
     };
 
     #[test]
@@ -85,10 +97,10 @@ mod v1_to_v2 {
         };
 
         let v1_cop = v1.clone();
-        let v2 = V2EnvExam {
+        let v2 = V2ExamEnvironmentExam {
             id: v1_cop.id,
             question_sets: vec![],
-            config: V2EnvConfig {
+            config: V2ExamEnvironmentConfig {
                 name: v1_cop.config.name,
                 note: v1_cop.config.note,
                 tags: vec![],
@@ -99,9 +111,10 @@ mod v1_to_v2 {
             },
             prerequisites: vec![],
             deprecated: v1_cop.deprecated,
+            version: 2,
         };
 
-        let new: V2EnvExam = v1.into();
+        let new: V2ExamEnvironmentExam = v1.into();
 
         compare_structs!(
             v2,
@@ -110,7 +123,8 @@ mod v1_to_v2 {
             question_sets,
             config,
             prerequisites,
-            deprecated
+            deprecated,
+            version
         );
     }
 
@@ -128,16 +142,17 @@ mod v1_to_v2 {
 
         let v1_cop = v1.clone();
 
-        let v2 = V2EnvExamAttempt {
+        let v2 = V2ExamEnvironmentExamAttempt {
             id: v1_cop.id,
             user_id: v1_cop.user_id,
             exam_id: v1_cop.exam_id,
             generated_exam_id: v1_cop.generated_exam_id,
             question_sets: vec![],
             start_time_in_m_s: v1_cop.start_time_in_m_s,
+            version: 2,
         };
 
-        let new: V2EnvExamAttempt = v1.into();
+        let new: V2ExamEnvironmentExamAttempt = v1.into();
 
         compare_structs!(
             v2,
@@ -147,7 +162,8 @@ mod v1_to_v2 {
             exam_id,
             generated_exam_id,
             question_sets,
-            start_time_in_m_s
+            start_time_in_m_s,
+            version
         );
     }
 }

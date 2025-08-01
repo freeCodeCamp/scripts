@@ -1,5 +1,18 @@
 # Prisma Migrate
 
+## Usage
+
+```bash
+git clone https://github.com/freeCodeCamp/scripts.git
+cd scripts/database/prisma-migrate
+```
+
+```bash
+cargo run --release
+```
+
+## Development
+
 Migrate from one schema to another.
 
 All migrations live in `src/migrations` as `v<i>.rs`. In order for a migration to happen, `From<PreviousVersion>` must be implemented for `NextVersion`:
