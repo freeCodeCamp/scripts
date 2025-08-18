@@ -36,6 +36,19 @@ model EnvExam {
   examAttempts   EnvExamAttempt[]
 }
 
+model EnvExamTemp {
+  /// Globally unique exam id
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  /// All questions for a given exam
+  questionSets  EnvQuestionSet[]
+  /// Configuration for exam metadata
+  config        EnvConfig
+  /// ObjectIds for required challenges/blocks to take the exam
+  prerequisites String[]         @db.ObjectId
+  /// If `deprecated`, the exam should no longer be considered for users
+  deprecated    Boolean
+}
+
 /// A grouping of one or more questions of a given type
 type EnvQuestionSet {
   /// Unique question type id
@@ -147,12 +160,12 @@ model EnvExamAttempt {
   questionSets  EnvQuestionSetAttempt[]
   /// Time exam was started as milliseconds since epoch
   startTimeInMS Int
+  needsRetake   Boolean
 
   // Relations
-  user                          user                           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  exam                          EnvExam                        @relation(fields: [examId], references: [id])
-  generatedExam                 EnvGeneratedExam               @relation(fields: [generatedExamId], references: [id])
-  ExamEnvironmentExamModeration ExamEnvironmentExamModeration?
+  user          user             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam          EnvExam          @relation(fields: [examId], references: [id])
+  generatedExam EnvGeneratedExam @relation(fields: [generatedExamId], references: [id])
 }
 
 type EnvQuestionSetAttempt {
@@ -197,33 +210,4 @@ type EnvGeneratedMultipleChoiceQuestion {
   id      String   @db.ObjectId
   /// Each item is a foreign key to an answer
   answers String[] @db.ObjectId
-}
-
-model ExamEnvironmentExamModeration {
-  id             String                              @id @default(auto()) @map("_id") @db.ObjectId
-  /// Whether or not the item is approved
-  status         ExamEnvironmentExamModerationStatus
-  /// Foreign key to exam attempt
-  examAttemptId  String                              @unique @db.ObjectId
-  /// Optional feedback/note about the moderation decision
-  feedback       String?
-  /// Date the exam attempt was moderated
-  moderationDate DateTime?
-  /// Foreign key to moderator. This is `null` until the item is moderated.
-  moderatorId    String?                             @db.ObjectId
-
-  /// Date the exam attempt was added to the moderation queue
-  submissionDate DateTime @default(now()) @db.Date
-
-  // Relations
-  examAttempt EnvExamAttempt @relation(fields: [examAttemptId], references: [id], onDelete: Cascade)
-}
-
-enum ExamEnvironmentExamModerationStatus {
-  /// Attempt is determined to be valid
-  Approved
-  /// Attempt is determined to be invalid
-  Denied
-  /// Attempt has yet to be moderated
-  Pending
 }
