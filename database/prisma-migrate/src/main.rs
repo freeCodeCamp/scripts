@@ -1,4 +1,4 @@
-use tracing::info;
+use tracing::{error, info};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
@@ -18,13 +18,13 @@ async fn main() {
 
     let uri = std::env::var("MONGODB_URI").unwrap();
     let client = db::create_client(&uri).await.unwrap();
-
-    migrations::migrate(&client).await;
+    let migration = migrations::migrate(&client);
 
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
             .expect("failed to install Ctrl+C handler");
+        info!("Received SIGINT (Ctrl+C), starting graceful shutdown...");
     };
 
     #[cfg(unix)]
@@ -33,17 +33,27 @@ async fn main() {
             .expect("failed to install SIGTERM handler")
             .recv()
             .await;
+        info!("Received SIGTERM, starting graceful shutdown...");
     };
 
     #[cfg(not(unix))]
     let terminate = std::future::pending::<()>();
 
     tokio::select! {
+        r = migration => {
+            match r {
+                Ok(_) => {},
+                Err(e) => {
+                    error!("{e}");
+                }
+            }
+            info!("Migration completed - exiting.");
+        },
         _ = ctrl_c => {
-            info!("Received SIGINT (Ctrl+C), starting graceful shutdown...");
+            // Migration future dropped here (cancelled)
         },
         _ = terminate => {
-            info!("Received SIGTERM, starting graceful shutdown...");
+            // Migration future dropped here (cancelled)
         },
-    }
+    };
 }

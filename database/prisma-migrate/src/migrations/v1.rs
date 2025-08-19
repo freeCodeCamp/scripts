@@ -1,19 +1,13 @@
-//! # V1 -> V2
+//! # V0 -> V1
 //!
 //! ## Changes
 //!
-//! ### `ExamEnv`
+//! ### `EnvExamTemp` -> `ExamCreatorExam`
 //!
 //! #### Add
 //!
 //! - `config.passingPercent` as Double
 //!   - `0.0`
-//!
-//! ### `EnvExamAttempt`
-//!
-//! #### Remove
-//!
-//! - `needsRetake` Boolean
 
 use mongodb::bson;
 use serde::{Deserialize, Serialize};
