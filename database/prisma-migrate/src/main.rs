@@ -1,4 +1,5 @@
-use tracing::{error, info};
+use std::time::Duration;
+use tracing::{error, info, warn};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod db;
@@ -20,6 +21,23 @@ async fn main() {
     let client = db::create_client(&uri).await.unwrap();
     let migration = migrations::migrate(&client);
 
+    // Optional timeout (in seconds) for the migration to finish.
+    // If MIGRATION_TIMEOUT_SECS is not set or invalid, proceed without a timeout.
+    let timeout_secs = match std::env::var("MIGRATION_TIMEOUT_SECS") {
+        Ok(val) => match val.parse::<u64>() {
+            Ok(secs) if secs > 0 => Some(secs),
+            Ok(_) => {
+                warn!("MIGRATION_TIMEOUT_SECS provided but not > 0; ignoring");
+                None
+            }
+            Err(e) => {
+                warn!("Failed to parse MIGRATION_TIMEOUT_SECS ('{val}'): {e}; ignoring");
+                None
+            }
+        },
+        Err(_) => None,
+    };
+
     let ctrl_c = async {
         tokio::signal::ctrl_c()
             .await
@@ -39,16 +57,26 @@ async fn main() {
     #[cfg(not(unix))]
     let terminate = std::future::pending::<()>();
 
-    tokio::select! {
-        r = migration => {
-            match r {
-                Ok(_) => {},
-                Err(e) => {
-                    error!("{e}");
+    let migration_task = async move {
+        if let Some(secs) = timeout_secs {
+            match tokio::time::timeout(Duration::from_secs(secs), migration).await {
+                Ok(_) => {
+                    info!("Migration completed - exiting.");
+                }
+                Err(_) => {
+                    error!("Migration timed out after {secs} seconds");
                 }
             }
+        } else {
+            if let Err(e) = migration.await {
+                error!("{e}");
+            }
             info!("Migration completed - exiting.");
-        },
+        }
+    };
+
+    tokio::select! {
+        _ = migration_task => { },
         _ = ctrl_c => {
             // Migration future dropped here (cancelled)
         },
