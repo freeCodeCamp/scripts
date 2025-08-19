@@ -7,6 +7,14 @@ git clone https://github.com/freeCodeCamp/scripts.git
 cd scripts/database/prisma-migrate
 ```
 
+Add `.env` file or env vars:
+
+- `MONGODB_URI`
+  - Required
+- `MIGRATION_TIMEOUT_SECS`
+  - Optional
+  - Integer >0 which ends script if it takes longer than specified
+
 ```bash
 cargo run --release
 ```
