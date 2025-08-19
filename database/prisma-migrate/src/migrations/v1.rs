@@ -22,7 +22,7 @@ use serde_json::Value;
 use crate::migrations::v0::V0EnvExamTemp;
 
 prisma_rust_schema::import_types!(
-    schema_path = "https://raw.githubusercontent.com/ShaunSHamilton/freeCodeCamp/refs/heads/chore_rename-temp-collection/api/prisma/schema.prisma",
+    schema_path = "https://raw.githubusercontent.com/freeCodeCamp/freeCodeCamp/main/api/prisma/schema.prisma",
     prefix = "V1",
     derive = [Clone, Debug, Serialize, Deserialize, PartialEq],
     patch = [
