@@ -6,8 +6,8 @@
 //!
 //! #### Add
 //!
-//! - `config.passingPercent` as Double
-//!   - `0.0`
+//! - `version` as Int
+//!   - `1`
 
 use mongodb::bson;
 use serde::{Deserialize, Serialize};

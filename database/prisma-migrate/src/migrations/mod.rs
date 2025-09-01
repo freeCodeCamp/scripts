@@ -14,7 +14,7 @@ pub async fn migrate(client: &Client) -> Result<(), String> {
     Ok(())
 }
 
-/// Migrated Collections: `EnvExamTemp`
+/// Migrated Collections: `EnvExamTemp` -> `ExamCreatorExam`
 #[instrument(skip_all)]
 pub async fn v0_to_v1(client: &Client) -> Result<(), String> {
     let exam_collection_v0 = db::get_collection::<v0::V0EnvExamTemp>(&client, "EnvExamTemp").await;
