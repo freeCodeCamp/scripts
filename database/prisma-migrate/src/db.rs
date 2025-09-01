@@ -14,7 +14,7 @@ where
 pub async fn create_client(uri: &str) -> mongodb::error::Result<Client> {
     let mut client_options = ClientOptions::parse(uri).await?;
 
-    client_options.app_name = Some("exam-moderation-service".to_string());
+    client_options.app_name = Some("prisma-migration".to_string());
 
     // Get a handle to the cluster
     let client = Client::with_options(client_options)?;

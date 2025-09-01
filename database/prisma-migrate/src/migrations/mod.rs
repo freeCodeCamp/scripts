@@ -34,6 +34,7 @@ pub async fn v0_to_v1(client: &Client) -> Result<(), String> {
             error!("unable to get next exam from cursor.");
             e.to_string()
         })?;
+        info!("migrating {}", v0.id);
         let v1: v1::V1ExamCreatorExam = v0.into();
 
         exam_collection_v1.insert_one(v1).await.map_err(|e| {

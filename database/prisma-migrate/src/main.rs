@@ -60,7 +60,13 @@ async fn main() {
     let migration_task = async move {
         if let Some(secs) = timeout_secs {
             match tokio::time::timeout(Duration::from_secs(secs), migration).await {
-                Ok(_) => {
+                Ok(migration_result) => {
+                    match migration_result {
+                        Ok(_) => {}
+                        Err(e) => {
+                            error!("Error migrating: {e}");
+                        }
+                    }
                     info!("Migration completed - exiting.");
                 }
                 Err(_) => {
