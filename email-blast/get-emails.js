@@ -4,12 +4,10 @@ require('dotenv').config();
 const Stream = require('stream');
 const fs = require('fs');
 const assert = require('assert');
-const mongodb = require('mongodb');
+const { MongoClient } = require('mongodb');
 const validator = require('validator');
 const emailValidator = require('email-validator');
 const ora = require('ora');
-
-const MongoClient = mongodb.MongoClient;
 const filePath = process.argv[2];
 
 const validOutput = fs.createWriteStream(filePath, { encoding: 'utf8' });
@@ -51,49 +49,50 @@ const {
   MONGODB_URI
 } = process.env;
 
-MongoClient.connect(
-  MONGODB_URI,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+async function main() {
+  const client = new MongoClient(MONGODB_URI, {
+    auth: { username: MONGO_USER, password: MONGO_PASSWORD },
     replicaSet: MONGO_RS,
-    auth: { user: MONGO_USER, password: MONGO_PASSWORD },
-    poolSize: 20
-  },
-  function (err, client) {
-    if (err) {
-      throw err;
-    }
-    const db = client.db(MONGO_DB);
+    maxPoolSize: 20
+  });
 
-    const stream = db
-      .collection('user')
-      .find(
-        {
-          sendQuincyEmail: true,
-          email: { $nin: [null, ''], $not: /(test|fake)/i }
-        },
-        {
-          email: 1,
-          unsubscribeId: 1
-        }
-      )
-      .batchSize(500)
-      .stream();
+  await client.connect();
+  const db = client.db(MONGO_DB);
 
-    const spinner = ora('Begin querying emails ...');
-    spinner.start();
+  const stream = db
+    .collection('user')
+    .find(
+      {
+        sendQuincyEmail: true,
+        email: { $nin: [null, ''], $not: /(test|fake)/i }
+      },
+      { projection: { email: 1, unsubscribeId: 1 } }
+    )
+    .batchSize(500)
+    .stream();
 
-    stream.on('data', ({ email, unsubscribeId }) => {
-      const data = { email, unsubscribeId };
-      spinner.text = `Getting info for: ${email}\n`;
-      rs.push(data);
-    });
+  const spinner = ora('Begin querying emails ...');
+  spinner.start();
 
-    stream.on('end', () => {
-      rs.push(null);
-      client.close();
-      spinner.succeed(`Completed compiling mailing list.`);
-    });
-  }
-);
+  stream.on('data', ({ email, unsubscribeId }) => {
+    spinner.text = `Getting info for: ${email}\n`;
+    rs.push({ email, unsubscribeId });
+  });
+
+  stream.on('end', () => {
+    rs.push(null);
+    client.close();
+    spinner.succeed('Completed compiling mailing list.');
+  });
+
+  stream.on('error', err => {
+    spinner.fail(`Stream error: ${err.message}`);
+    client.close();
+    process.exit(1);
+  });
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
