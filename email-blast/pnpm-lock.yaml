@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       dotenv:
-        specifier: ^9.0.2
-        version: 9.0.2
+        specifier: ^17.4.2
+        version: 17.4.2
       email-validator:
         specifier: ^2.0.4
         version: 2.0.4
@@ -21,7 +21,7 @@ importers:
         specifier: ^5.4.0
         version: 5.4.1
       validator:
-        specifier: ^13.6.0
+        specifier: ^13.15.35
         version: 13.15.35
 
 packages:
@@ -82,9 +82,9 @@ packages:
   defaults@1.0.4:
     resolution: {integrity: sha512-eFuaLoy/Rxalv2kr+lqMlUnrDWV+3j4pljOIJgLIhI058IQfWJ7vXhyEIHu+HtC738klGALYxOKDO0bQP3tg8A==}
 
-  dotenv@9.0.2:
-    resolution: {integrity: sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==}
-    engines: {node: '>=10'}
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+    engines: {node: '>=12'}
 
   email-validator@2.0.4:
     resolution: {integrity: sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ==}
@@ -268,7 +268,7 @@ snapshots:
     dependencies:
       clone: 1.0.4
 
-  dotenv@9.0.2: {}
+  dotenv@17.4.2: {}
 
   email-validator@2.0.4: {}
 

@@ -6,11 +6,11 @@
     "mailing-list": "node ./get-emails.js"
   },
   "dependencies": {
-    "dotenv": "^9.0.2",
+    "dotenv": "^17.4.2",
     "email-validator": "^2.0.4",
     "mongodb": "^7.2.0",
     "ora": "^5.4.0",
-    "validator": "^13.6.0"
+    "validator": "^13.15.35"
   },
   "engines": {
     "node": ">= 14"
