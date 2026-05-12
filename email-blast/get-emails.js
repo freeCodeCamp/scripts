@@ -70,20 +70,15 @@ MongoClient.connect(
       .collection('user')
       .find(
         {
-          $and: [
-            { email: { $exists: true } },
-            { email: { $ne: '' } },
-            { email: { $ne: null } },
-            { email: { $not: /(test|fake)/i } },
-            { sendQuincyEmail: true }
-          ]
+          sendQuincyEmail: true,
+          email: { $nin: [null, ''], $not: /(test|fake)/i }
         },
         {
           email: 1,
           unsubscribeId: 1
         }
       )
-      .batchSize(100)
+      .batchSize(500)
       .stream();
 
     const spinner = ora('Begin querying emails ...');
