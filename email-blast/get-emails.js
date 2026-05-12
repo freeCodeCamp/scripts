@@ -75,13 +75,7 @@ MongoClient.connect(
             { email: { $ne: '' } },
             { email: { $ne: null } },
             { email: { $not: /(test|fake)/i } },
-            {
-              $or: [
-                { sendQuincyEmail: true },
-                { sendQuincyEmail: { $exists: false } },
-                { sendQuincyEmail: null }
-              ]
-            }
+            { sendQuincyEmail: true }
           ]
         },
         {
