@@ -1,0 +1,28 @@
+{
+  "name": "email-blast",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "op run --env-file=./prod.env --no-masking -- tsx get-emails.ts ./email.csv"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "email-validator": "^2.0.4",
+    "mongodb": "^7.2.0",
+    "ora": "^9.4.0",
+    "validator": "^13.15.35"
+  },
+  "devDependencies": {
+    "@nhcarrigan/eslint-config": "^5.2.0",
+    "@nhcarrigan/typescript-config": "^4.0.0",
+    "@types/node": "^25.7.0",
+    "@types/validator": "13.15.10",
+    "eslint": "^10.3.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">= 18"
+  }
+}
