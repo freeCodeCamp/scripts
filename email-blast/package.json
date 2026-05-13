@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "mailing-list": "tsx get-emails.ts"
+    "start": "op run --env-file=./prod.env --no-masking -- tsx get-emails.ts email.csv"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
