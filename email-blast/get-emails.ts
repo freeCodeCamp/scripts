@@ -36,7 +36,7 @@ assert(
   `
 );
 
-const validOutput = createWriteStream(filePath, { encoding: 'utf8' });
+const validOutput = createWriteStream(/^\.?\/.+/.exec(filePath) ? filePath : `./${filePath}`, { encoding: 'utf8' });
 const invalidOutput = createWriteStream('./invalidEmails.csv', {
   encoding: 'utf8'
 });
@@ -88,8 +88,13 @@ async function main(): Promise<void> {
   const spinner = ora('Begin querying emails ...');
   spinner.start();
 
+  let count = 0;
+
   stream.on('data', ({ email, unsubscribeId }: EmailRecord) => {
-    spinner.text = `Getting info for: ${email}\n`;
+    count++;
+    if (count % 10000 === 0) {
+      spinner.text = `Fetching next batch of 10000 emails, ${count} emails fetched so far. Sample email: ${email}`;
+    }
     rs.push({ email, unsubscribeId });
   });
 
