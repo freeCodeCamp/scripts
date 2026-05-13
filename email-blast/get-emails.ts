@@ -24,6 +24,26 @@ const assertEnv = <T extends string | undefined>(env: T): env is NonNullable<T> 
   }
 }
 
+const isInScreenEnvironment = (): boolean => {
+  const termIsCapable
+    = process.env.TERM !== undefined
+    && process.env.TERMCAP !== undefined;
+  return (
+    process.env.STY !== undefined
+    || process.env.SCREEN !== undefined
+    || termIsCapable
+  );
+};
+
+/**
+ * If we do not confirm the user is in a screen session, and the user happens to NOT be in a screen session,
+ * killing the SSH connection will terminate this process without warning.
+ */
+if (!isInScreenEnvironment()) {
+  console.error('You must run this script in a screen session to persist the process after closing the SSH connection.');
+  process.exit(1);
+}
+
 const filePath = process.argv[2];
 
 assert(
