@@ -35,6 +35,14 @@ const isInScreenEnvironment = (): boolean => {
   );
 };
 
+console.log(`Welcome! This is a replicate of our database query for pulling down the newsletter list. Please note that this is NOT the original script!
+  
+  This version has been heavily modified to fit the workflows Naomi has established and documented. It was made into a separate script to ensure that I would not break someone else's workflow by changing the original script.
+  
+  If you want the original, \`cd ../accounts\` and it is \`get-emails.js\`.
+  
+  Thanks for your patience! Booting the tool now...`)
+
 /**
  * If we do not confirm the user is in a screen session, and the user happens to NOT be in a screen session,
  * killing the SSH connection will terminate this process without warning.
@@ -83,6 +91,16 @@ const { MONGO_DB: mongoDb, MONGO_PASSWORD: mongoPassword, MONGO_RS: mongoRs, MON
 
 async function main(): Promise<void> {
   if (!assertEnv(mongoUri) || !assertEnv(mongoDb) || !assertEnv(mongoUser) || !assertEnv(mongoPassword) || !assertEnv(mongoRs)) {
+    console.error(`One or more of the required MongoDB environment variables are not set.
+      
+      If you are using \`pnpm start\` OR you are calling the script manually with \`op run\`, please ensure you have run \`eval $(op signin)\` to authenticate with your freeCodeCamp 1password account.
+      
+      If you are calling the script manually without the 1password CLI, please note that you will need to set your own .env file with the required environment variables, and run the script with \`tsx --env-file=./your-env-file.env get-emails.ts ./email.csv\`.
+
+      Please refer to the prod.env file for the required environment variables.
+
+      If you are still having trouble, please contact Naomi for assistance.
+      `);
     process.exit(1);
   }
 
@@ -134,6 +152,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: Error) => {
+  console.error(`Oh dear! Something has gone catastrophically wrong! Please contact Naomi for assistance.`)
   console.error(err);
   process.exit(1);
 });
