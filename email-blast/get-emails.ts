@@ -49,10 +49,12 @@ const filePath = process.argv[2];
 assert(
   filePath,
   `
-  This script must be called with a filepath argument like so:
+  It is advised to run this script with \`pnpm start\` if you are using Naomi's email automation tool.
+  This will save the email list to the location that tool expects it to be.
 
-  pnpm start
+  Otherwise, you can run this script with a filepath argument like so:
 
+  op run --env-file=./prod.env --no-masking -- tsx get-emails.ts ./email.csv
   `
 );
 
