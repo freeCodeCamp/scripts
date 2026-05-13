@@ -1,0 +1,11 @@
+{
+  "extends": "@nhcarrigan/typescript-config",
+  "compilerOptions": {
+    "outDir": "./prod",
+    "rootDir": ".",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "target": "ES2024",
+    "types": ["node"]
+  },
+}
