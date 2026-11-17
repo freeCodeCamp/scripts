@@ -1,11 +1,23 @@
 {
-  "extends": "@nhcarrigan/typescript-config",
   "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "outDir": "./prod",
     "rootDir": ".",
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+    "skipLibCheck": true,
+    "strict": true,
     "target": "ES2024",
     "types": ["node"]
-  },
+  }
 }
