@@ -16,6 +16,6 @@
     "test": "echo \"Error: Test has not been defined.\" && exit 1"
   },
   "engines": {
-    "node": ">=26.13.1"
+    "node": ">=26"
   }
 }

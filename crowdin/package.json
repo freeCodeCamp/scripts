@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=26.13.1"
+    "node": ">=26"
   },
   "scripts": {
     "start": "echo \"Error: Start has not been defined.\" && exit 1",
