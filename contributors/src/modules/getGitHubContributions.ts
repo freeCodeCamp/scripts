@@ -45,7 +45,6 @@ const parseGitHubCommits = async (
  * Module to fetch commits to the default branch of the learn repository,
  * aggregate those commits, and return a list of contributors based on the
  * commits they made.
- *
  * @param {Credentials} credentials The credentials data from the ENV.
  * @returns {Promise<GithubContributor[]>} A list of contributors sorted by number of commits.
  */

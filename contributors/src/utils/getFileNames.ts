@@ -6,7 +6,6 @@ import { logHandler } from "./logHandler";
 /**
  * Module to get the file names within the data directory, excluding any
  * that are not .csv files.
- *
  * @returns {string[]} An array of file names.
  */
 export const getFileNames = async () => {

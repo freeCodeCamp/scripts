@@ -39,7 +39,6 @@ const parseForumData = async (
 /**
  * Module to fetch contributor data from the forum, based on number of liked posts,
  * and parse it into a JSON format with the name, username, likes, and profile url.
- *
  * @param {Credentials} credentials The credentials data from the ENV.
  * @returns {Promise<ForumContributor[]>} A parsed list of forum contributors.
  */

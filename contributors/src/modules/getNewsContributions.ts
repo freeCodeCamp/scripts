@@ -28,7 +28,6 @@ const parseNewsData = (
 /**
  * Module to query posts from Hashnode and aggregate them into a list of contributors
  * by number of posts published.
- *
  * @returns {Promise<NewsContributor[]>} A list of news contributors.
  */
 export const getNewsData = async (): Promise<{ news: NewsContributor[] }> => {
@@ -65,7 +64,7 @@ export const getNewsData = async (): Promise<{ news: NewsContributor[] }> => {
       data.publication.posts.pageInfo.hasNextPage &&
       data.publication.posts.edges.length > 0 &&
       new Date(
-        data.publication.posts.edges.at(-1)!.node.publishedAt
+        data.publication.posts.edges.at(-1)?.node.publishedAt ?? ""
       ).getTime() >= globalConfig.start
     ) {
       logHandler.log(

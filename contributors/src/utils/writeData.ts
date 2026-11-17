@@ -8,7 +8,6 @@ import { NewsContributor } from "../interfaces/news/NewsContributor";
 
 /**
  * Utility to parse data into a CSV format and write it to a file.
- *
  * @param {GithubContributor[] | ForumContributor[] | NewsContributor[] | CrowdinContributor[]} data The data to parse.
  * @param {string} type The type of data being parsed. Either GitHub, Forum, or News.
  * @param {string} fileName The name of the file to write to. Will be written as `/data/{fileName}.csv`.

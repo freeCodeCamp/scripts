@@ -5,7 +5,6 @@ import { logHandler } from "./logHandler";
 /**
  * Module to validate environment variables and create a credentials object to
  * pass to various helpers.
- *
  * @returns {Credentials} An object containing the credentials needed for the tool.
  */
 export const validateEnv = (): Credentials => {

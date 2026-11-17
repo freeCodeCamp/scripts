@@ -12,7 +12,6 @@ import { sleep } from "../utils/sleep";
 
 /**
  * Module to generate list of Crowdin contributors and aggregate their contributions.
- *
  * @param {Credentials} creds The credentials object.
  * @returns {Promise<FinalReport[]>} The list of contributors and their contributions.
  */
