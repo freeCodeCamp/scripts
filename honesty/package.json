@@ -18,5 +18,8 @@
     "inquirer": "^8.2.0",
     "mongodb": "^4.4.0",
     "spinnies": "^0.5.1"
+  },
+  "engines": {
+    "node": ">=26.13.1"
   }
 }

@@ -28,5 +28,8 @@
     "graphql-request": "6.1.0",
     "node-fetch": "^2.6.6",
     "winston": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=26.13.1"
   }
 }

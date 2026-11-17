@@ -27,5 +27,8 @@
     "@types/node-fetch": "^2.6.1",
     "markdown-table-ts": "^1.0.3",
     "node-fetch": "^2.6.7"
+  },
+  "engines": {
+    "node": ">=26.13.1"
   }
 }

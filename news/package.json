@@ -12,5 +12,9 @@
   "dependencies": {
     "@tryghost/admin-api": "^1.13.8",
     "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=26.13.1",
+    "npm": ">=11"
   }
 }

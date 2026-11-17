@@ -9,5 +9,8 @@
   "dependencies": {
     "dotenv": "^16.0.1",
     "node-fetch": "^2.6.1"
+  },
+  "engines": {
+    "node": ">=26.13.1"
   }
 }
