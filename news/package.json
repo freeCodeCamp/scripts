@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tryghost/admin-api": "^1.13.8",
+    "@tryghost/admin-api": "^1.14.16",
     "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=26",
+    "npm": ">=11"
   }
 }
